@@ -1,3 +1,4 @@
+""" Class used to convert an input string into a sequence of valid language tokens."""
 from tokens import Tok_Type, Token
 
 class Lexer:
@@ -35,7 +36,7 @@ class Lexer:
             return None
 
     def __tokenize_ident(self):
-        """ """
+        """ Tokenize a single identifier and return it."""
         ident_str = str()
         ident_str += self.curr_char
         self.advance()
@@ -45,7 +46,8 @@ class Lexer:
         return ident_str
 
     def __tokenize_num(self):
-        while
+        """ Tokenize a single integer number and return it."""
+        pass
 
     def __tokenize(self):
         """ Tokenize the current text sequence and return the tokens generated. """
@@ -101,6 +103,8 @@ class Lexer:
         self.token_stream.append(Token(Tok_Type.EOF))
 
     def tokenize_file(self, filename):
+        """ Tokenize an input file. If the fule does not exist, return a runtime error. 
+            Otheriwse returns the token stream produced."""
         pass
 
     def tokenize_string(self, input_str):
