@@ -1,0 +1,30 @@
+program := statement*
+
+;; Statements
+statement := if_stmnt|
+			 while_stmnt|
+			 for_stmnt| ;; will not implement yet
+			 block |
+			 class_def |
+			 func_def |
+			 expression |
+			 print | ;; not for now
+
+;; Expressions
+expr := ID ("=" expr)? | or_expr
+or_expr := and_expr ("|" and_expr)*
+and_expr := eq_expr ("&" eq_expr)*
+eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
+rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
+add_expr := term (("+" | "-") term)*
+term := factor (("*" | "/") factor)*
+;; factor := ID "(" arglist ")" | "(" expr ")" | unary_op factor | atom ;; for later
+;;arglist := atom ("," atom)*
+factor := "(" expr ")" | unary_op factor | atom 
+unary_op := "!" "-"
+
+atom := | NUM | STR | ID | BOOL
+;; Primitives
+BOOL := "false" | "true"
+ID := LETTER (LETTER | NUM)*
+NUM := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
