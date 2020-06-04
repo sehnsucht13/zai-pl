@@ -11,6 +11,9 @@ class Lexer:
         # Total length of input stream
         self.input_len = 0
 
+        # Characters which break up identification tokens
+        self.ident_sep = "#(),[]*/+-<=>!{}\"' "
+
     def advance(self):
         """ Advance the current character by one and return it. If there is no next character,
             return None."""
@@ -31,15 +34,18 @@ class Lexer:
         else:
             return None
 
-    def lex_ident(self):
+    def __tokenize_ident(self):
+        """ """
         ident_str = str()
-        while self.curr_char not in [" "]:
+        ident_str += self.curr_char
+        self.advance()
+        while self.curr_char not in self.ident_sep:
             ident_str += self.curr_char
             self.advance()
         return ident_str
 
-    def lex_num(self):
-        pass
+    def __tokenize_num(self):
+        while
 
     def __tokenize(self):
         """ Tokenize the current text sequence and return the tokens generated. """
@@ -85,14 +91,25 @@ class Lexer:
                 else:
                     self.token_stream.append(Token(Tok_Type.GT))
             elif self.curr_char in ['$', '@', '?'] or self.curr_char.isalpha():
-                self.lex_ident()
+                ident = self.__tokenize_ident()
+                self.token_stream.append(Token(Tok_Type.IDENT, ident))
             elif self.curr_char.isdigit():
-                self.lex_num()
-            
-        
+                num = self.__tokenize_num()
+                self.token_stream.append(Token(Tok_Type.NUM, num))
+            self.advance()
+        # Add final EOF token to indicate end of token stream
+        self.token_stream.append(Token(Tok_Type.EOF))
 
     def tokenize_file(self, filename):
         pass
 
     def tokenize_string(self, input_str):
-        pass
+        """ Tokenize a single input string. Returns the token stream produced."""
+        self.text = input_str
+        self.input_len = len(input_str)
+        if self.input_len > 0:
+            self.curr_char = self.text[self.curr_idx]
+            self.__tokenize()
+            return self.token_stream
+        else: 
+            return [Token(Tok_Type.EOF)]
