@@ -2,6 +2,7 @@ from ast_nodes import *
 from lexer import Lexer
 from tokens import Token, Tok_Type
 
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -34,17 +35,21 @@ class Parser:
 
     def atom(self):
         if self.curr_tok.tok_type == Tok_Type.ID:
+            node = ID_Node(self.curr_tok.literal)
             self.match(Tok_Type.ID)
-            return ID_Node(self.curr_tok.literal)
+            return node
         elif self.curr_tok.tok_type == Tok_Type.STRING:
+            node = String_Node(self.curr_tok.literal)
             self.match(Tok_Type.STRING)
-            return String_Node(self.curr_tok.literal)
+            return node
         elif self.curr_tok.tok_type == Tok_Type.NUM:
+            node = Num_Node(self.curr_tok.literal)
             self.match(Tok_Type.NUM)
-            return Num_Node(self.curr_tok.literal)
+            return node
         elif self.curr_tok.tok_type == Tok_Type.BOOL:
+            node = Bool_Node(self.curr_tok.literal)
             self.match(Tok_Type.BOOL)
-            return Bool_Node(self.curr_tok.literal)
+            return node
 
     def factor(self):
         if self.curr_tok.tok_type == Tok_Type.LRBRACE:
@@ -80,7 +85,12 @@ class Parser:
 
     def rel_expr(self):
         left = self.add_expr()
-        while self.curr_tok.tok_type in [Tok_Type.GT, Tok_Type.GTE, Tok_Type.LT, Tok_Type.LTE]:
+        while self.curr_tok.tok_type in [
+            Tok_Type.GT,
+            Tok_Type.GTE,
+            Tok_Type.LT,
+            Tok_Type.LTE,
+        ]:
             op = self.curr_tok
             self.match(self.curr_tok.tok_type)
             right = self.add_expr()
@@ -119,21 +129,22 @@ class Parser:
         return left
 
     def expression(self):
-       return self.or_expr() 
+        return self.or_expr()
 
     def statement(self):
         return self.expression()
 
     def program(self):
-        prog_node = Program_Node()        
+        prog_node = Program_Node()
         stmnt = self.statement()
         prog_node.add_stmnt(stmnt)
         return prog_node
 
     def parse(self):
-       ast_root = self.program() 
-       self.ast = ast_root
-       return self.ast
+        ast_root = self.program()
+        self.ast = ast_root
+        return self.ast
+
 
 if __name__ == "__main__":
     l = Lexer()
@@ -142,5 +153,3 @@ if __name__ == "__main__":
     p = Parser(stream)
     generated_ast = p.parse()
     print(generated_ast.stmnts)
-    
-
