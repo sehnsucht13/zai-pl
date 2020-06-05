@@ -18,10 +18,15 @@ class Lexer:
     def advance(self):
         """ Advance the current character by one and return it. If there is no next character,
             return None."""
-        if self.curr_idx + 1 < self.input_len:
+        if self.curr_char is None and self.curr_idx == 0:
+            self.curr_char = self.text[self.curr_idx]
+            return self.curr_char
+        elif self.curr_idx + 1 < self.input_len:
             self.curr_idx += 1
             self.curr_char = self.text[self.curr_idx]
             return self.curr_char
+        elif self.curr_char is None:
+            return None
         else:
             self.curr_char = None
             return None
@@ -39,19 +44,23 @@ class Lexer:
         """ Tokenize a single identifier and return it."""
         ident_str = str()
         ident_str += self.curr_char
-        self.advance()
-        while self.curr_char not in self.ident_sep:
+        while self.advance() is not None and self.curr_char not in self.ident_sep:
             ident_str += self.curr_char
-            self.advance()
+            #self.advance()
         return ident_str
 
     def __tokenize_num(self):
         """ Tokenize a single integer number and return it."""
-        pass
+        num_str = str()
+        num_str += self.curr_char
+        while self.advance() is not None and self.curr_char in "1234567890":
+            num_str += self.curr_char
+            #self.advance()
+        return int(num_str)
 
     def __tokenize(self):
         """ Tokenize the current text sequence and return the tokens generated. """
-        while self.curr_char is not None:
+        while self.advance() != None:
             if self.curr_char == "(":
                 self.token_stream.append(Token(Tok_Type.LRBRACE))
             elif self.curr_char == ")":
@@ -73,32 +82,36 @@ class Lexer:
             elif self.curr_char == "'":
                 self.token_stream.append(Token(Tok_Type.QUOTE))
             elif self.curr_char == "!":
-                if self.peek() == "="
+                if self.peek() == "=":
                     self.token_stream.append(Token(Tok_Type.NEQ))
+                    self.advance()
                 else:
                     self.token_stream.append(Token(Tok_Type.BANG))
             elif self.curr_char == "=":
-                if self.peek() == "="
+                if self.peek() == "=":
                     self.token_stream.append(Token(Tok_Type.EQ))
+                    self.advance()
                 else:
                     self.token_stream.append(Token(Tok_Type.ASSIGN))
             elif self.curr_char == "<":
-                if self.peek() == "="
+                if self.peek() == "=":
                     self.token_stream.append(Token(Tok_Type.LTE))
+                    self.advance()
                 else:
                     self.token_stream.append(Token(Tok_Type.LT))
             elif self.curr_char == ">":
-                if self.peek() == "="
+                if self.peek() == "=":
                     self.token_stream.append(Token(Tok_Type.GTE))
+                    self.advance()
                 else:
                     self.token_stream.append(Token(Tok_Type.GT))
             elif self.curr_char in ['$', '@', '?'] or self.curr_char.isalpha():
                 ident = self.__tokenize_ident()
-                self.token_stream.append(Token(Tok_Type.IDENT, ident))
+                self.token_stream.append(Token(Tok_Type.ID, ident))
             elif self.curr_char.isdigit():
                 num = self.__tokenize_num()
                 self.token_stream.append(Token(Tok_Type.NUM, num))
-            self.advance()
+
         # Add final EOF token to indicate end of token stream
         self.token_stream.append(Token(Tok_Type.EOF))
 
@@ -112,8 +125,14 @@ class Lexer:
         self.text = input_str
         self.input_len = len(input_str)
         if self.input_len > 0:
-            self.curr_char = self.text[self.curr_idx]
             self.__tokenize()
             return self.token_stream
         else: 
             return [Token(Tok_Type.EOF)]
+
+"""
+if __name__ == "__main__":
+    l = Lexer()
+    stream = l.tokenize_string("a$141_bc")
+    print(stream)
+"""
