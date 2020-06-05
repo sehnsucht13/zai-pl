@@ -1,5 +1,6 @@
 from ast_nodes import *
-from token import Token, Tok_Type
+from lexer import Lexer
+from tokens import Token, Tok_Type
 
 class Parser:
     def __init__(self, tokens):
@@ -16,7 +17,7 @@ class Parser:
         else:
             return None
 
-    def advance(self, n=1)
+    def advance(self, n=1):
         if self.curr_idx + n < self.tok_len:
             self.curr_idx += n
             self.curr_tok = self.tokens[self.curr_idx]
@@ -26,27 +27,31 @@ class Parser:
 
     def match(self, tok_type):
         if self.curr_tok.tok_type == tok_type:
-            return self.advance()
+            return self.advance(1)
         else:
             # TODO: Create error here
             pass
 
     def atom(self):
         if self.curr_tok.tok_type == Tok_Type.ID:
+            self.match(Tok_Type.ID)
             return ID_Node(self.curr_tok.literal)
         elif self.curr_tok.tok_type == Tok_Type.STRING:
+            self.match(Tok_Type.STRING)
             return String_Node(self.curr_tok.literal)
         elif self.curr_tok.tok_type == Tok_Type.NUM:
+            self.match(Tok_Type.NUM)
             return Num_Node(self.curr_tok.literal)
         elif self.curr_tok.tok_type == Tok_Type.BOOL:
+            self.match(Tok_Type.BOOL)
             return Bool_Node(self.curr_tok.literal)
 
     def factor(self):
-        if self.curr_tok.tok_type == Tok_Type.LRBRAC:
+        if self.curr_tok.tok_type == Tok_Type.LRBRACE:
             expr = self.expr()
-            match(Tok_Type.RRBRAC)
-            return expr
-        elif self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
+            match(Tok_Type.RRBRACE)
+            return Bracket_Node(expr)
+        if self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
             fact = self.factor()
             op = self.curr_tok.tok_type
             match(op)
@@ -56,38 +61,38 @@ class Parser:
 
     def term(self):
         left = self.factor()
-        while self.curr_tok.tok_type == [Tok_Type.MUL, Tok_Type.DIV]:
-            op = self.curr_tok
-            self.match(Tok_Type.self.curr_tok.tok_type)
+        while self.curr_tok.tok_type in [Tok_Type.MUL, Tok_Type.DIV]:
+            op = self.curr_tok.tok_type
+            self.match(op)
             right = self.term()
             left = Bin_Node(left, op, right)
         return left
 
     def add_expr(self):
         left = self.term()
-        while self.curr_tok.tok_type == [Tok_Type.PLUS, Tok_Type.MINUS]:
-            op = self.curr_tok
-            self.match(Tok_Type.self.curr_tok.tok_type)
+        while self.curr_tok.tok_type in [Tok_Type.PLUS, Tok_Type.MINUS]:
+            op = self.curr_tok.tok_type
+            self.match(op)
             right = self.term()
             left = Bin_Node(left, op, right)
 
         return left
 
     def rel_expr(self):
-        left = self.term()
-        while self.curr_tok.tok_type == [Tok_Type.GT, Tok_Type.GTE, Tok_Type.LT, Tok_Type.LTE]:
+        left = self.add_expr()
+        while self.curr_tok.tok_type in [Tok_Type.GT, Tok_Type.GTE, Tok_Type.LT, Tok_Type.LTE]:
             op = self.curr_tok
-            self.match(Tok_Type.self.curr_tok.tok_type)
-            right = self.term()
+            self.match(self.curr_tok.tok_type)
+            right = self.add_expr()
             left = Bin_Node(left, op, right)
 
         return left
 
-    def eq_expr(self)
+    def eq_expr(self):
         left = self.rel_expr()
-        while self.curr_tok.tok_type == [Tok_Type.EQ, Tok_Type.NEQ]:
+        while self.curr_tok.tok_type in [Tok_Type.EQ, Tok_Type.NEQ]:
             op = self.curr_tok
-            self.match(Tok_Type.self.curr_tok.tok_type)
+            self.match(self.curr_tok.tok_type)
             right = self.rel_expr()
             left = Bin_Node(left, op, right)
 
@@ -129,3 +134,13 @@ class Parser:
        ast_root = self.program() 
        self.ast = ast_root
        return self.ast
+
+if __name__ == "__main__":
+    l = Lexer()
+    stream = l.tokenize_string("4 + 4 * 13")
+    print("Token stream ", stream)
+    p = Parser(stream)
+    generated_ast = p.parse()
+    print(generated_ast.stmnts)
+    
+
