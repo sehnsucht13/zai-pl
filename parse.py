@@ -1,4 +1,5 @@
 from ast_nodes import *
+from token import Token, Tok_Type
 
 class Parser:
     def __init__(self, tokens):
@@ -30,16 +31,101 @@ class Parser:
             # TODO: Create error here
             pass
 
-    def parse_expression(self):
-        pass
+    def atom(self):
+        if self.curr_tok.tok_type == Tok_Type.ID:
+            return ID_Node(self.curr_tok.literal)
+        elif self.curr_tok.tok_type == Tok_Type.STRING:
+            return String_Node(self.curr_tok.literal)
+        elif self.curr_tok.tok_type == Tok_Type.NUM:
+            return Num_Node(self.curr_tok.literal)
+        elif self.curr_tok.tok_type == Tok_Type.BOOL:
+            return Bool_Node(self.curr_tok.literal)
 
-    def parse_statement(self):
-        pass
+    def factor(self):
+        if self.curr_tok.tok_type == Tok_Type.LRBRAC:
+            expr = self.expr()
+            match(Tok_Type.RRBRAC)
+            return expr
+        elif self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
+            fact = self.factor()
+            op = self.curr_tok.tok_type
+            match(op)
+            return Unary_Node(op, fact)
+        else:
+            return self.atom()
 
-    def parse_program(self):
-        pass
+    def term(self):
+        left = self.factor()
+        while self.curr_tok.tok_type == [Tok_Type.MUL, Tok_Type.DIV]:
+            op = self.curr_tok
+            self.match(Tok_Type.self.curr_tok.tok_type)
+            right = self.term()
+            left = Bin_Node(left, op, right)
+        return left
+
+    def add_expr(self):
+        left = self.term()
+        while self.curr_tok.tok_type == [Tok_Type.PLUS, Tok_Type.MINUS]:
+            op = self.curr_tok
+            self.match(Tok_Type.self.curr_tok.tok_type)
+            right = self.term()
+            left = Bin_Node(left, op, right)
+
+        return left
+
+    def rel_expr(self):
+        left = self.term()
+        while self.curr_tok.tok_type == [Tok_Type.GT, Tok_Type.GTE, Tok_Type.LT, Tok_Type.LTE]:
+            op = self.curr_tok
+            self.match(Tok_Type.self.curr_tok.tok_type)
+            right = self.term()
+            left = Bin_Node(left, op, right)
+
+        return left
+
+    def eq_expr(self)
+        left = self.rel_expr()
+        while self.curr_tok.tok_type == [Tok_Type.EQ, Tok_Type.NEQ]:
+            op = self.curr_tok
+            self.match(Tok_Type.self.curr_tok.tok_type)
+            right = self.rel_expr()
+            left = Bin_Node(left, op, right)
+
+        return left
+
+    def and_expr(self):
+        left = self.eq_expr()
+        while self.curr_tok.tok_type == Tok_Type.AND:
+            op = self.curr_tok
+            self.match(Tok_Type.AND)
+            right = self.eq_expr()
+            left = Bin_Node(left, op, right)
+
+        return left
+
+    def or_expr(self):
+        left = self.and_expr()
+        while self.curr_tok.tok_type == Tok_Type.OR:
+            op = self.curr_tok
+            self.match(Tok_Type.OR)
+            right = self.and_expr()
+            left = Bin_Node(left, op, right)
+
+        return left
+
+    def expression(self):
+       return self.or_expr() 
+
+    def statement(self):
+        return self.expression()
+
+    def program(self):
+        prog_node = Program_Node()        
+        stmnt = self.statement()
+        prog_node.add_stmnt(stmnt)
+        return prog_node
 
     def parse(self):
-       ast_root = self.parse_program() 
+       ast_root = self.program() 
        self.ast = ast_root
        return self.ast
