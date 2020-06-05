@@ -27,4 +27,6 @@ atom := | NUM | STR | ID | BOOL
 ;; Primitives
 BOOL := "false" | "true"
 ID := LETTER (LETTER | NUM)*
-NUM := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
+NUM := DIGIT (DIGIT)*
+DIGIT := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
+STR := "\"" (LETTER | NUM )* "\""
