@@ -17,7 +17,6 @@ class Bin_Node(AST_Node):
 
 class Unary_Node(AST_Node):
     def __init__(self, op, right):
-        self.type = node_type
         self.right = right
         self.op = op
 
@@ -26,11 +25,18 @@ class Bracket_Node(AST_Node):
         self.type = node_type
         self.exrp = expr
 
+class ID_Node(AST_Node):
+    def __init__(self, node_val):
+        self.val = node_val
+
 class Bool_Node(AST_Node):
-    def __init__(self, node_type, bool_val):
-        self.type = node_type
-        self.val = bool_val
+    def __init__(self, node_val):
+        self.val = node_val
+
+class String_Node(AST_Node):
+    def __init__(self, node_val):
+        self.val = node_val
 
 class Num_Node(AST_Node):
-    def __init__(self, int_val):
-        self.val = int_val
+    def __init__(self, node_val):
+        self.val = node_val
