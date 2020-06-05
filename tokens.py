@@ -43,9 +43,11 @@ class Tok_Type(Enum):
     EOF = auto()
 
 class Token:
-    def __init__(self, tok_type, literal=None):
+    def __init__(self, tok_type, literal=None, line_num=None, col_num=None):
         self.tok_type = tok_type
         self.literal = literal
+        self.line_num = line_num
+        self.col_num = col_num
 
     def __str__(self):
         if self.literal is not None:
