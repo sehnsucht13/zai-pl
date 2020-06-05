@@ -75,7 +75,7 @@ class Lexer:
                 self.token_stream.append(Token(Tok_Type.PLUS))
             elif self.curr_char == "/":
                 self.token_stream.append(Token(Tok_Type.DIV))
-            elif self.curr_char == "/":
+            elif self.curr_char == "*":
                 self.token_stream.append(Token(Tok_Type.MUL))
             elif self.curr_char == "\"":
                 self.token_stream.append(Token(Tok_Type.DQUOTE))
