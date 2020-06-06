@@ -14,7 +14,7 @@ def main():
         print(tok_stream)
         v = Visitor()
         val = v.visit(root)
-        print(val)
+        # print(val)
 
 
 if __name__ == "__main__":
