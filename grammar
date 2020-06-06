@@ -10,6 +10,9 @@ statement := if_stmnt|
 			 expression |
 			 print | ;; not for now
 
+if_stmnt := "if" "(" expression ")" statement ( "else" statement )? 
+print := "print" expression 
+
 ;; Expressions
 expr := ID ("=" expr)? | or_expr
 or_expr := and_expr ("|" and_expr)*
