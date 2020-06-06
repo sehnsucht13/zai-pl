@@ -36,6 +36,13 @@ class Lexer:
             self.curr_char = None
             return None
 
+    def reverse(self):
+        if self.curr_idx > 0 and self.curr_char is not None:
+            self.curr_idx -= 1
+            self.curr_char = self.text[self.curr_idx]
+            return self.curr_char
+        return None
+
     def peek(self):
         """ Return the next character in the input text sequence. If there is no next
             character, return None."""
@@ -59,7 +66,6 @@ class Lexer:
         num_str += self.curr_char
         while self.advance() is not None and self.curr_char in "1234567890":
             num_str += self.curr_char
-            # self.advance()
         return int(num_str)
 
     def __tokenize(self):
@@ -117,9 +123,12 @@ class Lexer:
             elif self.curr_char in ["$", "@", "?"] or self.curr_char.isalpha():
                 ident = self.__tokenize_ident()
                 self.token_stream.append(Token(Tok_Type.ID, ident))
+                self.reverse()
             elif self.curr_char.isdigit():
                 num = self.__tokenize_num()
                 self.token_stream.append(Token(Tok_Type.NUM, num))
+                self.reverse()
+                # self.reverse()
 
         # Add final EOF token to indicate end of token stream
         self.token_stream.append(Token(Tok_Type.EOF))
