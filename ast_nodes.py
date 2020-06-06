@@ -23,6 +23,17 @@ class Program_Node(AST_Node):
             stmnt_string += "\n" + stmnt.__str__()
 
 
+class Print_Node(AST_Node):
+    def __init__(self, expr):
+        self.expr = expr
+
+    def accept(self, visitor):
+        visitor.visit_print(self)
+
+    def __str__(self):
+        return "{}".format(self.expr)
+
+
 class Bin_Node(AST_Node):
     def __init__(self, left, op, right):
         raise NotImplementedError()

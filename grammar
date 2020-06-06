@@ -8,7 +8,7 @@ statement := if_stmnt|
 			 class_def |
 			 func_def |
 			 expression |
-			 print | ;; not for now
+			 print 
 
 if_stmnt := "if" "(" expression ")" statement ( "else" statement )? 
 print := "print" expression 

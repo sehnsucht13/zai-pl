@@ -17,7 +17,9 @@ class Visitor:
     def visit_program(self, node):
         for stmnt in node.stmnts:
             val = stmnt.accept(self)
-            print(val.value)
+            if is_atom(val):
+                print(val.value)
+            # print(val.value)
 
     def visit_num(self, node):
         return Num_Object(node.val)
@@ -99,3 +101,8 @@ class Visitor:
             return node.true_stmnt.accept(self)
         else:
             return node.else_stmnt.accept(self)
+
+    def visit_print(self, node):
+        print_value = node.expr.accept(self)
+        if is_atom(print_value):
+            print(print_value.value)

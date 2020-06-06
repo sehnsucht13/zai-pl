@@ -146,9 +146,16 @@ class Parser:
         node = If_Node(test_expr, if_stmtn, else_stmnt)
         return node
 
+    def print_statement(self):
+        self.match(Tok_Type.PRINT)
+        expr = self.expression()
+        return Print_Node(expr)
+
     def statement(self):
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
+        elif self.curr_tok.tok_type == Tok_Type.PRINT:
+            return self.print_statement()
         else:
             return self.expression()
 

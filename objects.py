@@ -10,8 +10,8 @@ class Internal_Object:
 class Num_Object(Internal_Object):
     def __init__(self, value):
         "Numeric object"
-        self.obj_type = ObjectType.NUM
         self.value = value
+        self.obj_type = ObjectType.NUM
 
 
 class String_Object(Internal_Object):
@@ -26,3 +26,10 @@ class Bool_Object(Internal_Object):
         "Boolean Value object."
         self.value = bool_val
         self.obj_type = ObjectType.BOOL
+
+
+def is_atom(object):
+    """ Check if an object is an atom."""
+    if object is None:
+        return False
+    return object.obj_type in [ObjectType.BOOL, ObjectType.NUM, ObjectType.STR]
