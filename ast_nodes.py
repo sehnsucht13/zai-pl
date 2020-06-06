@@ -109,7 +109,7 @@ class Relop_Bin_Node(Bin_Node):
 
 class Unary_Node(AST_Node):
     def __init__(self, op, right):
-        self.right = right
+        self.value = right
         self.op = op
 
     def accept(self, visitor):

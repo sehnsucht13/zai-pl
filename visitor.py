@@ -89,11 +89,11 @@ class Visitor:
         return Bool_Object(eq_result)
 
     def visit_unary(self, node):
-        result = node.accept(self)
+        result = node.value.accept(self)
         if node.op == Tok_Type.MINUS:
-            pass
+            return Num_Object(-(result.value))
         elif node.op == Tok_Type.BANG:
-            pass
+            return Bool_Object(not (result.value))
 
     def visit_if(self, node):
         condition = node.condition.accept(self)

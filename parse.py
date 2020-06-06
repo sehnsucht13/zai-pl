@@ -57,10 +57,10 @@ class Parser:
             expr = self.expression()
             self.match(Tok_Type.RRBRACE)
             return Bracket_Node(expr)
-        if self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
-            fact = self.factor()
+        elif self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
             op = self.curr_tok.tok_type
             self.match(op)
+            fact = self.factor()
             return Unary_Node(op, fact)
         else:
             return self.atom()
@@ -171,10 +171,10 @@ class Parser:
         return self.ast
 
 
-if __name__ == "__main__":
-    l = Lexer()
-    stream = l.tokenize_string("4 + 4 * 13")
-    print("Token stream ", stream)
-    p = Parser(stream)
-    generated_ast = p.parse()
-    print(generated_ast.stmnts)
+# if __name__ == "__main__":
+#     l = Lexer()
+#     stream = l.tokenize_string("4 + 4 * 13")
+#     print("Token stream ", stream)
+#     p = Parser(stream)
+#     generated_ast = p.parse()
+#     print(generated_ast.stmnts)
