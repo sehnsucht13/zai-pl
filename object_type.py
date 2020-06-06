@@ -6,3 +6,4 @@ class ObjectType(Enum):
     STR = auto()
     ID = auto()
     BOOL = auto()
+    FUNC = auto()

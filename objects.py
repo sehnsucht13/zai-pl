@@ -28,6 +28,17 @@ class Bool_Object(Internal_Object):
         self.obj_type = ObjectType.BOOL
 
 
+class Function_Object(Internal_Object):
+    def __init__(self, name, arg_symbols, body, env):
+        """Internal object used to represent a function."""
+        self.obj_type = ObjectType.FUNC
+        self.name = name
+        self.args = arg_symbols
+        self.arity = len(arg_symbols)
+        self.body = body
+        self.env = env
+
+
 def is_atom(object):
     """ Check if an object is an atom."""
     if object is None:
