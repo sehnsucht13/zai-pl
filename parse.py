@@ -130,7 +130,17 @@ class Parser:
         return left
 
     def expression(self):
-        return self.or_expr()
+        if (
+            self.curr_tok.tok_type == Tok_Type.ID
+            and self.peek().tok_type == Tok_Type.ASSIGN
+        ):
+            symbol = self.curr_tok.literal
+            self.match(Tok_Type.ID)
+            self.match(Tok_Type.ASSIGN)
+            value = self.expression()
+            return Assign_Bin_Node(symbol, value)
+        else:
+            return self.or_expr()
 
     def if_statement(self):
         self.match(Tok_Type.IF)

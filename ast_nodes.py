@@ -39,6 +39,18 @@ class Bin_Node(AST_Node):
         raise NotImplementedError()
 
 
+class Assign_Bin_Node(AST_Node):
+    def __init__(self, symbol, value):
+        self.symbol = symbol
+        self.value = value
+
+    def __str__(self):
+        return "ASSIGN_NODE {} {}".format(self.symbol, self.value)
+
+    def accept(self, visitor):
+        return visitor.visit_assign(self)
+
+
 class Eq_Bin_Node(Bin_Node):
     def __init__(self, left, op, right):
         self.left = left
@@ -165,7 +177,7 @@ class ID_Node(AST_Node):
         Keyword Arguments:
         visitor -- The visitor instance used to evaluate the node.
         """
-        return visitor.visit_id(self)
+        return visitor.visit_symbol(self)
 
 
 class Bool_Node(AST_Node):

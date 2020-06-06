@@ -6,7 +6,7 @@ from tokens import Tok_Type
 class Visitor:
     def __init__(self):
         "Visitor class used to evaluate nodes."
-        pass
+        self.global_env = dict()
 
     def visit(self, node):
         """
@@ -26,7 +26,7 @@ class Visitor:
 
     def visit_symbol(self, node):
         # Retrieve symbol from env
-        pass
+        return self.global_env[node.val]
 
     def visit_string(self, node):
         pass
@@ -109,3 +109,11 @@ class Visitor:
         print_value = node.expr.accept(self)
         if is_atom(print_value):
             print(print_value.value)
+
+    def visit_assign(self, node):
+        symbol = node.symbol
+        # Evaluate the right hand side
+        value = node.value.accept(self)
+        # Assign Symbol
+        self.global_env[symbol] = value
+        # TODO: Should we return its value after assignment?

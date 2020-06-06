@@ -4,13 +4,14 @@ from visitor import Visitor
 
 
 def main():
+    v = Visitor()
     while True:
         lexer = Lexer()
         str_input = input(">> ")
         tok_stream = lexer.tokenize_string(str_input)
+        # print(tok_stream)
         parser = Parser(tok_stream)
         root = parser.parse()
-        v = Visitor()
         val = v.visit(root)
 
 
