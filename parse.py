@@ -91,7 +91,7 @@ class Parser:
             Tok_Type.LT,
             Tok_Type.LTE,
         ]:
-            op = self.curr_tok
+            op = self.curr_tok.tok_type
             self.match(self.curr_tok.tok_type)
             right = self.add_expr()
             left = Bin_Node(left, op, right)
@@ -101,7 +101,7 @@ class Parser:
     def eq_expr(self):
         left = self.rel_expr()
         while self.curr_tok.tok_type in [Tok_Type.EQ, Tok_Type.NEQ]:
-            op = self.curr_tok
+            op = self.curr_tok.tok_type
             self.match(self.curr_tok.tok_type)
             right = self.rel_expr()
             left = Bin_Node(left, op, right)
@@ -111,7 +111,7 @@ class Parser:
     def and_expr(self):
         left = self.eq_expr()
         while self.curr_tok.tok_type == Tok_Type.AND:
-            op = self.curr_tok
+            op = self.curr_tok.tok_type
             self.match(Tok_Type.AND)
             right = self.eq_expr()
             left = Bin_Node(left, op, right)
@@ -121,7 +121,7 @@ class Parser:
     def or_expr(self):
         left = self.and_expr()
         while self.curr_tok.tok_type == Tok_Type.OR:
-            op = self.curr_tok
+            op = self.curr_tok.tok_type
             self.match(Tok_Type.OR)
             right = self.and_expr()
             left = Bin_Node(left, op, right)
