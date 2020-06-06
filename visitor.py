@@ -16,12 +16,10 @@ class Visitor:
 
     def visit_program(self, node):
         for stmnt in node.stmnts:
-            print("Program node at head", stmnt)
             val = stmnt.accept(self)
-            print(val)
+            print(val.value)
 
     def visit_num(self, node):
-        print("Num visit from node", node)
         return Num_Object(node.val)
 
     def visit_id(self, node):
@@ -38,35 +36,61 @@ class Visitor:
         return Bool_Object(node.val)
 
     def visit_binary(self, node):
+        print(node)
         # Evaluate left and right sides
-        # print("Got binary")
-        print("visit bin node", node)
         left = node.left.accept(self)
         right = node.right.accept(self)
-        print("Left from binary", left)
-        print("Right from binary", right)
 
         # Perform actions depeding on type
         if node.op == Tok_Type.PLUS:
-            return left.value + right.value
+            return Num_Object(left.value + right.value)
         elif node.op == Tok_Type.MINUS:
-            pass
+            return Num_Object(left.value - right.value)
         elif node.op == Tok_Type.MUL:
-            pass
+            return Num_Object(left.value * right.value)
         elif node.op == Tok_Type.DIV:
-            pass
+            return Num_Object(left.value / right.value)
+        # >
         elif node.op == Tok_Type.GT:
-            pass
+            result = left.value > right.value
+            if result is True:
+                return Bool_Object(True)
+            else:
+                return Bool_Object(False)
+
+        # >=
         elif node.op == Tok_Type.GTE:
-            pass
+            result = left.value >= right.value
+            if result is True:
+                return Bool_Object(True)
+            else:
+                return Bool_Object(False)
+        # <
         elif node.op == Tok_Type.LT:
-            pass
+            result = left.value < right.value
+            if result is True:
+                return Bool_Object(True)
+            else:
+                return Bool_Object(False)
+        # <=
         elif node.op == Tok_Type.LTE:
-            pass
+            result = left.value <= right.value
+            if result is True:
+                return Bool_Object(True)
+            else:
+                return Bool_Object(False)
         elif node.op == Tok_Type.EQ:
-            pass
+            result = left.value == right.value
+            if result is True:
+                return Bool_Object(True)
+            else:
+                return Bool_Object(False)
         elif node.op == Tok_Type.NEQ:
-            pass
+            result = left.value != right.value
+            if result is True:
+                return Bool_Object(True)
+            else:
+                return Bool_Object(False)
 
     def visit_unary(self, node):
         result = node.accept(self)
