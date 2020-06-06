@@ -24,5 +24,5 @@ class String_Object(Internal_Object):
 class Bool_Object(Internal_Object):
     def __init__(self, bool_val):
         "Boolean Value object."
-        self.bool_val = bool_val
+        self.value = bool_val
         self.obj_type = ObjectType.BOOL
