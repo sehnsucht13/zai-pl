@@ -132,8 +132,25 @@ class Parser:
     def expression(self):
         return self.or_expr()
 
+    def if_statement(self):
+        self.match(Tok_Type.IF)
+        self.match(Tok_Type.LRBRACE)
+        test_expr = self.expression()
+        self.match(Tok_Type.RRBRACE)
+        if_stmtn = self.statement()
+        else_stmnt = None
+        if self.curr_tok.tok_type == Tok_Type.ELSE:
+            self.match(Tok_Type.ELSE)
+            else_stmnt = self.statement()
+
+        node = If_Node(test_expr, if_stmtn, else_stmnt)
+        return node
+
     def statement(self):
-        return self.expression()
+        if self.curr_tok.tok_type == Tok_Type.IF:
+            return self.if_statement()
+        else:
+            return self.expression()
 
     def program(self):
         prog_node = Program_Node()

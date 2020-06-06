@@ -46,6 +46,7 @@ class Tok_Type(Enum):
     WHILE = auto()
     FOR = auto()
     PRINT = auto()
+    ELSE = auto()
     EOF = auto()
 
 
@@ -55,6 +56,7 @@ keywords = {
     "while": Tok_Type.WHILE,
     "for": Tok_Type.FOR,
     "print": Tok_Type.PRINT,
+    "else": Tok_Type.ELSE,
 }
 
 

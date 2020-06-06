@@ -92,3 +92,10 @@ class Visitor:
             pass
         elif node.op == Tok_Type.BANG:
             pass
+
+    def visit_if(self, node):
+        condition = node.condition.accept(self)
+        if condition.value is True:
+            return node.true_stmnt.accept(self)
+        else:
+            return node.else_stmnt.accept(self)
