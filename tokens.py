@@ -42,7 +42,20 @@ class Tok_Type(Enum):
 
     FUNC = auto()
     ASSIGN = auto()
+    IF = auto()
+    WHILE = auto()
+    FOR = auto()
+    PRINT = auto()
     EOF = auto()
+
+
+# Dictionary containing words reserved by language
+keywords = {
+    "if": Tok_Type.IF,
+    "while": Tok_Type.WHILE,
+    "for": Tok_Type.FOR,
+    "print": Tok_Type.PRINT,
+}
 
 
 class Token:

@@ -1,5 +1,5 @@
 """ Class used to convert an input string into a sequence of valid language tokens."""
-from tokens import Tok_Type, Token
+from tokens import Tok_Type, Token, keywords
 
 
 class Lexer:
@@ -18,6 +18,8 @@ class Lexer:
 
         # Characters which break up identification tokens
         self.ident_sep = "#(),[]*/+-<=>!{}\"' "
+
+        self.keywords = dict()
 
     def advance(self):
         """ Advance the current character by one and return it. If there is no next character,
@@ -122,7 +124,8 @@ class Lexer:
                     self.token_stream.append(Token(Tok_Type.GT))
             elif self.curr_char in ["$", "@", "?"] or self.curr_char.isalpha():
                 ident = self.__tokenize_ident()
-                self.token_stream.append(Token(Tok_Type.ID, ident))
+                token_type = keywords.get(ident, Tok_Type.ID)
+                self.token_stream.append(Token(token_type, ident))
                 self.reverse()
             elif self.curr_char.isdigit():
                 num = self.__tokenize_num()
@@ -149,9 +152,7 @@ class Lexer:
             return [Token(Tok_Type.EOF)]
 
 
-"""
-if __name__ == "__main__":
-    l = Lexer()
-    stream = l.tokenize_string("a$141_bc")
-    print(stream)
-"""
+# if __name__ == "__main__":
+#     l = Lexer()
+#     stream = l.tokenize_string("a$141_bc if If IF iF IFF iff")
+#     print(stream)
