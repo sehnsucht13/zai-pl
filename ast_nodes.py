@@ -17,9 +17,10 @@ class Program_Node(AST_Node):
         """
         return visitor.visit_program(self)
 
-    def pprint_nodes(self):
+    def __str__(self):
+        stmnt_string = str()
         for stmnt in self.stmnts:
-            print(stmnt)
+            stmnt_string += "\n" + stmnt.__str__()
 
 
 class Bin_Node(AST_Node):
@@ -51,13 +52,16 @@ class Unary_Node(AST_Node):
         """
         return visitor.visit_unary(self)
 
+    def __str__(self):
+        return "UNARY_NODE: {} {}".format(self.op, self.right)
+
 
 class Bracket_Node(AST_Node):
     def __init__(self, expr):
-        self.exrp = expr
+        self.expr = expr
 
     def __str__(self):
-        return "{} {}".format(self.expr)
+        return "BRACKET_NODE: {}".format(self.expr)
 
     def accept(self, visitor):
         """
@@ -87,7 +91,7 @@ class Bool_Node(AST_Node):
         self.val = node_val
 
     def __str__(self):
-        return "{}".format(self.val)
+        return "BOOL_NODE: {}".format(self.val)
 
     def accept(self, visitor):
         """
@@ -102,7 +106,7 @@ class String_Node(AST_Node):
         self.val = node_val
 
     def __str__(self):
-        return "{}".format(self.val)
+        return "STR_NODE: {}".format(self.val)
 
     def accept(self, visitor):
         """
@@ -117,7 +121,7 @@ class Num_Node(AST_Node):
         self.val = node_val
 
     def __str__(self):
-        return "{}".format(self.val)
+        return "NUM_NODE: {}".format(self.val)
 
     def accept(self, visitor):
         """
