@@ -124,8 +124,8 @@ class Lexer:
                     self.token_stream.append(Token(Tok_Type.GT))
             elif self.curr_char in ["$", "@", "?"] or self.curr_char.isalpha():
                 ident = self.__tokenize_ident()
-                token_type = keywords.get(ident, Tok_Type.ID)
-                self.token_stream.append(Token(token_type, ident))
+                token = keywords.get(ident, Token(Tok_Type.ID, ident))
+                self.token_stream.append(token)
                 self.reverse()
             elif self.curr_char.isdigit():
                 num = self.__tokenize_num()

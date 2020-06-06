@@ -50,16 +50,6 @@ class Tok_Type(Enum):
     EOF = auto()
 
 
-# Dictionary containing words reserved by language
-keywords = {
-    "if": Tok_Type.IF,
-    "while": Tok_Type.WHILE,
-    "for": Tok_Type.FOR,
-    "print": Tok_Type.PRINT,
-    "else": Tok_Type.ELSE,
-}
-
-
 class Token:
     def __init__(self, tok_type, literal=None, line_num=None, col_num=None):
         self.tok_type = tok_type
@@ -83,3 +73,15 @@ class Token:
         if self.tok_type == right.tok_type and self.literal == right.literal:
             return True
         return False
+
+
+# Dictionary containing words reserved by language and their corresponding tokens
+keywords = {
+    "if": Token(Tok_Type.IF),
+    "while": Token(Tok_Type.WHILE),
+    "for": Token(Tok_Type.FOR),
+    "print": Token(Tok_Type.PRINT),
+    "else": Token(Tok_Type.ELSE),
+    "true": Token(Tok_Type.TRUE),
+    "false": Token(Tok_Type.FALSE),
+}

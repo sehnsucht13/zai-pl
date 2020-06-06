@@ -36,7 +36,10 @@ class Visitor:
         return node.expr.accept(self)
 
     def visit_bool(self, node):
-        return Bool_Object(node.val)
+        if node.val == Tok_Type.TRUE:
+            return Bool_Object(True)
+        else:
+            return Bool_Object(False)
 
     def visit_arith(self, node):
         # Evaluate left and right sides

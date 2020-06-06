@@ -46,9 +46,9 @@ class Parser:
             node = Num_Node(self.curr_tok.literal)
             self.match(Tok_Type.NUM)
             return node
-        elif self.curr_tok.tok_type == Tok_Type.BOOL:
-            node = Bool_Node(self.curr_tok.literal)
-            self.match(Tok_Type.BOOL)
+        elif self.curr_tok.tok_type in [Tok_Type.TRUE, Tok_Type.FALSE]:
+            node = Bool_Node(self.curr_tok.tok_type)
+            self.match(self.curr_tok.tok_type)
             return node
 
     def factor(self):
