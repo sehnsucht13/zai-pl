@@ -25,6 +25,11 @@ class Program_Node(AST_Node):
 
 class Bin_Node(AST_Node):
     def __init__(self, left, op, right):
+        raise NotImplementedError()
+
+
+class Eq_Bin_Node(Bin_Node):
+    def __init__(self, left, op, right):
         self.left = left
         self.right = right
         self.op = op
@@ -34,10 +39,61 @@ class Bin_Node(AST_Node):
         Keyword Arguments:
         visitor -- The visitor instance used to evaluate the node.
         """
-        return visitor.visit_binary(self)
+        return visitor.visit_eq(self)
 
     def __str__(self):
-        return "BIN_NODE: {} {} {}".format(self.left, self.op, self.right)
+        return "EQ_NODE: {} {} {}".format(self.left, self.op, self.right)
+
+
+class Arith_Bin_Node(Bin_Node):
+    def __init__(self, left, op, right):
+        self.left = left
+        self.right = right
+        self.op = op
+
+    def accept(self, visitor):
+        """
+        Keyword Arguments:
+        visitor -- The visitor instance used to evaluate the node.
+        """
+        return visitor.visit_arith(self)
+
+    def __str__(self):
+        return "ARITH_NODE: {} {} {}".format(self.left, self.op, self.right)
+
+
+class Logic_Bin_Node(Bin_Node):
+    def __init__(self, left, op, right):
+        self.left = left
+        self.right = right
+        self.op = op
+
+    def accept(self, visitor):
+        """
+        Keyword Arguments:
+        visitor -- The visitor instance used to evaluate the node.
+        """
+        return visitor.visit_logic(self)
+
+    def __str__(self):
+        return "LOGIC_NODE: {} {} {}".format(self.left, self.op, self.right)
+
+
+class Relop_Bin_Node(Bin_Node):
+    def __init__(self, left, op, right):
+        self.left = left
+        self.right = right
+        self.op = op
+
+    def accept(self, visitor):
+        """
+        Keyword Arguments:
+        visitor -- The visitor instance used to evaluate the node.
+        """
+        return visitor.visit_relop(self)
+
+    def __str__(self):
+        return "RELOP_NODE: {} {} {}".format(self.left, self.op, self.right)
 
 
 class Unary_Node(AST_Node):

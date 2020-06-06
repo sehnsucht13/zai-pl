@@ -53,13 +53,14 @@ class Parser:
 
     def factor(self):
         if self.curr_tok.tok_type == Tok_Type.LRBRACE:
-            expr = self.expr()
-            match(Tok_Type.RRBRACE)
+            self.match(Tok_Type.LRBRACE)
+            expr = self.expression()
+            self.match(Tok_Type.RRBRACE)
             return Bracket_Node(expr)
         if self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
             fact = self.factor()
             op = self.curr_tok.tok_type
-            match(op)
+            self.match(op)
             return Unary_Node(op, fact)
         else:
             return self.atom()
@@ -70,7 +71,7 @@ class Parser:
             op = self.curr_tok.tok_type
             self.match(op)
             right = self.term()
-            left = Bin_Node(left, op, right)
+            left = Arith_Bin_Node(left, op, right)
         return left
 
     def add_expr(self):
@@ -79,7 +80,7 @@ class Parser:
             op = self.curr_tok.tok_type
             self.match(op)
             right = self.term()
-            left = Bin_Node(left, op, right)
+            left = Arith_Bin_Node(left, op, right)
 
         return left
 
@@ -94,7 +95,7 @@ class Parser:
             op = self.curr_tok.tok_type
             self.match(self.curr_tok.tok_type)
             right = self.add_expr()
-            left = Bin_Node(left, op, right)
+            left = Relop_Bin_Node(left, op, right)
 
         return left
 
@@ -104,7 +105,7 @@ class Parser:
             op = self.curr_tok.tok_type
             self.match(self.curr_tok.tok_type)
             right = self.rel_expr()
-            left = Bin_Node(left, op, right)
+            left = Eq_Bin_Node(left, op, right)
 
         return left
 
@@ -114,7 +115,7 @@ class Parser:
             op = self.curr_tok.tok_type
             self.match(Tok_Type.AND)
             right = self.eq_expr()
-            left = Bin_Node(left, op, right)
+            left = Logic_Bin_Node(left, op, right)
 
         return left
 
@@ -124,7 +125,7 @@ class Parser:
             op = self.curr_tok.tok_type
             self.match(Tok_Type.OR)
             right = self.and_expr()
-            left = Bin_Node(left, op, right)
+            left = Logic_Bin_Node(left, op, right)
 
         return left
 

@@ -22,21 +22,21 @@ class Visitor:
     def visit_num(self, node):
         return Num_Object(node.val)
 
-    def visit_id(self, node):
-        # Retrieve id
+    def visit_symbol(self, node):
+        # Retrieve symbol from env
         pass
 
     def visit_string(self, node):
         pass
+        # return
 
     def visit_bracket(self, node):
-        pass
+        return node.expr.accept(self)
 
     def visit_bool(self, node):
         return Bool_Object(node.val)
 
-    def visit_binary(self, node):
-        print(node)
+    def visit_arith(self, node):
         # Evaluate left and right sides
         left = node.left.accept(self)
         right = node.right.accept(self)
@@ -50,47 +50,41 @@ class Visitor:
             return Num_Object(left.value * right.value)
         elif node.op == Tok_Type.DIV:
             return Num_Object(left.value / right.value)
-        # >
-        elif node.op == Tok_Type.GT:
-            result = left.value > right.value
-            if result is True:
-                return Bool_Object(True)
-            else:
-                return Bool_Object(False)
 
+    def visit_relop(self, node):
+        left = node.left.accept(self)
+        right = node.right.accept(self)
+
+        # Stores the result of the operation
+        relop_result = None
+
+        # >
+        if node.op == Tok_Type.GT:
+            relop_result = left.value > right.value
         # >=
         elif node.op == Tok_Type.GTE:
-            result = left.value >= right.value
-            if result is True:
-                return Bool_Object(True)
-            else:
-                return Bool_Object(False)
+            relop_result = left.value >= right.value
         # <
         elif node.op == Tok_Type.LT:
-            result = left.value < right.value
-            if result is True:
-                return Bool_Object(True)
-            else:
-                return Bool_Object(False)
+            relop_result = left.value < right.value
         # <=
         elif node.op == Tok_Type.LTE:
-            result = left.value <= right.value
-            if result is True:
-                return Bool_Object(True)
-            else:
-                return Bool_Object(False)
-        elif node.op == Tok_Type.EQ:
-            result = left.value == right.value
-            if result is True:
-                return Bool_Object(True)
-            else:
-                return Bool_Object(False)
+            relop_result = left.value <= right.value
+
+        return Bool_Object(relop_result)
+
+    def visit_eq(self, node):
+        left = node.left.accept(self)
+        right = node.right.accept(self)
+
+        # Store the result of the comparison
+        eq_result = None
+        if node.op == Tok_Type.EQ:
+            eq_result = left.value == right.value
         elif node.op == Tok_Type.NEQ:
-            result = left.value != right.value
-            if result is True:
-                return Bool_Object(True)
-            else:
-                return Bool_Object(False)
+            eq_result = left.value != right.value
+
+        return Bool_Object(eq_result)
 
     def visit_unary(self, node):
         result = node.accept(self)
