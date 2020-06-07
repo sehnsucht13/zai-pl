@@ -22,7 +22,7 @@ class Frame:
         self.scopes = list()
         # Add the base scope of the current frame
         self.scopes.append(dict())
-        self.scope_depth = -1
+        self.scope_depth = 0
 
     def enter_scope(self):
         self.scope_depth += 1
@@ -31,6 +31,7 @@ class Frame:
     def exit_scope(self):
         if self.scope_depth > -1:
             self.scopes.pop()
+            self.scope_depth -= 1
 
     def add_symbol(self, symbol, value):
         self.scopes[self.scope_depth][symbol] = value
