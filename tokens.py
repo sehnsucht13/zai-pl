@@ -84,4 +84,5 @@ keywords = {
     "else": Token(Tok_Type.ELSE),
     "true": Token(Tok_Type.TRUE),
     "false": Token(Tok_Type.FALSE),
+    "func": Token(Tok_Type.FUNC),
 }

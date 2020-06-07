@@ -161,9 +161,24 @@ class Parser:
         expr = self.expression()
         return Print_Node(expr)
 
+    # TODO: Refactor match function and finish parsing functions
+    def func_def(self):
+        self.match(Tok_Type.FUNC)
+        if self.curr_tok.tok_type == Tok_Type.ID:
+            func_name = self.curr_tok.literal
+            self.match(Tok_Type.ID)
+        self.match(Tok_Type.LRBRACE)
+        arg_symbols = list()
+        while self.curr_tok.tok_type != Tok_Type.RRBRACE:
+            # arg_symbols.append()
+            pass
+
     def statement(self):
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
+        elif self.curr_tok.tok_type == Tok_Type.FUNC:
+            # return self.print_statement()
+            pass
         elif self.curr_tok.tok_type == Tok_Type.PRINT:
             return self.print_statement()
         else:
