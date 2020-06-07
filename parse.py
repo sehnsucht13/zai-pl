@@ -26,12 +26,19 @@ class Parser:
         else:
             return None
 
-    def match(self, tok_type):
-        if self.curr_tok.tok_type == tok_type:
-            return self.advance(1)
-        else:
-            # TODO: Create error here
-            pass
+    def match(self, token_type, error_str=None):
+        if type(token_type) == list:
+            for token in token_type:
+                if self.curr_tok.tok_type == token:
+                    curr_token = self.curr_tok
+                    self.advance(1)
+                    return curr_token
+        elif self.curr_tok.tok_type == token_type:
+            curr_token = self.curr_tok
+            self.advance(1)
+            return curr_token
+
+        # TODO: Throw error here if there is a mismatch and use error_str to display it.
 
     def atom(self):
         if self.curr_tok.tok_type == Tok_Type.ID:
