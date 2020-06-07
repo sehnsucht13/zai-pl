@@ -171,20 +171,33 @@ class Parser:
     # TODO: Refactor match function and finish parsing functions
     def func_def(self):
         self.match(Tok_Type.FUNC)
+        func_name = None
         if self.curr_tok.tok_type == Tok_Type.ID:
             func_name = self.curr_tok.literal
             self.match(Tok_Type.ID)
         self.match(Tok_Type.LRBRACE)
+
+        # Collect argument symbols for the function
         arg_symbols = list()
         while self.curr_tok.tok_type != Tok_Type.RRBRACE:
-            # arg_symbols.append()
-            pass
+            sym = self.match(Tok_Type.ID)
+            arg_symbols.append(sym)
+        self.match(Tok_Type.RRBRACE)
+        self.match(Tok_Type.LCBRACE)
+
+        func_ast = list()
+        while self.curr_tok.tok_type != Tok_Type.RCBRACE:
+            func_stmnt = self.statement()
+            arg_symbols.append(func_stmnt)
+        self.match(Tok_Type.RCBRACE)
+
+        return Func_Node(func_name, arg_symbols, func_ast)
 
     def statement(self):
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
         elif self.curr_tok.tok_type == Tok_Type.FUNC:
-            # return self.print_statement()
+            # return self.func_def()
             pass
         elif self.curr_tok.tok_type == Tok_Type.PRINT:
             return self.print_statement()
