@@ -55,16 +55,17 @@ class Lexer:
         """ Tokenize a single identifier and return it."""
         ident_str = str()
         ident_str += self.curr_char
-        while self.advance() is not None and self.curr_char not in self.ident_sep:
+        while self.peek() is not None and self.peek() not in self.ident_sep:
+            self.advance()
             ident_str += self.curr_char
-            # self.advance()
         return ident_str
 
     def __tokenize_num(self):
         """ Tokenize a single integer number and return it."""
         num_str = str()
         num_str += self.curr_char
-        while self.advance() is not None and self.curr_char in "1234567890":
+        while self.peek() is not None and self.peek() in "1234567890":
+            self.advance()
             num_str += self.curr_char
         return int(num_str)
 
@@ -130,11 +131,11 @@ class Lexer:
                 ident = self.__tokenize_ident()
                 token = keywords.get(ident, Token(Tok_Type.ID, ident))
                 self.token_stream.append(token)
-                self.reverse()
+                # self.reverse()
             elif self.curr_char.isdigit():
                 num = self.__tokenize_num()
                 self.token_stream.append(Token(Tok_Type.NUM, num))
-                self.reverse()
+                # self.reverse()
                 # self.reverse()
 
         # Add final EOF token to indicate end of token stream
