@@ -17,6 +17,10 @@ class Program_Node(AST_Node):
         """
         return visitor.visit_program(self)
 
+    def pprint_program():
+        for stmnt in self.stmnts:
+            print(stmnt)
+
     def __str__(self):
         stmnt_string = str()
         for stmnt in self.stmnts:
@@ -243,7 +247,10 @@ class Block_Node(AST_Node):
         self.stmnts = block_stmnts
 
     def __str__(self):
-        return "BLOCK_NODE {}".format(self.stmnts)
+        output = str()
+        for stmtn in self.stmnts:
+            output += "\n" + stmtn.__str__()
+        return "BLOCK_NODE \n{}".format(output)
 
     def accept(self, visitor):
         return visitor.visit_block(self)

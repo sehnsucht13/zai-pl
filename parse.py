@@ -193,16 +193,24 @@ class Parser:
 
         return Func_Node(func_name, arg_symbols, func_ast)
 
+    def block(self):
+        self.match(Tok_Type.LCURLY)
+        block_stmnts = list()
+        while self.curr_tok.tok_type != Tok_Type.RCURLY:
+            stmnt = self.statement()
+            block_stmnts.append(stmnt)
+        self.match(Tok_Type.RCURLY)
+        return Block_Node(block_stmnts)
+
     def statement(self):
-        print("Statement ", self.curr_tok)
+        #print("Statement ", self.curr_tok)
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
         elif self.curr_tok.tok_type == Tok_Type.FUNC:
             # return self.func_def()
             pass
         elif self.curr_tok.tok_type == Tok_Type.LCURLY:
-            # return self.func_def()
-            pass
+            return self.block()
         elif self.curr_tok.tok_type == Tok_Type.PRINT:
             return self.print_statement()
         else:
@@ -210,8 +218,9 @@ class Parser:
 
     def program(self):
         prog_node = Program_Node()
-        stmnt = self.statement()
-        prog_node.add_stmnt(stmnt)
+        while self.curr_tok.tok_type != Tok_Type.EOF:
+            stmnt = self.statement()
+            prog_node.add_stmnt(stmnt)
         return prog_node
 
     def parse(self):

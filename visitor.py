@@ -1,12 +1,13 @@
 from object_type import ObjectType
 from objects import *
 from tokens import Tok_Type
+from env import Frame
 
 
 class Visitor:
     def __init__(self):
         "Visitor class used to evaluate nodes."
-        self.global_env = dict()
+        self.global_env = Frame()
 
     def visit(self, node):
         """
@@ -19,14 +20,13 @@ class Visitor:
             val = stmnt.accept(self)
             if is_atom(val):
                 print(val.value)
-            # print(val.value)
 
     def visit_num(self, node):
         return Num_Object(node.val)
 
     def visit_symbol(self, node):
         # Retrieve symbol from env
-        return self.global_env[node.val]
+        return self.global_env.lookup_symbol(node.val)
 
     def visit_string(self, node):
         pass
@@ -115,5 +115,12 @@ class Visitor:
         # Evaluate the right hand side
         value = node.value.accept(self)
         # Assign Symbol
-        self.global_env[symbol] = value
+        self.global_env.add_symbol(symbol, value)
         # TODO: Should we return its value after assignment?
+
+    def visit_block(self, node):
+        # Create a new scope to evaluate the current block in
+        self.global_env.enter_scope()
+        for stmnt in node.stmnts:
+            stmnt.accept(self)
+        self.global_env.exit_scope()
