@@ -19,8 +19,6 @@ class Lexer:
         # Characters which break up identification tokens
         self.ident_sep = "#(),[]*/+-<=>!{}\"' "
 
-        self.keywords = dict()
-
     def advance(self):
         """ Advance the current character by one and return it. If there is no next character,
             return None."""
@@ -84,8 +82,14 @@ class Lexer:
                 self.token_stream.append(Token(Tok_Type.RRBRACE))
             elif self.curr_char == ",":
                 self.token_stream.append(Token(Tok_Type.COMMA))
-            elif self.curr_char == ",":
-                self.token_stream.append(Token(Tok_Type.COMMA))
+            elif self.curr_char == "{":
+                self.token_stream.append(Token(Tok_Type.LCBRACE))
+            elif self.curr_char == "}":
+                self.token_stream.append(Token(Tok_Type.RCBRACE))
+            elif self.curr_char == "[":
+                self.token_stream.append(Token(Tok_Type.LSBRACE))
+            elif self.curr_char == "]":
+                self.token_stream.append(Token(Tok_Type.RSBRACE))
             elif self.curr_char == "-":
                 self.token_stream.append(Token(Tok_Type.MINUS))
             elif self.curr_char == "+":
@@ -150,9 +154,3 @@ class Lexer:
             return self.token_stream
         else:
             return [Token(Tok_Type.EOF)]
-
-
-# if __name__ == "__main__":
-#     l = Lexer()
-#     stream = l.tokenize_string("a$141_bc if If IF iF IFF iff")
-#     print(stream)
