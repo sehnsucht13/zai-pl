@@ -28,7 +28,7 @@ class Bool_Object(Internal_Object):
         self.obj_type = ObjectType.BOOL
 
 
-class Function_Object(Internal_Object):
+class Func_Object(Internal_Object):
     def __init__(self, name, arg_symbols, body, env):
         """Internal object used to represent a function."""
         self.obj_type = ObjectType.FUNC
@@ -36,6 +36,7 @@ class Function_Object(Internal_Object):
         self.args = arg_symbols
         self.arity = len(arg_symbols)
         self.body = body
+        # Reference to the current env
         self.env = env
 
 

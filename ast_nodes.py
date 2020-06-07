@@ -239,7 +239,7 @@ class Func_Node(AST_Node):
         return "FUNC_NODE {} {} {}".format(self.val)
 
     def accept(self, visitor):
-        return visitor.visit_func(self)
+        return visitor.visit_func_def(self)
 
 
 class Block_Node(AST_Node):

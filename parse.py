@@ -171,27 +171,30 @@ class Parser:
     # TODO: Refactor match function and finish parsing functions
     def func_def(self):
         self.match(Tok_Type.FUNC)
-        func_name = None
-        if self.curr_tok.tok_type == Tok_Type.ID:
-            func_name = self.curr_tok.literal
-            self.match(Tok_Type.ID)
+        func_name = self.match(Tok_Type.ID).literal
         self.match(Tok_Type.LROUND)
 
         # Collect argument symbols for the function
         arg_symbols = list()
-        while self.curr_tok.tok_type != Tok_Type.RROUND:
-            sym = self.match(Tok_Type.ID)
-            arg_symbols.append(sym)
+        if self.curr_tok.tok_type == Tok_Type.ID:
+            func_arg = self.match(Tok_Type.ID)
+            arg_symbols.append(func_arg)
+            if self.curr_tok.tok_type == Tok_Type.COMMA:
+                while self.curr_tok.tok_type != Tok_Type.RROUND:
+                    self.match(Tok_Type.COMMA)
+                    func_arg = self.match(Tok_Type.ID)
+                    arg_symbols.append(func_arg)
+
         self.match(Tok_Type.RROUND)
         self.match(Tok_Type.LCURLY)
 
-        func_ast = list()
+        func_body = list()
         while self.curr_tok.tok_type != Tok_Type.RCURLY:
             func_stmnt = self.statement()
-            arg_symbols.append(func_stmnt)
+            func_body.append(func_stmnt)
         self.match(Tok_Type.RCURLY)
 
-        return Func_Node(func_name, arg_symbols, func_ast)
+        return Func_Node(func_name, arg_symbols, func_body)
 
     def block(self):
         self.match(Tok_Type.LCURLY)
@@ -203,12 +206,11 @@ class Parser:
         return Block_Node(block_stmnts)
 
     def statement(self):
-        #print("Statement ", self.curr_tok)
+        # print("Statement ", self.curr_tok)
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
         elif self.curr_tok.tok_type == Tok_Type.FUNC:
-            # return self.func_def()
-            pass
+            return self.func_def()
         elif self.curr_tok.tok_type == Tok_Type.LCURLY:
             return self.block()
         elif self.curr_tok.tok_type == Tok_Type.PRINT:

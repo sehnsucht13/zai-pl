@@ -1,19 +1,21 @@
 from object_type import ObjectType
 from objects import *
 from tokens import Tok_Type
-from env import Frame
+from env import RunTime_Stack
 
 
 class Visitor:
+    """ Visitor class used to evaluate AST nodes. """
+
     def __init__(self):
         "Visitor class used to evaluate nodes."
-        self.global_env = Frame()
+        self.global_env = RunTime_Stack()
 
-    def visit(self, node):
+    def visit(self, ast_root):
         """
-        Visit an unspecified node.
+        Main entry point for all AST roots.
         """
-        return node.accept(self)
+        return ast_root.accept(self)
 
     def visit_program(self, node):
         for stmnt in node.stmnts:
@@ -26,11 +28,13 @@ class Visitor:
 
     def visit_symbol(self, node):
         # Retrieve symbol from env
-        return self.global_env.lookup_symbol(node.val)
+        # return self.global_env.lookup_symbol(node.val)
+        curr_frame = self.global_env.peek()
+        # TODO: Catch case of symbol not existing. Need to return an error
+        return curr_frame.resolve_sym(node.val)
 
     def visit_string(self, node):
         pass
-        # return
 
     def visit_bracket(self, node):
         return node.expr.accept(self)
@@ -114,13 +118,21 @@ class Visitor:
         symbol = node.symbol
         # Evaluate the right hand side
         value = node.value.accept(self)
-        # Assign Symbol
-        self.global_env.add_symbol(symbol, value)
+        curr_frame = self.global_env.peek()
+        curr_frame.add_symbol(symbol, value)
         # TODO: Should we return its value after assignment?
 
     def visit_block(self, node):
         # Create a new scope to evaluate the current block in
-        self.global_env.enter_scope()
+        curr_frame = self.global_env.peek()
+        curr_frame.enter_scope()
         for stmnt in node.stmnts:
             stmnt.accept(self)
-        self.global_env.exit_scope()
+        curr_frame.exit_scope()
+
+    def visit_func_def(self, node):
+        curr_frame = self.global_env.peek()
+        # Register the function in the current frame
+        curr_frame.add_symbol(
+            node.name, Func_Object(node.name, node.args, node.body, curr_frame)
+        )
