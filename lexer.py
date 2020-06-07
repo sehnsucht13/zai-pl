@@ -78,19 +78,19 @@ class Lexer:
                 # Reset current column number
                 self.curr_col_num = 0
             elif self.curr_char == "(":
-                self.token_stream.append(Token(Tok_Type.LRBRACE))
+                self.token_stream.append(Token(Tok_Type.LROUND))
             elif self.curr_char == ")":
-                self.token_stream.append(Token(Tok_Type.RRBRACE))
+                self.token_stream.append(Token(Tok_Type.RROUND))
             elif self.curr_char == ",":
                 self.token_stream.append(Token(Tok_Type.COMMA))
             elif self.curr_char == "{":
-                self.token_stream.append(Token(Tok_Type.LCBRACE))
+                self.token_stream.append(Token(Tok_Type.LCURLY))
             elif self.curr_char == "}":
-                self.token_stream.append(Token(Tok_Type.RCBRACE))
+                self.token_stream.append(Token(Tok_Type.RCURLY))
             elif self.curr_char == "[":
-                self.token_stream.append(Token(Tok_Type.LSBRACE))
+                self.token_stream.append(Token(Tok_Type.LSQUARE))
             elif self.curr_char == "]":
-                self.token_stream.append(Token(Tok_Type.RSBRACE))
+                self.token_stream.append(Token(Tok_Type.RSQUARE))
             elif self.curr_char == "-":
                 self.token_stream.append(Token(Tok_Type.MINUS))
             elif self.curr_char == "+":
@@ -142,7 +142,7 @@ class Lexer:
         self.token_stream.append(Token(Tok_Type.EOF))
 
     def tokenize_file(self, filename):
-        """ Tokenize an input file. If the fule does not exist, return a runtime error. 
+        """ Tokenize an input file. If the fule does not exist, return a runtime error.
             Otheriwse returns the token stream produced."""
         pass
 

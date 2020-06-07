@@ -59,10 +59,10 @@ class Parser:
             return node
 
     def factor(self):
-        if self.curr_tok.tok_type == Tok_Type.LRBRACE:
-            self.match(Tok_Type.LRBRACE)
+        if self.curr_tok.tok_type == Tok_Type.LROUND:
+            self.match(Tok_Type.LROUND)
             expr = self.expression()
-            self.match(Tok_Type.RRBRACE)
+            self.match(Tok_Type.RROUND)
             return Bracket_Node(expr)
         elif self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
             op = self.curr_tok.tok_type
@@ -151,9 +151,9 @@ class Parser:
 
     def if_statement(self):
         self.match(Tok_Type.IF)
-        self.match(Tok_Type.LRBRACE)
+        self.match(Tok_Type.LROUND)
         test_expr = self.expression()
-        self.match(Tok_Type.RRBRACE)
+        self.match(Tok_Type.RROUND)
         if_stmtn = self.statement()
         else_stmnt = None
         if self.curr_tok.tok_type == Tok_Type.ELSE:
@@ -175,28 +175,32 @@ class Parser:
         if self.curr_tok.tok_type == Tok_Type.ID:
             func_name = self.curr_tok.literal
             self.match(Tok_Type.ID)
-        self.match(Tok_Type.LRBRACE)
+        self.match(Tok_Type.LROUND)
 
         # Collect argument symbols for the function
         arg_symbols = list()
-        while self.curr_tok.tok_type != Tok_Type.RRBRACE:
+        while self.curr_tok.tok_type != Tok_Type.RROUND:
             sym = self.match(Tok_Type.ID)
             arg_symbols.append(sym)
-        self.match(Tok_Type.RRBRACE)
-        self.match(Tok_Type.LCBRACE)
+        self.match(Tok_Type.RROUND)
+        self.match(Tok_Type.LCURLY)
 
         func_ast = list()
-        while self.curr_tok.tok_type != Tok_Type.RCBRACE:
+        while self.curr_tok.tok_type != Tok_Type.RCURLY:
             func_stmnt = self.statement()
             arg_symbols.append(func_stmnt)
-        self.match(Tok_Type.RCBRACE)
+        self.match(Tok_Type.RCURLY)
 
         return Func_Node(func_name, arg_symbols, func_ast)
 
     def statement(self):
+        print("Statement ", self.curr_tok)
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
         elif self.curr_tok.tok_type == Tok_Type.FUNC:
+            # return self.func_def()
+            pass
+        elif self.curr_tok.tok_type == Tok_Type.LCURLY:
             # return self.func_def()
             pass
         elif self.curr_tok.tok_type == Tok_Type.PRINT:

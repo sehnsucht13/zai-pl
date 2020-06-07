@@ -15,10 +15,12 @@ class Tok_Type(Enum):
     QUOTE = auto()
     # Double quote "
     DQUOTE = auto()
-    LRBRACE = auto()
-    RRBRACE = auto()
-    LSBRACE = auto()
-    RSBRACE = auto()
+    LROUND = auto()
+    RROUND = auto()
+    LSQUARE = auto()
+    RSQUARE = auto()
+    LCURLY = auto()
+    RCURLY = auto()
     # Comparison op
     EQ = auto()
     NEQ = auto
