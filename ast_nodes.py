@@ -236,3 +236,14 @@ class Func_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_func(self)
+
+
+class Block_Node(AST_Node):
+    def __init__(self, block_stmnts):
+        self.stmnts = block_stmnts
+
+    def __str__(self):
+        return "BLOCK_NODE {}".format(self.stmnts)
+
+    def accept(self, visitor):
+        return visitor.visit_block(self)
