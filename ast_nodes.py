@@ -223,3 +223,16 @@ class Num_Node(AST_Node):
         visitor -- The visitor instance used to evaluate the node.
         """
         return visitor.visit_num(self)
+
+
+class Func_Node(AST_Node):
+    def __init__(self, name, args, body):
+        self.name = name
+        self.args = args
+        self.body = body
+
+    def __str__(self):
+        return "FUNC_NODE {} {} {}".format(self.val)
+
+    def accept(self, visitor):
+        return visitor.visit_func(self)
