@@ -1,9 +1,18 @@
+"""
+Module containing the parser class used to produce the AST to be evaluated
+by the interpreter.
+"""
+
 from ast_nodes import *
 from lexer import Lexer
 from tokens import Token, Tok_Type
 
 
 class Parser:
+    """
+    Parse and produce an AST from the provided token stream.
+    """
+
     def __init__(self, tokens):
         self.tokens = tokens
         self.tok_len = len(tokens)
@@ -13,12 +22,21 @@ class Parser:
         self.ast = None
 
     def peek(self, n=1):
+        """ 
+        Look ahead and return the Nth token in the token stream. If a numeric
+        argument is not provided, return the next token in the stream. If
+        there is no next token, return None.
+        """
         if self.curr_idx + n < self.tok_len:
             return self.tokens[self.curr_idx + n]
         else:
             return None
 
     def advance(self, n=1):
+        """
+        Advance the current token being used by N places. If a numeric 
+        argument is not provided, return the next token in the stream.
+        If there is no next token, return None."""
         if self.curr_idx + n < self.tok_len:
             self.curr_idx += n
             self.curr_tok = self.tokens[self.curr_idx]
@@ -27,6 +45,14 @@ class Parser:
             return None
 
     def match(self, token_type, error_str=None):
+        """
+        Check if the type of the current token being used matches with the provided
+        token types. The token types to be checked can be either in a  list or a single
+        token.
+        
+        There is no error produced from type mismatched yet."""
+        assert token_type is not None
+
         if type(token_type) == list:
             for token in token_type:
                 if self.curr_tok.tok_type == token:
@@ -41,6 +67,17 @@ class Parser:
         # TODO: Throw error here if there is a mismatch and use error_str to display it.
 
     def atom(self):
+        """ 
+        Parse an atom(pritive) object.
+        Grammar:
+        atom := | NUM | STR | ID | BOOL
+        ;; Primitives
+        BOOL := "false" | "true"
+        ID := LETTER (LETTER | NUM | "-" | "$" | "@")*
+        NUM := DIGIT (DIGIT)*
+        DIGIT := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
+        STR := "\"" (LETTER | NUM )* "\""
+        """
         if self.curr_tok.tok_type == Tok_Type.ID:
             node = ID_Node(self.curr_tok.literal)
             self.match(Tok_Type.ID)
@@ -59,6 +96,13 @@ class Parser:
             return node
 
     def factor(self):
+        """ 
+        Parse a factor rule.
+        Grammar:
+
+        factor := "(" expr ")" | unary_op factor | atom 
+        unary_op := "!" "-"
+        """
         if self.curr_tok.tok_type == Tok_Type.LROUND:
             self.match(Tok_Type.LROUND)
             expr = self.expression()
@@ -73,6 +117,11 @@ class Parser:
             return self.atom()
 
     def term(self):
+        """ 
+        Parse a term rule.
+        Grammar:
+        term := factor (("*" | "/") factor)*
+        """
         left = self.factor()
         while self.curr_tok.tok_type in [Tok_Type.MUL, Tok_Type.DIV]:
             op = self.curr_tok.tok_type
@@ -82,6 +131,11 @@ class Parser:
         return left
 
     def add_expr(self):
+        """ 
+        Parse an addition expression:
+        Grammar:
+        add_expr := term (("+" | "-") term)*
+        """
         left = self.term()
         while self.curr_tok.tok_type in [Tok_Type.PLUS, Tok_Type.MINUS]:
             op = self.curr_tok.tok_type
@@ -92,6 +146,12 @@ class Parser:
         return left
 
     def rel_expr(self):
+        """ 
+        Parse a relative expression:
+        Grammar:
+        rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
+        """
+
         left = self.add_expr()
         while self.curr_tok.tok_type in [
             Tok_Type.GT,
@@ -107,6 +167,11 @@ class Parser:
         return left
 
     def eq_expr(self):
+        """ 
+        Parse an equality expression:
+        Grammar:
+        eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
+        """
         left = self.rel_expr()
         while self.curr_tok.tok_type in [Tok_Type.EQ, Tok_Type.NEQ]:
             op = self.curr_tok.tok_type
@@ -117,6 +182,11 @@ class Parser:
         return left
 
     def and_expr(self):
+        """ 
+        Parse an equality expression:
+        Grammar:
+        eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
+        """
         left = self.eq_expr()
         while self.curr_tok.tok_type == Tok_Type.AND:
             op = self.curr_tok.tok_type
@@ -127,6 +197,11 @@ class Parser:
         return left
 
     def or_expr(self):
+        """ 
+        Parse an equality expression:
+        Grammar:
+        eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
+        """
         left = self.and_expr()
         while self.curr_tok.tok_type == Tok_Type.OR:
             op = self.curr_tok.tok_type
@@ -137,6 +212,11 @@ class Parser:
         return left
 
     def expression(self):
+        """ 
+        Parse an equality expression:
+        Grammar:
+        eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
+        """
         if (
             self.curr_tok.tok_type == Tok_Type.ID
             and self.peek().tok_type == Tok_Type.ASSIGN
@@ -150,6 +230,12 @@ class Parser:
             return self.or_expr()
 
     def if_statement(self):
+        """ 
+        Parse an if statement.
+        Grammar:
+
+        if_stmnt := "if" "(" expression ")" statement ( "else" statement )? 
+        """
         self.match(Tok_Type.IF)
         self.match(Tok_Type.LROUND)
         test_expr = self.expression()
@@ -164,12 +250,25 @@ class Parser:
         return node
 
     def print_statement(self):
+        """ 
+        Parse a print statement.
+        Grammar:
+
+        print := "print" expr 
+        """
         self.match(Tok_Type.PRINT)
         expr = self.expression()
         return Print_Node(expr)
 
     # TODO: Refactor match function and finish parsing functions
     def func_def(self):
+        """ 
+        Parse a function definition.
+        Grammar:
+
+        func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
+        """
+
         self.match(Tok_Type.FUNC)
         func_name = self.match(Tok_Type.ID).literal
         self.match(Tok_Type.LROUND)
@@ -197,6 +296,13 @@ class Parser:
         return Func_Node(func_name, arg_symbols, func_body)
 
     def block(self):
+        """ 
+        Parse a block which acts as a nested scope within the program. 
+        Grammar:
+
+        block := "{" statement* "}"
+        """
+
         self.match(Tok_Type.LCURLY)
         block_stmnts = list()
         while self.curr_tok.tok_type != Tok_Type.RCURLY:
@@ -206,7 +312,19 @@ class Parser:
         return Block_Node(block_stmnts)
 
     def statement(self):
-        # print("Statement ", self.curr_tok)
+        """ 
+        Parse a statement. 
+        Grammar:
+        
+        statement := if_stmnt    |
+                     while_stmnt | ;; not done
+		     for_stmnt   | ;; not done
+		     class_def   | ;; not done
+		     func_def    | 
+		     block       |  
+		     print       |
+		     expr
+        """
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
         elif self.curr_tok.tok_type == Tok_Type.FUNC:
@@ -219,6 +337,11 @@ class Parser:
             return self.expression()
 
     def program(self):
+        """ 
+        Parse a program rule.
+        Grammar:
+        program := statement*
+        """
         prog_node = Program_Node()
         while self.curr_tok.tok_type != Tok_Type.EOF:
             stmnt = self.statement()
@@ -226,15 +349,9 @@ class Parser:
         return prog_node
 
     def parse(self):
+        """ 
+        Parse the provided stream of tokens and return the AST produced.
+        """
         ast_root = self.program()
         self.ast = ast_root
         return self.ast
-
-
-# if __name__ == "__main__":
-#     l = Lexer()
-#     stream = l.tokenize_string("4 + 4 * 13")
-#     print("Token stream ", stream)
-#     p = Parser(stream)
-#     generated_ast = p.parse()
-#     print(generated_ast.stmnts)
