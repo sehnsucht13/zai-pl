@@ -40,8 +40,16 @@ class Func_Object(Internal_Object):
         self.env = env
 
 
-def is_atom(object):
+def is_atom(obj):
     """ Check if an object is an atom."""
-    if object is None:
+    if obj is None:
         return False
-    return object.obj_type in [ObjectType.BOOL, ObjectType.NUM, ObjectType.STR]
+    return obj.obj_type in [ObjectType.BOOL, ObjectType.NUM, ObjectType.STR]
+
+
+def pprint_internal_object(internal_obj):
+    if is_atom(internal_obj):
+        print(internal_obj.value)
+    elif internal_obj.obj_type == ObjectType.FUNC:
+        output_str = "<function object {}>".format(internal_obj.name)
+        print(output_str)

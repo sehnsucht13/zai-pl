@@ -21,7 +21,7 @@ class Visitor:
         for stmnt in node.stmnts:
             val = stmnt.accept(self)
             if is_atom(val):
-                print(val.value)
+                pprint_internal_object(val)
 
     def visit_num(self, node):
         return Num_Object(node.val)
@@ -111,8 +111,7 @@ class Visitor:
 
     def visit_print(self, node):
         print_value = node.expr.accept(self)
-        if is_atom(print_value):
-            print(print_value.value)
+        pprint_internal_object(print_value)
 
     def visit_assign(self, node):
         symbol = node.symbol
