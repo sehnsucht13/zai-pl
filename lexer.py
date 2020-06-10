@@ -17,7 +17,7 @@ class Lexer:
         self.curr_col_num = 0
 
         # Characters which break up identification tokens
-        self.ident_sep = "#(),[]*/+-<=>!{}\"' "
+        self.ident_sep = "\n\t#(),[]*/+-<=>!{}\"' "
 
     def advance(self):
         """ Advance the current character by one and return it. If there is no next character,
@@ -90,7 +90,7 @@ class Lexer:
 
     def __tokenize(self):
         """ Tokenize the current text sequence and return the tokens generated. """
-        while self.advance() != None:
+        while self.advance() is not None:
             if self.curr_char == "\n":
                 # Increment line numbers
                 self.curr_lin_num += 1
