@@ -69,6 +69,25 @@ class Lexer:
             num_str += self.curr_char
         return int(num_str)
 
+    def collect_str(self):
+        str_content = str()
+        while True:
+            if self.curr_char is None:
+                self.token_stream.append(Token(Tok_Type.STRING, str_content))
+                return
+            elif self.curr_char != "\\" and self.peek() == '"':
+                str_content += self.curr_char
+                self.token_stream.append(Token(Tok_Type.STRING, str_content))
+                self.advance()
+                self.token_stream.append(Token(Tok_Type.DQUOTE))
+                return
+            else:
+                str_content += self.curr_char
+                self.advance()
+
+        # while self.peek() != None or (self.peek() != '"' and self.curr_char != "\\"):
+        #     str_content.appen
+
     def __tokenize(self):
         """ Tokenize the current text sequence and return the tokens generated. """
         while self.advance() != None:
@@ -101,6 +120,7 @@ class Lexer:
                 self.token_stream.append(Token(Tok_Type.MUL))
             elif self.curr_char == '"':
                 self.token_stream.append(Token(Tok_Type.DQUOTE))
+                self.collect_str()
             elif self.curr_char == "'":
                 self.token_stream.append(Token(Tok_Type.QUOTE))
             elif self.curr_char == "!":
