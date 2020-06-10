@@ -82,9 +82,11 @@ class Parser:
             node = ID_Node(self.curr_tok.literal)
             self.match(Tok_Type.ID)
             return node
-        elif self.curr_tok.tok_type == Tok_Type.STRING:
-            node = String_Node(self.curr_tok.literal)
-            self.match(Tok_Type.STRING)
+        elif self.curr_tok.tok_type == Tok_Type.DQUOTE:
+            self.match(Tok_Type.DQUOTE)
+            str_token = self.match(Tok_Type.STRING)
+            node = String_Node(str_token.literal)
+            self.match(Tok_Type.DQUOTE)
             return node
         elif self.curr_tok.tok_type == Tok_Type.NUM:
             node = Num_Node(self.curr_tok.literal)
