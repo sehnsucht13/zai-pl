@@ -1,4 +1,9 @@
+""" Module defining nodes used in the abstract syntax tree created by the parser. """
+
+
 class AST_Node:
+    """  """
+
     def __init__(self):
         raise NotImplementedError()
 
@@ -16,10 +21,6 @@ class Program_Node(AST_Node):
         visitor -- The visitor instance used to evaluate the node.
         """
         return visitor.visit_program(self)
-
-    def pprint_program():
-        for stmnt in self.stmnts:
-            print(stmnt)
 
     def __str__(self):
         stmnt_string = str()

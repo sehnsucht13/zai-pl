@@ -18,6 +18,8 @@ class Frame:
             self.scope_depth -= 1
 
     def add_symbol(self, symbol, value):
+        assert symbol != None
+        assert value != None
         self.scopes[self.scope_depth][symbol] = value
 
     def lookup_symbol(self, symbol):
@@ -34,6 +36,7 @@ class Frame:
     # If the symbol is found here, it is returned. Otherwise, we look up the chain of parent frames.
     # If the symbol is not found in any frames, we return None.
     def resolve_sym(self, symbol):
+        assert symbol is not None
         # Check for value in current frame
         value = self.lookup_symbol(symbol)
         #
