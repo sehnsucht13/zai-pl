@@ -6,6 +6,7 @@ by the interpreter.
 from ast_nodes import *
 from lexer import Lexer
 from tokens import Token, Tok_Type
+from internal_error import InternalSyntaxErr
 
 
 class Parser:
@@ -65,6 +66,16 @@ class Parser:
             return curr_token
 
         # TODO: Throw error here if there is a mismatch and use error_str to display it.
+        error_msg = str()
+        if type(token_type) == list:
+            error_msg = "Parsing error! Expected either one of {} but got {}".format(
+                token_type, self.curr_tok.tok_type
+            )
+        else:
+            error_msg = "Parsing error! Expected {} but got {}".format(
+                token_type, self.curr_tok.tok_type
+            )
+        raise InternalSyntaxErr(error_msg)
 
     def atom(self):
         """ 
