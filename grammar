@@ -4,33 +4,34 @@ program := statement*
 statement := if_stmnt|
 			 while_stmnt| ;; not done
 			 for_stmnt| ;; will not implement yet
-			 block |  ;; not done
 			 class_def | ;; not done
-			 func_def | ;; not done
-			 expression |
-			 print 
+			 func_def | 
+			 block |  
+			 print |
+			 expr
 
 if_stmnt := "if" "(" expression ")" statement ( "else" statement )? 
-func_def := "func" ID "(" ID* ")" "{" statement* "}"
-print := "print" expression 
+func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
+block := "{" statement* "}"
+print := "print" expr 
 
 ;; Expressions
-expr := ID ("=" or_expr)? | or_expr
-or_expr := and_expr ("|" and_expr)*
-and_expr := eq_expr ("&" eq_expr)*
+expr := "let"? ID ("=" or_expr)? | or_expr
+or_expr := and_expr ("||" and_expr)*
+and_expr := eq_expr ("&&" eq_expr)*
 eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
 rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
 add_expr := term (("+" | "-") term)*
 term := factor (("*" | "/") factor)*
 ;; factor := ID "(" arglist ")" | "(" expr ")" | unary_op factor | atom ;; for later
-;;arglist := atom ("," atom)*
+;;arglist := (atom ("," atom)*)?
 factor := "(" expr ")" | unary_op factor | atom 
 unary_op := "!" "-"
 
 atom := | NUM | STR | ID | BOOL
 ;; Primitives
 BOOL := "false" | "true"
-ID := LETTER (LETTER | NUM)*
+ID := LETTER (LETTER | NUM | "-" | "$" | "@")*
 NUM := DIGIT (DIGIT)*
 DIGIT := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
 STR := "\"" (LETTER | NUM )* "\""
