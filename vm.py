@@ -6,10 +6,14 @@ from tokens import Tok_Type
 
 
 class VM:
-    """ Visitor class used to evaluate AST nodes. """
+    """
+    Class representing a single instance of the YAPL virtual machine. Each command
+    is evaluate within the same context.
+    """
 
     def __init__(self):
         self.global_env = RunTime_Stack()
+        self.repl_mode_flag = False
 
     def execute(self, ast_root):
         """
@@ -19,8 +23,9 @@ class VM:
 
     def run_repl(self):
         """
-        Start a REPL which evaluates every command provided.
+        Start a REPL which evaluates every command provided within one VM context.
         """
+        self.repl_mode_flag = True
         while True:
             lexer = Lexer()
             str_input = input(">> ")
@@ -29,13 +34,12 @@ class VM:
             root = parser.parse()
             val = self.execute(root)
 
-    def run_file(self, file_name):
+    def run_string(self, input_str):
         """
-        Run a single file whose file path is file_name.
+        Run a single string within the current VM context.
         """
         lexer = Lexer()
-        file_text = open(file_name, 'r').read()
-        tok_stream = lexer.tokenize_string(file_text)
+        tok_stream = lexer.tokenize_string(input_str)
         parser = Parser(tok_stream)
         root = parser.parse()
         val = self.execute(root)
@@ -43,7 +47,7 @@ class VM:
     def visit_program(self, node):
         for stmnt in node.stmnts:
             val = stmnt.accept(self)
-            if is_atom(val):
+            if is_atom(val) and self.repl_mode_flag:
                 pprint_internal_object(val)
 
     def visit_num(self, node):
@@ -139,8 +143,11 @@ class VM:
         symbol = node.symbol
         # Evaluate the right hand side
         value = node.value.accept(self)
+        assert symbol is not None
+        assert value is not None
         curr_frame = self.global_env.peek()
-        curr_frame.add_symbol(symbol, value)
+        insert_status = curr_frame.add_symbol(symbol, value)
+        # asssert
         # TODO: Should we return its value after assignment?
 
     def visit_block(self, node):
