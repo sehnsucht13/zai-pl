@@ -122,6 +122,8 @@ class Lexer:
                 self.token_stream.append(Token(Tok_Type.MUL))
             elif self.curr_char == '"':
                 self.token_stream.append(Token(Tok_Type.DQUOTE))
+                # Skip over the current character which is a double quote
+                self.advance()
                 self.collect_str()
             elif self.curr_char == "'":
                 self.token_stream.append(Token(Tok_Type.QUOTE))
@@ -153,12 +155,9 @@ class Lexer:
                 ident = self.__tokenize_ident()
                 token = keywords.get(ident, Token(Tok_Type.ID, ident))
                 self.token_stream.append(token)
-                # self.reverse()
             elif self.curr_char.isdigit():
                 num = self.__tokenize_num()
                 self.token_stream.append(Token(Tok_Type.NUM, num))
-                # self.reverse()
-                # self.reverse()
 
         # Add final EOF token to indicate end of token stream
         self.token_stream.append(Token(Tok_Type.EOF))
