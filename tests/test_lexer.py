@@ -100,9 +100,120 @@ def test_symbol_lex_no_special():
     compare_tokens(lexer_output, expected)
 
 
-# def test_symbol_lex_special():
-#     pass
+def test_symbol_lex_special():
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("$")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.ID, "$"),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("@")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.ID, "@"),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("?")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.ID, "?"),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("hello@worl$d?")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.ID, "hello@worl$d?"),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("hello@worl$d?123")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.ID, "hello@worl$d?123"),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("h3llo@worl$d")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.ID, "h3llo@worl$d"),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("Symb0lOn3? Symb0lTw0?")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.ID, "Symb0lOn3?"),
+        Token(Tok_Type.ID, "Symb0lTw0?"),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
 
 
-# def test_number_lex():
-#     pass
+def test_number_lex():
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("1")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.NUM, 1),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("0")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.NUM, 0),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("233")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.NUM, 233),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("233 455")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.NUM, 233),
+        Token(Tok_Type.NUM, 455),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string("-233")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.MINUS),
+        Token(Tok_Type.NUM, 233),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+
+def test_string():
+    pass
