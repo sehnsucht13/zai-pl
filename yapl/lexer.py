@@ -17,7 +17,7 @@ class Lexer:
         self.curr_col_num = 0
 
         # Characters which break up identification tokens
-        self.ident_sep = "\n\t#(),[]*/+-<=>!{}\"' "
+        self.ident_sep = "\n\t#;(),[]*/+-<=>!{}\"' "
 
     def advance(self):
         """ Advance the current character by one and return it. If there is no next character,
