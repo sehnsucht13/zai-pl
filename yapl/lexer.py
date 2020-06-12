@@ -1,5 +1,5 @@
 """ Class used to convert an input string into a sequence of valid language tokens."""
-from tokens import Tok_Type, Token, keywords
+from yapl.tokens import Tok_Type, Token, keywords
 
 
 class Lexer:
@@ -170,8 +170,22 @@ class Lexer:
 
     def tokenize_string(self, input_str):
         """ Tokenize a single input string. Returns the token stream produced."""
+        if self.text is not None:
+            self.text = input_str
+            self.input_len = len(input_str)
+
+            # Reset all other variables
+            self.token_stream = list()
+            self.curr_char = None
+            self.curr_idx = 0
+            self.input_len = 0
+            self.curr_lin_num = 0
+            self.curr_col_num = 0
+
+        # set input text string and its length
         self.text = input_str
         self.input_len = len(input_str)
+
         if self.input_len > 0:
             self.__tokenize()
             return self.token_stream
