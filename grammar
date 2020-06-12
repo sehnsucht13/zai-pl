@@ -1,22 +1,23 @@
 program := statement*
 
 ;; Statements
-statement := if_stmnt|
-			 while_stmnt| ;; not done
-			 for_stmnt| ;; will not implement yet
-			 class_def | ;; not done
-			 func_def | 
-			 block |  
-			 print |
-			 expr
+statement := if_stmnt    |
+			 while_stmnt | ; not done
+			 for_stmnt   | ; will not implement yet
+			 class_def   | ; not done
+			 func_def    | 
+			 block_stmnt |  
+			 print_stmnt |
+			 simple_expr
 
-if_stmnt := "if" "(" expression ")" statement ( "else" statement )? 
+if_stmnt := "if" "(" expr ")"  "{" statement* "}"( "else" "{" statement* "}" )? 
 func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
-block := "{" statement* "}"
-print := "print" expr 
+block_stmnt := "{" statement* "}"
+print_stmnt := "print" expr ";"
 
-;; Expressions
-expr := "let"? ID ("=" or_expr)? | or_expr
+; Expressions
+simple_expr := expr ";"
+expr := "let"? ID ("=" or_expr)?  | or_expr
 or_expr := and_expr ("||" and_expr)*
 and_expr := eq_expr ("&&" eq_expr)*
 eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
