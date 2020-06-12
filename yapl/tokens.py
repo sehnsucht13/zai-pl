@@ -11,6 +11,8 @@ class Tok_Type(Enum):
     NUM = auto()
 
     COMMA = auto()
+    # A semicolon ";"
+    SEMIC = auto()
     # Single quote '
     QUOTE = auto()
     # Double quote "

@@ -102,6 +102,8 @@ class Lexer:
                 self.token_stream.append(Token(Tok_Type.RROUND))
             elif self.curr_char == ",":
                 self.token_stream.append(Token(Tok_Type.COMMA))
+            elif self.curr_char == ";":
+                self.token_stream.append(Token(Tok_Type.SEMIC))
             elif self.curr_char == "{":
                 self.token_stream.append(Token(Tok_Type.LCURLY))
             elif self.curr_char == "}":

@@ -36,7 +36,7 @@ def main():
         f_path = Path(args.file_path)
         if f_path.exists() and f_path.is_file():
             file_text = f_path.open().read()
-            print(file_text)
+            # print(file_text)
             vm.run_string(file_text)
             exit(0)
 

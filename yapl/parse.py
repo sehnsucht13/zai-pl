@@ -271,6 +271,7 @@ class Parser:
         """
         self.match(Tok_Type.PRINT)
         expr = self.expression()
+        self.match(Tok_Type.SEMIC)
         return Print_Node(expr)
 
     # TODO: Refactor match function and finish parsing functions
@@ -324,6 +325,17 @@ class Parser:
         self.match(Tok_Type.RCURLY)
         return Block_Node(block_stmnts)
 
+    def simple_expr(self):
+        """
+        Parse a simple expression. 
+        Grammar:
+        
+        simple_expr := expr ";"
+        """
+        expr_result = self.expression()
+        self.match(Tok_Type.SEMIC)
+        return expr_result
+
     def statement(self):
         """ 
         Parse a statement. 
@@ -347,7 +359,7 @@ class Parser:
         elif self.curr_tok.tok_type == Tok_Type.PRINT:
             return self.print_statement()
         else:
-            return self.expression()
+            return self.simple_expr()
 
     def program(self):
         """ 
