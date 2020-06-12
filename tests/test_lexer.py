@@ -216,4 +216,103 @@ def test_number_lex():
 
 
 def test_string():
-    pass
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string('"hello world"')
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.DQUOTE),
+        Token(Tok_Type.STRING, "hello world"),
+        Token(Tok_Type.DQUOTE),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer = Lexer()
+    lexer_output = lexer.tokenize_string('"1 number with another number 2"')
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.DQUOTE),
+        Token(Tok_Type.STRING, "1 number with another number 2"),
+        Token(Tok_Type.DQUOTE),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    # lexer = Lexer()
+    # lexer_output = lexer.tokenize_string('"Here is a string with a "string" inside it"')
+    # print(lexer_output)
+    # expected = [
+    #     Token(Tok_Type.DQUOTE),
+    #     Token(Tok_Type.STRING, '"Here is a string with a "string" inside it"'),
+    #     Token(Tok_Type.DQUOTE),
+    #     Token(Tok_Type.EOF),
+    # ]
+    # compare_tokens(lexer_output, expected)
+
+
+def test_keywords():
+    lexer = Lexer()
+
+    lexer_output = lexer.tokenize_string("if")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.IF),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer_output = lexer.tokenize_string("while")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.WHILE),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer_output = lexer.tokenize_string("for")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.FOR),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer_output = lexer.tokenize_string("print")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.PRINT),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer_output = lexer.tokenize_string("else")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.ELSE),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer_output = lexer.tokenize_string("true")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.TRUE),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer_output = lexer.tokenize_string("false")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.FALSE),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
+
+    lexer_output = lexer.tokenize_string("func")
+    print(lexer_output)
+    expected = [
+        Token(Tok_Type.FUNC),
+        Token(Tok_Type.EOF),
+    ]
+    compare_tokens(lexer_output, expected)
