@@ -1,4 +1,4 @@
-from object_type import ObjectType
+from yapl.object_type import ObjectType
 
 
 class Internal_Object:

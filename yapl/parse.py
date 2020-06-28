@@ -3,10 +3,9 @@ Module containing the parser class used to produce the AST to be evaluated
 by the interpreter.
 """
 
-from ast_nodes import *
-from lexer import Lexer
-from tokens import Token, Tok_Type
-from internal_error import InternalSyntaxErr
+from yapl.ast_nodes import *
+from yapl.tokens import Token, Tok_Type
+from yapl.internal_error import InternalSyntaxErr
 
 
 class Parser:

@@ -1,6 +1,10 @@
 import pytest
+
+# import yapl
 from yapl.lexer import Lexer
 from yapl.tokens import Tok_Type, Token
+#from lexer import Lexer
+#from tokens import Tok_Type, Token
 
 
 def compare_tokens(l1, l2):

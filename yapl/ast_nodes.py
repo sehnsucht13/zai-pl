@@ -2,7 +2,9 @@
 
 
 class AST_Node:
-    """  """
+    """ 
+    Base class from which all AST nodes are derived.
+    """
 
     def __init__(self):
         raise NotImplementedError()
@@ -45,9 +47,10 @@ class Bin_Node(AST_Node):
 
 
 class Assign_Bin_Node(AST_Node):
-    def __init__(self, symbol, value):
+    def __init__(self, symbol, value, local_assign=False):
         self.symbol = symbol
         self.value = value
+        self.local = local_assign
 
     def __str__(self):
         return "ASSIGN_NODE {} {}".format(self.symbol, self.value)

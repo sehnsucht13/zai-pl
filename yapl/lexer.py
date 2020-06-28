@@ -187,6 +187,7 @@ class Lexer:
 
         if self.input_len > 0:
             self.__tokenize()
+            # print("stream = ", self.token_stream)
             return self.token_stream
         else:
             return [Token(Tok_Type.EOF)]

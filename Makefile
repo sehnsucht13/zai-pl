@@ -1,5 +1,8 @@
 test:
-	pytest tests
+	python3 -m pytest 
 
 run:
-	./yapl/yapl.py
+	python3 -m yapl
+
+freeze:
+	pip freeze > requirements.txt

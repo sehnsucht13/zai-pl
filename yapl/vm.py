@@ -1,8 +1,8 @@
-from lexer import Lexer
-from env import RunTime_Stack
-from objects import *
-from parse import Parser
-from tokens import Tok_Type
+from yapl.lexer import Lexer
+from yapl.env import RunTime_Stack
+from yapl.objects import *
+from yapl.parse import Parser
+from yapl.tokens import Tok_Type
 
 
 class YAPL_VM:
