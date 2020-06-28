@@ -50,6 +50,7 @@ class Tok_Type(Enum):
     WHILE = auto()
     FOR = auto()
     PRINT = auto()
+    LET = auto()
     ELSE = auto()
     EOF = auto()
 
@@ -88,5 +89,8 @@ keywords = {
     "else": Token(Tok_Type.ELSE),
     "true": Token(Tok_Type.TRUE),
     "false": Token(Tok_Type.FALSE),
+    "let": Token(Tok_Type.LET),
     "func": Token(Tok_Type.FUNC),
+    "and": Token(Tok_Type.AND),
+    "or": Token(Tok_Type.OR),
 }

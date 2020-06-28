@@ -1,11 +1,11 @@
-from env import RunTime_Stack
 from lexer import Lexer
+from env import RunTime_Stack
 from objects import *
 from parse import Parser
 from tokens import Tok_Type
 
 
-class VM:
+class YAPL_VM:
     """
     Class representing a single instance of the YAPL virtual machine. Each command
     is evaluate within the same context.
@@ -40,6 +40,7 @@ class VM:
         """
         lexer = Lexer()
         tok_stream = lexer.tokenize_string(input_str)
+        #print(tok_stream)
         parser = Parser(tok_stream)
         root = parser.parse()
         val = self.execute(root)
@@ -85,6 +86,22 @@ class VM:
             return Num_Object(left.value * right.value)
         elif node.op == Tok_Type.DIV:
             return Num_Object(left.value / right.value)
+
+    def visit_logic(self, node):
+        left = node.left.accept(self)
+        right = node.right.accept(self)
+
+        # Stores the result of the operation
+        result = None
+
+        # >
+        if node.op == Tok_Type.AND:
+            relop_result = left.value and right.value
+        # >=
+        elif node.op == Tok_Type.OR:
+            relop_result = left.value or right.value
+
+        return Bool_Object(relop_result)
 
     def visit_relop(self, node):
         left = node.left.accept(self)
