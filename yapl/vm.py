@@ -150,9 +150,10 @@ class YAPL_VM:
             return Bool_Object(not (result.value))
 
     def visit_if(self, node):
+        # Evaluate each condition and execute block if it is true
         for cond in node.conditions:
-            truth_value = cond[0].accept(self)
-            if truth_value.value == True:
+            cond_value = cond[0].accept(self)
+            if is_truthy(cond_value):
                 return cond[1].accept(self)
 
         return node.else_block.accept(self)

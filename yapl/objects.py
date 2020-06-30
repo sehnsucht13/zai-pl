@@ -93,15 +93,6 @@ class Func_Object(Internal_Object):
         )
 
 
-def is_atom(obj):
-    """
-    Check if an object is an atom(Boolean, Integer or string).
-    """
-    if obj is None:
-        return False
-    return obj.obj_type in [ObjectType.BOOL, ObjectType.NUM, ObjectType.STR]
-
-
 def pprint_internal_object(internal_obj):
     """
     Pretty print an internal object depending on it's type.
@@ -111,3 +102,19 @@ def pprint_internal_object(internal_obj):
     elif internal_obj.obj_type == ObjectType.FUNC:
         output_str = "<function object {}>".format(internal_obj.name)
         print(output_str)
+
+
+def is_truthy(internal_object):
+    """ Check if an internal object is truthy. Returns True or False."""
+    # Truthiness will be the same as the one in python
+    if internal_object.obj_type in [ObjectType.BOOL, ObjectType.STR, ObjectType.NUM]:
+        return bool(internal_object.value)
+
+
+def is_atom(obj):
+    """
+    Check if an object is an atom(Boolean, Integer or string).
+    """
+    if obj is None:
+        return False
+    return obj.obj_type in [ObjectType.BOOL, ObjectType.NUM, ObjectType.STR]

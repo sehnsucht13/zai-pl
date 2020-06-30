@@ -85,7 +85,7 @@ class Parser:
             return Num_Node(node.lexeme)
         else:
             node = self.match(Tok_Type.TRUE, Tok_Type.FALSE)
-            return Bool_Node(node.lexeme)
+            return Bool_Node(node.tok_type)
 
     def factor(self):
         """
