@@ -44,37 +44,20 @@ class Parser:
         else:
             return None
 
-    def match(self, token_type, error_str=None):
+    def match(self, *args):
         """
         Check if the type of the current token being used matches with the provided
         token types. The token types to be checked can be either in a  list or a single
         token.
 
         There is no error produced from type mismatched yet."""
-        assert token_type is not None
-
-        if type(token_type) == list:
-            for token in token_type:
-                if self.curr_tok.tok_type == token:
-                    curr_token = self.curr_tok
-                    self.advance(1)
-                    return curr_token
-        elif self.curr_tok.tok_type == token_type:
+        if self.curr_tok in args:
             curr_token = self.curr_tok
             self.advance(1)
             return curr_token
 
         # TODO: Throw error here if there is a mismatch and use error_str to display it.
-        error_msg = str()
-        if type(token_type) == list:
-            error_msg = "Parsing error! Expected either one of {} but got {}".format(
-                token_type, self.curr_tok.tok_type
-            )
-        else:
-            error_msg = "Parsing error! Expected {} but got {}".format(
-                token_type, self.curr_tok.tok_type
-            )
-        raise InternalSyntaxErr(error_msg)
+        raise InternalSyntaxErr(args, self.curr_tok)
 
     def atom(self):
         """
@@ -89,9 +72,8 @@ class Parser:
         STR := "\"" (LETTER | NUM )* "\""
         """
         if self.curr_tok.tok_type == Tok_Type.ID:
-            node = ID_Node(self.curr_tok.lexeme)
-            self.match(Tok_Type.ID)
-            return node
+            node = self.match(Tok_Type.ID)
+            return ID_Node(node.lexeme)
         elif self.curr_tok.tok_type == Tok_Type.DQUOTE:
             self.match(Tok_Type.DQUOTE)
             str_token = self.match(Tok_Type.STRING)
@@ -99,13 +81,11 @@ class Parser:
             self.match(Tok_Type.DQUOTE)
             return node
         elif self.curr_tok.tok_type == Tok_Type.NUM:
-            node = Num_Node(self.curr_tok.lexeme)
-            self.match(Tok_Type.NUM)
-            return node
-        elif self.curr_tok.tok_type in [Tok_Type.TRUE, Tok_Type.FALSE]:
-            node = Bool_Node(self.curr_tok.tok_type)
-            self.match(self.curr_tok.tok_type)
-            return node
+            node = self.match(Tok_Type.NUM)
+            return Num_Node(node.lexeme)
+        else:
+            node = self.match(Tok_Type.TRUE, Tok_Type.FALSE)
+            return Bool_Node(node.lexeme)
 
     def factor(self):
         """
@@ -124,11 +104,13 @@ class Parser:
             func_args = list()
             func_name = self.atom()
             self.match(Tok_Type.LROUND)
+
             while self.curr_tok.tok_type != Tok_Type.RROUND:
                 arg_value = self.or_expr()
                 func_args.append(arg_value)
                 if self.curr_tok.tok_type != Tok_Type.RROUND:
                     self.match(Tok_Type.COMMA)
+
             self.match(Tok_Type.RROUND)
             return Func_Call_Node(func_name, func_args)
         elif self.curr_tok.tok_type == Tok_Type.LROUND:
@@ -137,10 +119,9 @@ class Parser:
             self.match(Tok_Type.RROUND)
             return Bracket_Node(expr)
         elif self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
-            op = self.curr_tok.tok_type
-            self.match(op)
+            op = self.match(Tok_Type.BANG, Tok_Type.MINUS)
             fact = self.factor()
-            return Unary_Node(op, fact)
+            return Unary_Node(op.tok_type, fact)
         else:
             return self.atom()
 
@@ -152,10 +133,10 @@ class Parser:
         """
         left = self.factor()
         while self.curr_tok.tok_type in [Tok_Type.MUL, Tok_Type.DIV]:
-            op = self.curr_tok.tok_type
-            self.match(op)
+            op = self.match(Tok_Type.MUL, Tok_Type.DIV)
             right = self.term()
-            left = Arith_Bin_Node(left, op, right)
+            left = Arith_Bin_Node(left, op.tok_type, right)
+
         return left
 
     def add_expr(self):
@@ -166,10 +147,9 @@ class Parser:
         """
         left = self.term()
         while self.curr_tok.tok_type in [Tok_Type.PLUS, Tok_Type.MINUS]:
-            op = self.curr_tok.tok_type
-            self.match(op)
+            op = self.match(Tok_Type.PLUS, Tok_Type.MINUS)
             right = self.term()
-            left = Arith_Bin_Node(left, op, right)
+            left = Arith_Bin_Node(left, op.tok_type, right)
 
         return left
 
@@ -187,10 +167,9 @@ class Parser:
             Tok_Type.LT,
             Tok_Type.LTE,
         ]:
-            op = self.curr_tok.tok_type
-            self.match(self.curr_tok.tok_type)
+            op = self.match(Tok_Type.GT, Tok_Type.GTE, Tok_Type.LT, Tok_Type.LTE)
             right = self.add_expr()
-            left = Relop_Bin_Node(left, op, right)
+            left = Relop_Bin_Node(left, op.tok_type, right)
 
         return left
 
@@ -202,10 +181,9 @@ class Parser:
         """
         left = self.rel_expr()
         while self.curr_tok.tok_type in [Tok_Type.EQ, Tok_Type.NEQ]:
-            op = self.curr_tok.tok_type
-            self.match(self.curr_tok.tok_type)
+            op = self.match(Tok_Type.EQ, Tok_Type.NEQ)
             right = self.rel_expr()
-            left = Eq_Bin_Node(left, op, right)
+            left = Eq_Bin_Node(left, op.tok_type, right)
 
         return left
 
@@ -217,10 +195,9 @@ class Parser:
         """
         left = self.eq_expr()
         while self.curr_tok.tok_type == Tok_Type.AND:
-            op = self.curr_tok.tok_type
-            self.match(Tok_Type.AND)
+            op = self.match((Tok_Type.AND))
             right = self.eq_expr()
-            left = Logic_Bin_Node(left, op, right)
+            left = Logic_Bin_Node(left, op.tok_type, right)
 
         return left
 
@@ -232,10 +209,9 @@ class Parser:
         """
         left = self.and_expr()
         while self.curr_tok.tok_type == Tok_Type.OR:
-            op = self.curr_tok.tok_type
-            self.match(Tok_Type.OR)
+            op = self.match(Tok_Type.OR)
             right = self.and_expr()
-            left = Logic_Bin_Node(left, op, right)
+            left = Logic_Bin_Node(left, op.tok_type, right)
 
         return left
 
@@ -255,8 +231,7 @@ class Parser:
             self.curr_tok.tok_type == Tok_Type.ID
             and self.peek().tok_type == Tok_Type.ASSIGN
         ):
-            symbol = self.curr_tok.lexeme
-            self.match(Tok_Type.ID)
+            symbol = self.match(Tok_Type.ID).lexeme
             self.match(Tok_Type.ASSIGN)
             value = self.expression()
             return Replace_Assign_Bin_Node(symbol, value)
@@ -272,7 +247,7 @@ class Parser:
         """
         self.match(Tok_Type.IF)
         self.match(Tok_Type.LROUND)
-        test_expr = self.expression()
+        test_expr = self.or_expr()
         self.match(Tok_Type.RROUND)
         if_stmtn = self.statement()
         else_stmnt = None
@@ -288,7 +263,7 @@ class Parser:
         Parse a print statement.
         Grammar:
 
-        print := "print" expr
+        print := "print" expr ";"
         """
         self.match(Tok_Type.PRINT)
         expr = self.expression()

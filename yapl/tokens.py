@@ -64,18 +64,28 @@ class Token:
 
     def __str__(self):
         if self.lexeme is not None:
-            return "({} {})".format(self.tok_type, self.lexeme)
+            return "(T:{} Le:{} C:{} L:{})".format(
+                self.tok_type, self.lexeme, self.col_num, self.line_num
+            )
         else:
-            return "({})".format(self.tok_type)
+            return "(T:{} C:{} L:{})".format(self.tok_type, self.col_num, self.line_num)
 
     def __repr__(self):
         if self.lexeme is not None:
-            return "({} {})".format(self.tok_type, self.lexeme)
+            return "(T:{} Le:{} C:{} L:{})".format(
+                self.tok_type, self.lexeme, self.col_num, self.line_num
+            )
         else:
-            return "({})".format(self.tok_type)
+            return "(T:{} C:{} L:{})".format(self.tok_type, self.col_num, self.line_num)
 
     def __eq__(self, right):
-        if self.tok_type == right.tok_type and self.lexeme == right.lexeme:
+        # Necessary to compare Tok_Type with a token.
+        if isinstance(right, Enum):
+            if right == self.tok_type:
+                return True
+            else:
+                return False
+        elif self.tok_type == right.tok_type and self.lexeme == right.lexeme:
             return True
         return False
 
