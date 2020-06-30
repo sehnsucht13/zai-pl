@@ -1,8 +1,11 @@
-""" Class used to convert an input string into a sequence of valid language tokens."""
+""" Module containing lexer class used to convert an input string into a sequence of language tokens."""
 from yapl.tokens import Tok_Type, Token, keywords
 
 
 class Lexer:
+    """Class used to convert a string of characters into language tokens.
+    """
+
     def __init__(self):
         self.text = None
         self.token_stream = list()
@@ -19,7 +22,7 @@ class Lexer:
         # Characters which break up identification tokens
         self.ident_sep = "\n\t#;(),[]*/+-<=>!{}\"' "
 
-    def advance(self):
+    def _advance(self):
         """ Advance the current character by one and return it. If there is no next character,
             return None."""
         if self.curr_idx + 1 < self.input_len:
@@ -31,7 +34,7 @@ class Lexer:
             self.curr_char = None
             return None
 
-    def peek(self):
+    def _peek(self):
         """ Return the next character in the input text sequence. If there is no next
             character, return None."""
         if self.curr_idx + 1 < self.input_len:
@@ -39,28 +42,21 @@ class Lexer:
         else:
             return None
 
-    def reverse(self):
-        if self.curr_idx > 0 and self.curr_char is not None:
-            self.curr_idx -= 1
-            self.curr_char = self.text[self.curr_idx]
-            return self.curr_char
-        return None
-
     def _tokenize_ident(self):
-        """ Tokenize a single identifier and return it."""
+        """ Tokenize an identifier and return its lexeme."""
         ident_str = str(self.curr_char)
         # ident_str += self.curr_char
-        while self.peek() is not None and self.peek() not in self.ident_sep:
-            self.advance()
+        while self._peek() is not None and self._peek() not in self.ident_sep:
+            self._advance()
             ident_str += self.curr_char
         return ident_str
 
     def _tokenize_num(self):
-        """ Tokenize a single integer number and return it."""
+        """ Tokenize a single integer number and return it in integer form."""
         num_str = str()
         num_str += self.curr_char
-        while self.peek() is not None and self.peek() in "1234567890":
-            self.advance()
+        while self._peek() is not None and self._peek() in "1234567890":
+            self._advance()
             num_str += self.curr_char
         return int(num_str)
 
@@ -77,7 +73,7 @@ class Lexer:
                     )
                 )
                 return
-            elif self.curr_char != "\\" and self.peek() == '"':
+            elif self.curr_char != "\\" and self._peek() == '"':
                 str_content += self.curr_char
                 self.token_stream.append(
                     Token(
@@ -87,21 +83,18 @@ class Lexer:
                         self.curr_col_num,
                     )
                 )
-                self.advance()
+                self._advance()
                 self.token_stream.append(
                     Token(Tok_Type.DQUOTE, self.curr_lin_num, self.curr_col_num)
                 )
                 return
             else:
                 str_content += self.curr_char
-                self.advance()
+                self._advance()
 
-        # while self.peek() != None or (self.peek() != '"' and self.curr_char != "\\"):
-        #     str_content.appen
-
-    def __tokenize(self):
+    def _tokenize(self):
         """ Tokenize the current text sequence and return the tokens generated. """
-        while self.advance() is not None:
+        while self._advance() is not None:
             if self.curr_char == "\n":
                 # Increment line numbers
                 self.curr_lin_num += 1
@@ -160,48 +153,48 @@ class Lexer:
                     Token(Tok_Type.DQUOTE, self.curr_lin_num, self.curr_col_num)
                 )
                 # Skip over the current character which is a double quote
-                self.advance()
+                self._advance()
                 self._tokenize_str()
             elif self.curr_char == "'":
                 self.token_stream.append(
                     Token(Tok_Type.QUOTE, self.curr_lin_num, self.curr_col_num)
                 )
             elif self.curr_char == "!":
-                if self.peek() == "=":
+                if self._peek() == "=":
                     self.token_stream.append(
                         Token(Tok_Type.NEQ, self.curr_lin_num, self.curr_col_num)
                     )
-                    self.advance()
+                    self._advance()
                 else:
                     self.token_stream.append(
                         Token(Tok_Type.BANG, self.curr_lin_num, self.curr_col_num)
                     )
             elif self.curr_char == "=":
-                if self.peek() == "=":
+                if self._peek() == "=":
                     self.token_stream.append(
                         Token(Tok_Type.EQ, self.curr_lin_num, self.curr_col_num)
                     )
-                    self.advance()
+                    self._advance()
                 else:
                     self.token_stream.append(
                         Token(Tok_Type.ASSIGN, self.curr_lin_num, self.curr_col_num)
                     )
             elif self.curr_char == "<":
-                if self.peek() == "=":
+                if self._peek() == "=":
                     self.token_stream.append(
                         Token(Tok_Type.LTE, self.curr_lin_num, self.curr_col_num)
                     )
-                    self.advance()
+                    self._advance()
                 else:
                     self.token_stream.append(
                         Token(Tok_Type.LT, self.curr_lin_num, self.curr_col_num)
                     )
             elif self.curr_char == ">":
-                if self.peek() == "=":
+                if self._peek() == "=":
                     self.token_stream.append(
                         Token(Tok_Type.GTE, self.curr_lin_num, self.curr_col_num)
                     )
-                    self.advance()
+                    self._advance()
                 else:
                     self.token_stream.append(
                         Token(Tok_Type.GT, self.curr_lin_num, self.curr_col_num)
@@ -224,9 +217,13 @@ class Lexer:
                 )
 
         # Add final EOF token to indicate end of token stream
-        self.token_stream.append(Token(Tok_Type.EOF))
+        self.token_stream.append(
+            Token(Tok_Type.EOF, None, self.curr_lin_num, self.curr_col_num)
+        )
 
     def _reset_internal_state(self):
+        """Reset the internal state of the lexer for a new input string.
+        """
         self.input_len = len(self.text)
 
         # Reset all other variables
@@ -248,7 +245,7 @@ class Lexer:
         self.input_len = len(input_str)
 
         if self.input_len > 0:
-            self.__tokenize()
+            self._tokenize()
             return self.token_stream
         else:
             return [Token(Tok_Type.EOF)]
