@@ -2,7 +2,7 @@ from yapl.object_type import ObjectType
 
 
 class Internal_Object:
-    """ 
+    """
     Base class for all internal objects used in the interpreter.
     """
 
@@ -16,6 +16,12 @@ class Num_Object(Internal_Object):
         self.value = value
         self.obj_type = ObjectType.NUM
 
+    def __repr__(self):
+        return "NUM_OBJ {}".format(self.value)
+
+    def __str__(self):
+        return "NUM_OBJ {}".format(self.value)
+
 
 class String_Object(Internal_Object):
     def __init__(self, string_val):
@@ -25,6 +31,12 @@ class String_Object(Internal_Object):
         self.value = string_val
         self.obj_type = ObjectType.STR
 
+    def __repr__(self):
+        return "STR_OBJ {}".format(self.value)
+
+    def __str__(self):
+        return "STR_OBJ {}".format(self.value)
+
 
 class Bool_Object(Internal_Object):
     def __init__(self, bool_val):
@@ -33,6 +45,12 @@ class Bool_Object(Internal_Object):
         """
         self.value = bool_val
         self.obj_type = ObjectType.BOOL
+
+    def __str__(self):
+        return "BOOL_OBJ {}".format(self.value)
+
+    def __repr__(self):
+        return "BOOL_OBJ {}".format(self.value)
 
 
 class Func_Object(Internal_Object):
@@ -48,9 +66,14 @@ class Func_Object(Internal_Object):
         # Reference to the current env
         self.env = env
 
+    def __str__(self):
+        return "FUNC_OBJ: Name: {}, Args: {}, Arity: {}, Body: {}".format(
+            self.name, self.args, self.arity, self.body
+        )
+
 
 def is_atom(obj):
-    """ 
+    """
     Check if an object is an atom(Boolean, Integer or string).
     """
     if obj is None:
