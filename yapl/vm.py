@@ -1,5 +1,5 @@
 from yapl.lexer import Lexer
-from yapl.env import RunTime_Stack
+from yapl.env import Environment, Scope
 from yapl.objects import *
 from yapl.parse import Parser
 from yapl.tokens import Tok_Type
@@ -12,7 +12,7 @@ class YAPL_VM:
     """
 
     def __init__(self):
-        self.global_env = RunTime_Stack()
+        self.env = Environment()
         self.repl_mode_flag = False
 
     def execute(self, ast_root):
@@ -40,7 +40,7 @@ class YAPL_VM:
         """
         lexer = Lexer()
         tok_stream = lexer.tokenize_string(input_str)
-        #print(tok_stream)
+        # print(tok_stream)
         parser = Parser(tok_stream)
         root = parser.parse()
         val = self.execute(root)
@@ -56,9 +56,9 @@ class YAPL_VM:
 
     def visit_symbol(self, node):
         # Retrieve symbol from env
-        curr_frame = self.global_env.peek()
+        curr_scope = self.env.peek()
         # TODO: Catch case of symbol not existing. Need to return an error
-        return curr_frame.resolve_sym(node.val)
+        return curr_scope.lookup_symbol(node.val)
 
     def visit_string(self, node):
         return String_Object(node.val)
@@ -162,22 +162,41 @@ class YAPL_VM:
         value = node.value.accept(self)
         assert symbol is not None
         assert value is not None
-        curr_frame = self.global_env.peek()
-        insert_status = curr_frame.add_symbol(symbol, value)
+        scope = self.env.peek()
+        scope.add_symbol(symbol, value)
         # asssert
         # TODO: Should we return its value after assignment?
 
     def visit_block(self, node):
         # Create a new scope to evaluate the current block in
-        curr_frame = self.global_env.peek()
-        curr_frame.enter_scope()
+        self.env.enter_scope()
         for stmnt in node.stmnts:
             stmnt.accept(self)
-        curr_frame.exit_scope()
+        self.env.exit_scope()
 
     def visit_func_def(self, node):
-        curr_frame = self.global_env.peek()
+        scope = self.env.peek()
         # Register the function in the current frame
-        curr_frame.add_symbol(
-            node.name, Func_Object(node.name, node.args, node.body, curr_frame)
-        )
+        scope.add_symbol(node.name, Func_Object(node.name, node.args, node.body, scope))
+
+    def visit_func_call(self, node):
+        func_object = node.func_name.accept(self)
+        eval_args = list()
+
+        # Evaluate the arguments
+        for arg in node.func_args:
+            val = arg.accept(self)
+            eval_args.append(val)
+
+        # Create a new scope
+        self.env.enter_scope(func_object.env)
+
+        # Add all arguments
+        for arg_pair in zip(func_object.args, eval_args):
+            print(arg_pair)
+            self.env.peek().add_symbol(arg_pair[0].literal, arg_pair[1])
+        print(self.env.peek().scope)
+
+        for stmnt in func_object.body:
+            stmnt.accept(self)
+        self.env.exit_scope()
