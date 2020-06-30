@@ -3,30 +3,33 @@ program := statement*
 ;; Statements
 statement := if_stmnt    |
 			 while_stmnt | ; not done
-			 for_stmnt   | ; will not implement yet
+			 for_stmnt   | ; not done
 			 class_def   | ; not done
-			 func_def    | 
-			 block_stmnt |  
+			 func_def    |
+			 block_stmnt |
 			 print_stmnt |
+			 switch_stmnt| ; not done
 			 simple_expr
 
-if_stmnt := "if" "(" expr ")"  "{" statement* "}"( "else" "{" statement* "}" )? 
+if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
 func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
 block_stmnt := "{" statement* "}"
 print_stmnt := "print" expr ";"
+switch_stmnt := "switch" "(" or_expr ")" ("case" ":" or_expr block_stmnt)* "default" ":" block_stmnt
 
-; Expressions
+
+
+;; Expressions
 simple_expr := expr ";"
-expr := "let"? ID ("=" or_expr)?  | or_expr
+expr := "let"? ID "=" or_expr | or_expr
 or_expr := and_expr ("||" and_expr)*
 and_expr := eq_expr ("&&" eq_expr)*
 eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
 rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
 add_expr := term (("+" | "-") term)*
 term := factor (("*" | "/") factor)*
-;; factor := ID "(" arglist ")" | "(" expr ")" | unary_op factor | atom ;; for later
-;;arglist := (atom ("," atom)*)?
-factor := "(" expr ")" | unary_op factor | atom 
+factor := ID "(" arglist ")" | "(" expr ")" | unary_op factor | atom
+arglist := (or_expr ("," or_expr)*)?
 unary_op := "!" "-"
 
 atom := | NUM | STR | ID | BOOL
