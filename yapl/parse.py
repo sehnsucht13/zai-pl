@@ -241,11 +241,17 @@ class Parser:
 
     def expression(self):
         """
-        Parse an equality expression:
+        Parse a general expression:
         Grammar:
-        eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
+        expr := "let"? ID "=" or_expr | or_expr
         """
-        if (
+        if self.curr_tok.tok_type == Tok_Type.LET:
+            self.match(Tok_Type.LET)
+            symbol = self.match(Tok_Type.ID).literal
+            self.match(Tok_Type.ASSIGN)
+            value = self.expression()
+            return New_Assign_Bin_Node(symbol, value)
+        elif (
             self.curr_tok.tok_type == Tok_Type.ID
             and self.peek().tok_type == Tok_Type.ASSIGN
         ):
@@ -253,7 +259,7 @@ class Parser:
             self.match(Tok_Type.ID)
             self.match(Tok_Type.ASSIGN)
             value = self.expression()
-            return Assign_Bin_Node(symbol, value)
+            return Replace_Assign_Bin_Node(symbol, value)
         else:
             return self.or_expr()
 

@@ -156,15 +156,26 @@ class YAPL_VM:
         print_value = node.expr.accept(self)
         pprint_internal_object(print_value)
 
-    def visit_assign(self, node):
+    def visit_replace_assign(self, node):
+        symbol = node.symbol
+        # Evaluate the right hand side
+        value = node.value.accept(self)
+        assert symbol is not None
+        assert value is not None
+
+        scope = self.env.peek()
+        status = scope.add_symbol(symbol, value, False)
+        # TODO: Throw an error here if return value is False. This means that
+        # the variale does not exist in the environment.
+
+    def visit_new_assign(self, node):
         symbol = node.symbol
         # Evaluate the right hand side
         value = node.value.accept(self)
         assert symbol is not None
         assert value is not None
         scope = self.env.peek()
-        scope.add_symbol(symbol, value)
-        # asssert
+        scope.add_symbol(symbol, value, True)
         # TODO: Should we return its value after assignment?
 
     def visit_block(self, node):
@@ -177,7 +188,9 @@ class YAPL_VM:
     def visit_func_def(self, node):
         scope = self.env.peek()
         # Register the function in the current frame
-        scope.add_symbol(node.name, Func_Object(node.name, node.args, node.body, scope))
+        scope.add_symbol(
+            node.name, Func_Object(node.name, node.args, node.body, scope), True
+        )
 
     def visit_func_call(self, node):
         func_object = node.func_name.accept(self)
@@ -196,7 +209,7 @@ class YAPL_VM:
 
         # Add arguments to the current environment
         for arg_pair in zip(func_object.args, arg_values):
-            self.env.peek().add_symbol(arg_pair[0].literal, arg_pair[1])
+            self.env.peek().add_symbol(arg_pair[0].literal, arg_pair[1], True)
 
         for stmnt in func_object.body:
             stmnt.accept(self)

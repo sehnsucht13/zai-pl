@@ -46,17 +46,30 @@ class Bin_Node(AST_Node):
         raise NotImplementedError()
 
 
-class Assign_Bin_Node(AST_Node):
+class Replace_Assign_Bin_Node(AST_Node):
     def __init__(self, symbol, value, local_assign=False):
         self.symbol = symbol
         self.value = value
         self.local = local_assign
 
     def __str__(self):
-        return "ASSIGN_NODE {} {}".format(self.symbol, self.value)
+        return "REPLACE_ASSIGN_NODE {} {}".format(self.symbol, self.value)
 
     def accept(self, visitor):
-        return visitor.visit_assign(self)
+        return visitor.visit_replace_assign(self)
+
+
+class New_Assign_Bin_Node(AST_Node):
+    def __init__(self, symbol, value, local_assign=False):
+        self.symbol = symbol
+        self.value = value
+        self.local = local_assign
+
+    def __str__(self):
+        return "NEW_ASSIGN_NODE {} {}".format(self.symbol, self.value)
+
+    def accept(self, visitor):
+        return visitor.visit_new_assign(self)
 
 
 class Eq_Bin_Node(Bin_Node):

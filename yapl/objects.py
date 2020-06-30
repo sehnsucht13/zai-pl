@@ -67,8 +67,8 @@ class Func_Object(Internal_Object):
         self.env = env
 
     def __str__(self):
-        return "FUNC_OBJ: Name: {}, Args: {}, Arity: {}, Body: {}".format(
-            self.name, self.args, self.arity, self.body
+        return "FUNC_OBJ: Name: {}, Args: {}, Arity: {}".format(
+            self.name, self.args, self.arity,
         )
 
 
