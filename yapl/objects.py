@@ -1,4 +1,19 @@
-from yapl.object_type import ObjectType
+"""
+Module contains several classes used to represent internal objects within the interpreter.
+"""
+from enum import Enum, auto
+
+
+class ObjectType(Enum):
+    """
+    Enum used to represent the different types of internal objects.
+    """
+
+    NUM = auto()
+    STR = auto()
+    ID = auto()
+    BOOL = auto()
+    FUNC = auto()
 
 
 class Internal_Object:
@@ -11,8 +26,11 @@ class Internal_Object:
 
 
 class Num_Object(Internal_Object):
+    """
+    Numeric internal object used to store integers.
+    """
+
     def __init__(self, value):
-        "Numeric object used to store integers."
         self.value = value
         self.obj_type = ObjectType.NUM
 
@@ -24,10 +42,11 @@ class Num_Object(Internal_Object):
 
 
 class String_Object(Internal_Object):
+    """
+    Internal object used to represent strings within the interpreter.
+    """
+
     def __init__(self, string_val):
-        """
-        Internal object used to represent strings within the interpreter.
-        """
         self.value = string_val
         self.obj_type = ObjectType.STR
 
@@ -39,10 +58,11 @@ class String_Object(Internal_Object):
 
 
 class Bool_Object(Internal_Object):
+    """
+    Internal object used to represent boolean values within the interpreter.
+    """
+
     def __init__(self, bool_val):
-        """
-        Internal object used to represent boolean values within the interpreter.
-        """
         self.value = bool_val
         self.obj_type = ObjectType.BOOL
 
@@ -54,10 +74,11 @@ class Bool_Object(Internal_Object):
 
 
 class Func_Object(Internal_Object):
+    """
+    Internal object used to represent a function.
+    """
+
     def __init__(self, name, arg_symbols, body, env):
-        """
-        Internal object used to represent a function.
-        """
         self.obj_type = ObjectType.FUNC
         self.name = name
         self.args = arg_symbols
