@@ -3,10 +3,20 @@ class Scope:
         self.scope = dict()
         self.parent = parent
 
-    def add_symbol(self, symbol, value):
+    def add_symbol(self, symbol, value, local=False):
         assert symbol != None
         assert value != None
-        self.scope[symbol] = value
+        if local is True:
+            self.scope[symbol] = value
+        else:
+            if symbol in self.scope.keys():
+                self.scope[symbol] = value
+                return True
+            elif self.parent is None:
+                # TODO: Add error handling here. It will be a "runtime" error.
+                return False
+            else:
+                return self.parent.add_symbol(symbol, value, local)
 
     def lookup_symbol(self, symbol):
         value = self.scope.get(symbol, None)
