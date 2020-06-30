@@ -172,14 +172,13 @@ class Bracket_Node(AST_Node):
 
 
 class If_Node(AST_Node):
-    def __init__(self, condition, true_stmnt, else_stmnt):
-        self.condition = condition
-        self.true_stmnt = true_stmnt
-        self.else_stmnt = else_stmnt
+    def __init__(self, conditions, else_block):
+        self.conditions = conditions
+        self.else_block = else_block
 
     def __str__(self):
-        return "IF_NODE: cond: {} true: {} false:{}".format(
-            self.condition, self.true_stmnt, self.else_stmnt
+        return "IF_NODE: conditions: {} else:{}".format(
+            self.conditions, self.else_block
         )
 
     def accept(self, visitor):

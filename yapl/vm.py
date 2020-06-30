@@ -3,6 +3,7 @@ from yapl.env import Environment, Scope
 from yapl.objects import *
 from yapl.parse import Parser
 from yapl.tokens import Tok_Type
+from yapl.internal_error import InternalSyntaxErr
 
 
 class YAPL_VM:
@@ -39,11 +40,14 @@ class YAPL_VM:
         Run a single string within the current VM context.
         """
         lexer = Lexer()
-        tok_stream = lexer.tokenize_string(input_str)
-        # print(tok_stream)
-        parser = Parser(tok_stream)
-        root = parser.parse()
-        val = self.execute(root)
+        try:
+            tok_stream = lexer.tokenize_string(input_str)
+            # print(tok_stream)
+            parser = Parser(tok_stream)
+            root = parser.parse()
+            val = self.execute(root)
+        except InternalSyntaxErr as e:
+            print(e)
 
     def visit_program(self, node):
         for stmnt in node.stmnts:
@@ -146,11 +150,12 @@ class YAPL_VM:
             return Bool_Object(not (result.value))
 
     def visit_if(self, node):
-        condition = node.condition.accept(self)
-        if condition.value is True:
-            return node.true_stmnt.accept(self)
-        else:
-            return node.else_stmnt.accept(self)
+        for cond in node.conditions:
+            truth_value = cond[0].accept(self)
+            if truth_value.value == True:
+                return cond[1].accept(self)
+
+        return node.else_block.accept(self)
 
     def visit_print(self, node):
         print_value = node.expr.accept(self)
@@ -180,7 +185,8 @@ class YAPL_VM:
 
     def visit_block(self, node):
         # Create a new scope to evaluate the current block in
-        self.env.enter_scope()
+        parent_env = self.env.peek()
+        self.env.enter_scope(parent_env)
         for stmnt in node.stmnts:
             stmnt.accept(self)
         self.env.exit_scope()

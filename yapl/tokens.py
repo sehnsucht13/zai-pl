@@ -44,14 +44,19 @@ class Tok_Type(Enum):
     AND = auto()
     OR = auto()
 
-    FUNC = auto()
-    ASSIGN = auto()
+    # Control flow
     IF = auto()
+    ELSE = auto()
+    ELIF = auto()
     WHILE = auto()
     FOR = auto()
+
+    FUNC = auto()
     PRINT = auto()
+
+    # Variable Assignment
+    ASSIGN = auto()
     LET = auto()
-    ELSE = auto()
     EOF = auto()
 
 
@@ -104,10 +109,11 @@ class Token:
 # Dictionary containing words reserved by language and their corresponding tokens
 keywords = {
     "if": Token(Tok_Type.IF),
+    "else": Token(Tok_Type.ELSE),
+    "elif": Token(Tok_Type.ELIF),
     "while": Token(Tok_Type.WHILE),
     "for": Token(Tok_Type.FOR),
     "print": Token(Tok_Type.PRINT),
-    "else": Token(Tok_Type.ELSE),
     "true": Token(Tok_Type.TRUE),
     "false": Token(Tok_Type.FALSE),
     "let": Token(Tok_Type.LET),

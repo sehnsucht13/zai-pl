@@ -245,17 +245,32 @@ class Parser:
 
         if_stmnt := "if" "(" expression ")" statement ( "else" statement )?
         """
+        # List used to store all "if condition then" or "elif condition then" pairs.
+        conditions = list()
+
+        # Parse "If ... then ..."
         self.match(Tok_Type.IF)
         self.match(Tok_Type.LROUND)
-        test_expr = self.or_expr()
+        if_cond = self.or_expr()
         self.match(Tok_Type.RROUND)
-        if_stmtn = self.statement()
-        else_stmnt = None
+        then_block = self.block()
+        conditions.append(tuple((if_cond, then_block)))
+
+        # Parse "elif ... then ..."
+        while self.curr_tok.tok_type == Tok_Type.ELIF:
+            self.match(Tok_Type.ELIF)
+            self.match(Tok_Type.LROUND)
+            cond = self.or_expr()
+            self.match(Tok_Type.RROUND)
+            then_block = self.block()
+            conditions.append(tuple((cond, then_block)))
+
+        else_block = None
         if self.curr_tok.tok_type == Tok_Type.ELSE:
             self.match(Tok_Type.ELSE)
-            else_stmnt = self.statement()
+            else_block = self.block()
 
-        node = If_Node(test_expr, if_stmtn, else_stmnt)
+        node = If_Node(conditions, else_block)
         return node
 
     def print_statement(self):
