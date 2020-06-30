@@ -56,26 +56,26 @@ class Tok_Type(Enum):
 
 
 class Token:
-    def __init__(self, tok_type, literal=None, line_num=None, col_num=None):
+    def __init__(self, tok_type, lexeme=None, line_num=None, col_num=None):
         self.tok_type = tok_type
-        self.literal = literal
+        self.lexeme = lexeme
         self.line_num = line_num
         self.col_num = col_num
 
     def __str__(self):
-        if self.literal is not None:
-            return "({} {})".format(self.tok_type, self.literal)
+        if self.lexeme is not None:
+            return "({} {})".format(self.tok_type, self.lexeme)
         else:
             return "({})".format(self.tok_type)
 
     def __repr__(self):
-        if self.literal is not None:
-            return "({} {})".format(self.tok_type, self.literal)
+        if self.lexeme is not None:
+            return "({} {})".format(self.tok_type, self.lexeme)
         else:
             return "({})".format(self.tok_type)
 
     def __eq__(self, right):
-        if self.tok_type == right.tok_type and self.literal == right.literal:
+        if self.tok_type == right.tok_type and self.lexeme == right.lexeme:
             return True
         return False
 

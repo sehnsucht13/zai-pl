@@ -209,7 +209,7 @@ class YAPL_VM:
 
         # Add arguments to the current environment
         for arg_pair in zip(func_object.args, arg_values):
-            self.env.peek().add_symbol(arg_pair[0].literal, arg_pair[1], True)
+            self.env.peek().add_symbol(arg_pair[0].lexeme, arg_pair[1], True)
 
         for stmnt in func_object.body:
             stmnt.accept(self)

@@ -89,17 +89,17 @@ class Parser:
         STR := "\"" (LETTER | NUM )* "\""
         """
         if self.curr_tok.tok_type == Tok_Type.ID:
-            node = ID_Node(self.curr_tok.literal)
+            node = ID_Node(self.curr_tok.lexeme)
             self.match(Tok_Type.ID)
             return node
         elif self.curr_tok.tok_type == Tok_Type.DQUOTE:
             self.match(Tok_Type.DQUOTE)
             str_token = self.match(Tok_Type.STRING)
-            node = String_Node(str_token.literal)
+            node = String_Node(str_token.lexeme)
             self.match(Tok_Type.DQUOTE)
             return node
         elif self.curr_tok.tok_type == Tok_Type.NUM:
-            node = Num_Node(self.curr_tok.literal)
+            node = Num_Node(self.curr_tok.lexeme)
             self.match(Tok_Type.NUM)
             return node
         elif self.curr_tok.tok_type in [Tok_Type.TRUE, Tok_Type.FALSE]:
@@ -247,7 +247,7 @@ class Parser:
         """
         if self.curr_tok.tok_type == Tok_Type.LET:
             self.match(Tok_Type.LET)
-            symbol = self.match(Tok_Type.ID).literal
+            symbol = self.match(Tok_Type.ID).lexeme
             self.match(Tok_Type.ASSIGN)
             value = self.expression()
             return New_Assign_Bin_Node(symbol, value)
@@ -255,7 +255,7 @@ class Parser:
             self.curr_tok.tok_type == Tok_Type.ID
             and self.peek().tok_type == Tok_Type.ASSIGN
         ):
-            symbol = self.curr_tok.literal
+            symbol = self.curr_tok.lexeme
             self.match(Tok_Type.ID)
             self.match(Tok_Type.ASSIGN)
             value = self.expression()
@@ -305,7 +305,7 @@ class Parser:
         """
 
         self.match(Tok_Type.FUNC)
-        func_name = self.match(Tok_Type.ID).literal
+        func_name = self.match(Tok_Type.ID).lexeme
         self.match(Tok_Type.LROUND)
 
         # Collect argument symbols for the function
