@@ -181,22 +181,24 @@ class YAPL_VM:
 
     def visit_func_call(self, node):
         func_object = node.func_name.accept(self)
-        eval_args = list()
-
-        # Evaluate the arguments
-        for arg in node.func_args:
-            val = arg.accept(self)
-            eval_args.append(val)
-
         # Create a new scope
         self.env.enter_scope(func_object.env)
 
-        # Add all arguments
-        for arg_pair in zip(func_object.args, eval_args):
-            print(arg_pair)
+        # Evaluate the arguments
+        arg_values = list()
+        for arg in node.func_args:
+            val = arg.accept(self)
+            arg_values.append(val)
+
+        if len(arg_values) != func_object.arity:
+            # TODO: Add error handling for mismatched arity
+            print("Not enough values!")
+
+        # Add arguments to the current environment
+        for arg_pair in zip(func_object.args, arg_values):
             self.env.peek().add_symbol(arg_pair[0].literal, arg_pair[1])
-        print(self.env.peek().scope)
 
         for stmnt in func_object.body:
             stmnt.accept(self)
+
         self.env.exit_scope()
