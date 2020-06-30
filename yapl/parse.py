@@ -22,7 +22,7 @@ class Parser:
         self.ast = None
 
     def peek(self, n=1):
-        """ 
+        """
         Look ahead and return the Nth token in the token stream. If a numeric
         argument is not provided, return the next token in the stream. If
         there is no next token, return None.
@@ -34,7 +34,7 @@ class Parser:
 
     def advance(self, n=1):
         """
-        Advance the current token being used by N places. If a numeric 
+        Advance the current token being used by N places. If a numeric
         argument is not provided, return the next token in the stream.
         If there is no next token, return None."""
         if self.curr_idx + n < self.tok_len:
@@ -49,7 +49,7 @@ class Parser:
         Check if the type of the current token being used matches with the provided
         token types. The token types to be checked can be either in a  list or a single
         token.
-        
+
         There is no error produced from type mismatched yet."""
         assert token_type is not None
 
@@ -77,7 +77,7 @@ class Parser:
         raise InternalSyntaxErr(error_msg)
 
     def atom(self):
-        """ 
+        """
         Parse an atom(pritive) object.
         Grammar:
         atom := | NUM | STR | ID | BOOL
@@ -108,14 +108,30 @@ class Parser:
             return node
 
     def factor(self):
-        """ 
+        """
         Parse a factor rule.
         Grammar:
 
-        factor := "(" expr ")" | unary_op factor | atom 
+        factor := "(" expr ")" | unary_op factor | atom
         unary_op := "!" "-"
         """
-        if self.curr_tok.tok_type == Tok_Type.LROUND:
+        # TODO: There will be a problem with the first if statement. Nonetype does not
+        # does not have a "tok_type" so it will fail if there is no next token.
+        if (
+            self.curr_tok.tok_type == Tok_Type.ID
+            and self.peek().tok_type == Tok_Type.LROUND
+        ):
+            func_args = list()
+            func_name = self.atom()
+            self.match(Tok_Type.LROUND)
+            while self.curr_tok.tok_type != Tok_Type.RROUND:
+                arg_value = self.or_expr()
+                func_args.append(arg_value)
+                if self.curr_tok.tok_type != Tok_Type.RROUND:
+                    self.match(Tok_Type.COMMA)
+            self.match(Tok_Type.RROUND)
+            return Func_Call_Node(func_name, func_args)
+        elif self.curr_tok.tok_type == Tok_Type.LROUND:
             self.match(Tok_Type.LROUND)
             expr = self.expression()
             self.match(Tok_Type.RROUND)
@@ -129,7 +145,7 @@ class Parser:
             return self.atom()
 
     def term(self):
-        """ 
+        """
         Parse a term rule.
         Grammar:
         term := factor (("*" | "/") factor)*
@@ -143,7 +159,7 @@ class Parser:
         return left
 
     def add_expr(self):
-        """ 
+        """
         Parse an addition expression:
         Grammar:
         add_expr := term (("+" | "-") term)*
@@ -158,7 +174,7 @@ class Parser:
         return left
 
     def rel_expr(self):
-        """ 
+        """
         Parse a relative expression:
         Grammar:
         rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
@@ -179,7 +195,7 @@ class Parser:
         return left
 
     def eq_expr(self):
-        """ 
+        """
         Parse an equality expression:
         Grammar:
         eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
@@ -194,7 +210,7 @@ class Parser:
         return left
 
     def and_expr(self):
-        """ 
+        """
         Parse an equality expression:
         Grammar:
         eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
@@ -209,7 +225,7 @@ class Parser:
         return left
 
     def or_expr(self):
-        """ 
+        """
         Parse an equality expression:
         Grammar:
         eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
@@ -224,7 +240,7 @@ class Parser:
         return left
 
     def expression(self):
-        """ 
+        """
         Parse an equality expression:
         Grammar:
         eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
@@ -242,11 +258,11 @@ class Parser:
             return self.or_expr()
 
     def if_statement(self):
-        """ 
+        """
         Parse an if statement.
         Grammar:
 
-        if_stmnt := "if" "(" expression ")" statement ( "else" statement )? 
+        if_stmnt := "if" "(" expression ")" statement ( "else" statement )?
         """
         self.match(Tok_Type.IF)
         self.match(Tok_Type.LROUND)
@@ -262,11 +278,11 @@ class Parser:
         return node
 
     def print_statement(self):
-        """ 
+        """
         Parse a print statement.
         Grammar:
 
-        print := "print" expr 
+        print := "print" expr
         """
         self.match(Tok_Type.PRINT)
         expr = self.expression()
@@ -275,7 +291,7 @@ class Parser:
 
     # TODO: Refactor match function and finish parsing functions
     def func_def(self):
-        """ 
+        """
         Parse a function definition.
         Grammar:
 
@@ -309,8 +325,8 @@ class Parser:
         return Func_Node(func_name, arg_symbols, func_body)
 
     def block(self):
-        """ 
-        Parse a block which acts as a nested scope within the program. 
+        """
+        Parse a block which acts as a nested scope within the program.
         Grammar:
 
         block := "{" statement* "}"
@@ -326,9 +342,9 @@ class Parser:
 
     def simple_expr(self):
         """
-        Parse a simple expression. 
+        Parse a simple expression.
         Grammar:
-        
+
         simple_expr := expr ";"
         """
         expr_result = self.expression()
@@ -336,16 +352,16 @@ class Parser:
         return expr_result
 
     def statement(self):
-        """ 
-        Parse a statement. 
+        """
+        Parse a statement.
         Grammar:
-        
+
         statement := if_stmnt    |
                      while_stmnt | ;; not done
 		     for_stmnt   | ;; not done
 		     class_def   | ;; not done
-		     func_def    | 
-		     block       |  
+		     func_def    |
+		     block       |
 		     print       |
 		     expr
         """
@@ -361,7 +377,7 @@ class Parser:
             return self.simple_expr()
 
     def program(self):
-        """ 
+        """
         Parse a program rule.
         Grammar:
         program := statement*
@@ -373,7 +389,7 @@ class Parser:
         return prog_node
 
     def parse(self):
-        """ 
+        """
         Parse the provided stream of tokens and return the AST produced.
         """
         ast_root = self.program()

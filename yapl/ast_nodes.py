@@ -2,7 +2,7 @@
 
 
 class AST_Node:
-    """ 
+    """
     Base class from which all AST nodes are derived.
     """
 
@@ -240,7 +240,8 @@ class Func_Node(AST_Node):
         self.body = body
 
     def __str__(self):
-        return "FUNC_NODE {} {} {}".format(self.val)
+        print("caled print")
+        return "FUNC_NODE {}".format(self.name)
 
     def accept(self, visitor):
         return visitor.visit_func_def(self)
@@ -258,3 +259,16 @@ class Block_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_block(self)
+
+
+class Func_Call_Node(AST_Node):
+    def __init__(self, func_name, func_args):
+        self.func_name = func_name
+        self.func_args = func_args
+
+    def __str__(self):
+        return "FUNC_CALL {} {}".format(self.func_name, self.func_args)
+
+    def accept(self, visitor):
+        return visitor.visit_func_call(self)
+
