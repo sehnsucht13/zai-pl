@@ -205,6 +205,17 @@ class YAPL_VM:
             node.name, Func_Object(node.name, node.args, node.body, scope), True
         )
 
+    def visit_class_def(self, node):
+        """
+        Keyword Arguments:
+        node -- Class definition node
+        """
+        scope = self.env.peek()
+        # Register the class in the scope
+        scope.add_symbol(
+            node.class_name, Class_Object(node.class_name, node.class_methods), True
+        )
+
     def visit_func_call(self, node):
         func_object = node.func_name.accept(self)
         # Create a new scope

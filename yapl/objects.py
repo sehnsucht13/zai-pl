@@ -93,6 +93,16 @@ class Func_Object(Internal_Object):
         )
 
 
+class Class_Object(Internal_Object):
+    def __init__(self, class_name, class_methods):
+        "setup class object"
+        self.class_name = class_name
+        self.class_methods = class_methods
+
+    def __str__(self):
+        return "CLASS_OBJ: Name: {}".format(self.class_name)
+
+
 def pprint_internal_object(internal_obj):
     """
     Pretty print an internal object depending on it's type.

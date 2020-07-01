@@ -311,3 +311,27 @@ class Func_Call_Node(AST_Node):
     def accept(self, visitor):
         return visitor.visit_func_call(self)
 
+
+class Class_Method_Node(AST_Node):
+    def __init__(self, name, args, body):
+        self.name = name
+        self.args = args
+        self.body = body
+
+    def __str__(self):
+        return "CLASS_METHOD_NODE {}".format(self.name)
+
+    def accept(self, visitor):
+        return visitor.visit_class_method(self)
+
+
+class Class_Def_Node(AST_Node):
+    def __init__(self, class_name, class_methods):
+        self.class_name = class_name
+        self.class_methods = class_methods
+
+    def __str__(self):
+        return "CLASS_NODE {} {}".format(self.class_name, self.class_methods)
+
+    def accept(self, visitor):
+        return visitor.visit_class_def(self)

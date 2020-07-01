@@ -55,6 +55,7 @@ class Tok_Type(Enum):
     DEFAULT = auto()
 
     FUNC = auto()
+    CLASS = auto()
     PRINT = auto()
 
     # Variable Assignment
@@ -126,4 +127,5 @@ keywords = {
     "switch": Token(Tok_Type.SWITCH),
     "case": Token(Tok_Type.CASE),
     "default": Token(Tok_Type.DEFAULT),
+    "class": Token(Tok_Type.CLASS),
 }

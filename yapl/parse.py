@@ -355,6 +355,26 @@ class Parser:
         self.match(Tok_Type.SEMIC)
         return expr_result
 
+    def class_def(self):
+        self.match(Tok_Type.CLASS)
+        class_name = self.match(Tok_Type.ID).lexeme
+        self.match(Tok_Type.LCURLY)
+
+        class_methods = list()
+        while self.curr_tok.tok_type != Tok_Type.RCURLY:
+            func_node = self.func_def()
+            # Cast regular function node to method node.
+            # The parsing procedure is the same for both so there is no point
+            # in rewriting the code in a separate parsing procedure.
+            method_node = Class_Method_Node(
+                func_node.name, func_node.args, func_node.body
+            )
+            class_methods.append(method_node)
+
+        self.match(Tok_Type.RCURLY)
+
+        return Class_Def_Node(class_name, class_methods)
+
     def statement(self):
         """
         Parse a statement.
@@ -373,8 +393,12 @@ class Parser:
             return self.if_statement()
         elif self.curr_tok.tok_type == Tok_Type.FUNC:
             return self.func_def()
+        elif self.curr_tok.tok_type == Tok_Type.CLASS:
+            return self.class_def()
         elif self.curr_tok.tok_type == Tok_Type.WHILE:
             return self.while_statement()
+        elif self.curr_tok.tok_type == Tok_Type.SWITCH:
+            return self.switch_statement()
         elif self.curr_tok.tok_type == Tok_Type.LCURLY:
             return self.block()
         elif self.curr_tok.tok_type == Tok_Type.PRINT:
