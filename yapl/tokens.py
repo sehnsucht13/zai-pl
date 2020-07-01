@@ -50,6 +50,9 @@ class Tok_Type(Enum):
     ELIF = auto()
     WHILE = auto()
     FOR = auto()
+    SWITCH = auto()
+    CASE = auto()
+    DEFAULT = auto()
 
     FUNC = auto()
     PRINT = auto()
@@ -120,4 +123,7 @@ keywords = {
     "func": Token(Tok_Type.FUNC),
     "and": Token(Tok_Type.AND),
     "or": Token(Tok_Type.OR),
+    "switch": Token(Tok_Type.SWITCH),
+    "case": Token(Tok_Type.CASE),
+    "default": Token(Tok_Type.DEFAULT),
 }

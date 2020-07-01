@@ -197,6 +197,21 @@ class While_Node(AST_Node):
         return visitor.visit_while(self)
 
 
+class Switch_Node(AST_Node):
+    def __init__(self, switch_cond, switch_cases, default_case):
+        self.switch_cond = switch_cond
+        self.switch_cases = switch_cases
+        self.default_case = default_case
+
+    def __str__(self):
+        return "SWITCH_NODE: condition: {} cases:{} default:{}".format(
+            self.switch_cond, self.switch_cases, self.default_case
+        )
+
+    def accept(self, visitor):
+        return visitor.visit_switch(self)
+
+
 class ID_Node(AST_Node):
     def __init__(self, node_val):
         self.val = node_val
