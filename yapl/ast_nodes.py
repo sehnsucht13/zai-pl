@@ -185,6 +185,18 @@ class If_Node(AST_Node):
         return visitor.visit_if(self)
 
 
+class While_Node(AST_Node):
+    def __init__(self, condition, body):
+        self.condition = condition
+        self.body = body
+
+    def __str__(self):
+        return "WHILE_NODE: condition: {} body:{}".format(self.condition, self.body)
+
+    def accept(self, visitor):
+        return visitor.visit_while(self)
+
+
 class ID_Node(AST_Node):
     def __init__(self, node_val):
         self.val = node_val

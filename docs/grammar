@@ -12,6 +12,7 @@ statement := if_stmnt    |
 			 simple_expr
 
 if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
+while_stmnt := "while" "(" or_expr ")" block_stmnt
 func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
 block_stmnt := "{" statement* "}"
 print_stmnt := "print" expr ";"

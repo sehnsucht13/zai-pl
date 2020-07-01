@@ -336,6 +336,14 @@ class Parser:
         self.match(Tok_Type.RCURLY)
         return Block_Node(block_stmnts)
 
+    def while_statement(self):
+        self.match(Tok_Type.WHILE)
+        self.match(Tok_Type.LROUND)
+        condition = self.or_expr()
+        self.match(Tok_Type.RROUND)
+        body = self.block()
+        return While_Node(condition, body)
+
     def simple_expr(self):
         """
         Parse a simple expression.
@@ -365,6 +373,8 @@ class Parser:
             return self.if_statement()
         elif self.curr_tok.tok_type == Tok_Type.FUNC:
             return self.func_def()
+        elif self.curr_tok.tok_type == Tok_Type.WHILE:
+            return self.while_statement()
         elif self.curr_tok.tok_type == Tok_Type.LCURLY:
             return self.block()
         elif self.curr_tok.tok_type == Tok_Type.PRINT:

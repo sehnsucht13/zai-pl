@@ -158,6 +158,12 @@ class YAPL_VM:
 
         return node.else_block.accept(self)
 
+    def visit_while(self, node):
+        cond_value = node.condition.accept(self)
+        while is_truthy(cond_value):
+            node.body.accept(self)
+            cond_value = node.condition.accept(self)
+
     def visit_print(self, node):
         print_value = node.expr.accept(self)
         pprint_internal_object(print_value)
