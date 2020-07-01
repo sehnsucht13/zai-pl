@@ -2,7 +2,7 @@ program := statement*
 
 ;; Statements
 statement := if_stmnt    |
-			 while_stmnt | ; not done
+			 while_stmnt |
 			 for_stmnt   | ; not done
 			 class_def   | ; not done
 			 func_def    |
@@ -13,11 +13,11 @@ statement := if_stmnt    |
 
 if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
 while_stmnt := "while" "(" or_expr ")" block_stmnt
+class_def := "class" ID "{" func_def* "}"
 func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
 block_stmnt := "{" statement* "}"
 print_stmnt := "print" expr ";"
 switch_stmnt := "switch" "(" or_expr ")" ("case" ":" or_expr block_stmnt)* "default" ":" block_stmnt
-
 
 
 ;; Expressions
