@@ -29,7 +29,7 @@ eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
 rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
 add_expr := term (("+" | "-") term)*
 term := factor (("*" | "/") factor)*
-factor := ID "(" arglist ")" | "(" expr ")" | unary_op factor | atom
+factor := ID ( "(" arglist ")" | "." ID )+ | "(" expr ")" | unary_op factor | atom
 arglist := (or_expr ("," or_expr)*)?
 unary_op := "!" "-"
 
