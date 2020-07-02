@@ -300,16 +300,16 @@ class Block_Node(AST_Node):
         return visitor.visit_block(self)
 
 
-class Func_Call_Node(AST_Node):
-    def __init__(self, func_name, func_args):
-        self.func_name = func_name
-        self.func_args = func_args
+class Call_Node(AST_Node):
+    def __init__(self, object_name, call_args):
+        self.object_name = object_name
+        self.call_args = call_args
 
     def __str__(self):
-        return "FUNC_CALL {} {}".format(self.func_name, self.func_args)
+        return "CALL_NODE: {} {}".format(self.object_name, self.call_args)
 
     def accept(self, visitor):
-        return visitor.visit_func_call(self)
+        return visitor.visit_call(self)
 
 
 class Class_Method_Node(AST_Node):

@@ -2,6 +2,7 @@
 Module contains several classes used to represent internal objects within the interpreter.
 """
 from enum import Enum, auto
+from yapl.env import Scope
 
 
 class ObjectType(Enum):
@@ -14,6 +15,7 @@ class ObjectType(Enum):
     ID = auto()
     BOOL = auto()
     FUNC = auto()
+    CLASS = auto()
 
 
 class Internal_Object:
@@ -93,14 +95,22 @@ class Func_Object(Internal_Object):
         )
 
 
-class Class_Object(Internal_Object):
+class Class_Def_Object(Internal_Object):
     def __init__(self, class_name, class_methods):
         "setup class object"
+        self.obj_type = ObjectType.CLASS
         self.class_name = class_name
         self.class_methods = class_methods
 
     def __str__(self):
         return "CLASS_OBJ: Name: {}".format(self.class_name)
+
+
+class Class_Instance_Object(Internal_Object):
+    def __init__(self, class_name, class_methods):
+        "Object representing a class instance."
+        self.class_name = class_name
+        self.internal_namespace = Scope()
 
 
 def pprint_internal_object(internal_obj):

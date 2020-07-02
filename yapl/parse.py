@@ -112,7 +112,7 @@ class Parser:
                     self.match(Tok_Type.COMMA)
 
             self.match(Tok_Type.RROUND)
-            return Func_Call_Node(func_name, func_args)
+            return Call_Node(func_name, func_args)
         elif self.curr_tok.tok_type == Tok_Type.LROUND:
             self.match(Tok_Type.LROUND)
             expr = self.expression()
@@ -343,6 +343,16 @@ class Parser:
         self.match(Tok_Type.RROUND)
         body = self.block()
         return While_Node(condition, body)
+
+    def switch_statement(self):
+        self.match(Tok_Type.SWITCH)
+        self.match(Tok_Type.LROUND)
+        condition = self.or_expr()
+        self.match(Tok_Type.RROUND)
+
+        cases = list()
+        while self.curr_tok.tok_type == Tok_Type.CASE:
+            pass
 
     def simple_expr(self):
         """

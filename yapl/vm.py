@@ -213,29 +213,36 @@ class YAPL_VM:
         scope = self.env.peek()
         # Register the class in the scope
         scope.add_symbol(
-            node.class_name, Class_Object(node.class_name, node.class_methods), True
+            node.class_name, Class_Def_Object(node.class_name, node.class_methods), True
         )
 
-    def visit_func_call(self, node):
-        func_object = node.func_name.accept(self)
-        # Create a new scope
-        self.env.enter_scope(func_object.env)
+    def visit_call(self, node):
+        call_object = node.object_name.accept(self)
 
-        # Evaluate the arguments
-        arg_values = list()
-        for arg in node.func_args:
-            val = arg.accept(self)
-            arg_values.append(val)
+        # Case of function object
+        if call_object.obj_type == ObjectType.FUNC:
+            # Create a new scope
+            self.env.enter_scope(call_object.env)
 
-        if len(arg_values) != func_object.arity:
-            # TODO: Add error handling for mismatched arity
-            print("Not enough values!")
+            # Evaluate the arguments
+            arg_values = list()
+            for arg in node.call_args:
+                val = arg.accept(self)
+                arg_values.append(val)
 
-        # Add arguments to the current environment
-        for arg_pair in zip(func_object.args, arg_values):
-            self.env.peek().add_symbol(arg_pair[0].lexeme, arg_pair[1], True)
+            if len(arg_values) != call_object.arity:
+                # TODO: Add error handling for mismatched arity
+                print("Not enough values!")
 
-        for stmnt in func_object.body:
-            stmnt.accept(self)
+            # Add arguments to the current environment
+            for arg_pair in zip(call_object.args, arg_values):
+                self.env.peek().add_symbol(arg_pair[0].lexeme, arg_pair[1], True)
 
-        self.env.exit_scope()
+            for stmnt in call_object.body:
+                stmnt.accept(self)
+
+            self.env.exit_scope()
+
+        elif call_object.obj_type == ObjectType.CLASS:
+            print("got a class")
+            return Num_Object(44)
