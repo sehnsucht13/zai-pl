@@ -15,7 +15,8 @@ class ObjectType(Enum):
     ID = auto()
     BOOL = auto()
     FUNC = auto()
-    CLASS = auto()
+    CLASS_DEF = auto()
+    CLASS_INSTANCE = auto()
 
 
 class Internal_Object:
@@ -98,7 +99,7 @@ class Func_Object(Internal_Object):
 class Class_Def_Object(Internal_Object):
     def __init__(self, class_name, class_methods):
         "setup class object"
-        self.obj_type = ObjectType.CLASS
+        self.obj_type = ObjectType.CLASS_DEF
         self.class_name = class_name
         self.class_methods = class_methods
 
@@ -109,8 +110,13 @@ class Class_Def_Object(Internal_Object):
 class Class_Instance_Object(Internal_Object):
     def __init__(self, class_name, class_methods):
         "Object representing a class instance."
+        self.obj_type = ObjectType.CLASS_INSTANCE
         self.class_name = class_name
-        self.internal_namespace = Scope()
+        self.internal_namespace = Scope(None)
+
+        # Register all class methods in the internal environment
+        for method in class_methods:
+            self.internal_namespace.add_symbol(method.name, method, True)
 
 
 def pprint_internal_object(internal_obj):
