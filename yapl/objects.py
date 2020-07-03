@@ -128,6 +128,12 @@ def pprint_internal_object(internal_obj):
     elif internal_obj.obj_type == ObjectType.FUNC:
         output_str = "<function object {}>".format(internal_obj.name)
         print(output_str)
+    elif internal_obj.obj_type == ObjectType.CLASS_DEF:
+        output_str = "<class definition object {}>".format(internal_obj.class_name)
+        print(output_str)
+    elif internal_obj.obj_type == ObjectType.CLASS_INSTANCE:
+        output_str = "<class instance object {}>".format(internal_obj.class_name)
+        print(output_str)
 
 
 def is_truthy(internal_object):
