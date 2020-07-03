@@ -243,6 +243,8 @@ class YAPL_VM:
 
             self.env.exit_scope()
 
-        elif call_object.obj_type == ObjectType.CLASS:
+        elif call_object.obj_type == ObjectType.CLASS_DEF:
             print("got a class")
-            return Num_Object(44)
+            return Class_Instance_Object(
+                call_object.class_name, call_object.class_methods
+            )
