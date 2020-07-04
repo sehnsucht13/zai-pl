@@ -13,3 +13,15 @@ class InternalRuntimeErr(InternalErr):
 
     def __repr__(self):
         "Internal Runtime Error: {}".format(self.message)
+
+
+class InternalParseErr(InternalErr):
+    def __init__(self, message):
+        "Class representing internal errors encountered during parsing/lexing stage."
+        self.message = message
+
+    def __str__(self):
+        return "Parse Error: {}".format(self.message)
+
+    def __repr__(self):
+        "Internal Parse Error: {}".format(self.message)
