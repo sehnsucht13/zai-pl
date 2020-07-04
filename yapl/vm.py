@@ -3,7 +3,7 @@ from yapl.env import Environment, Scope
 from yapl.objects import *
 from yapl.parse import Parser
 from yapl.tokens import Tok_Type
-from yapl.internal_error import InternalSyntaxErr
+from yapl.internal_error import InternalRuntimeErr
 
 
 class YAPL_VM:
@@ -46,7 +46,7 @@ class YAPL_VM:
             parser = Parser(tok_stream)
             root = parser.parse()
             val = self.execute(root)
-        except InternalSyntaxErr as e:
+        except InternalRuntimeErr as e:
             print(e)
 
     def visit_program(self, node):
@@ -62,7 +62,13 @@ class YAPL_VM:
         # Retrieve symbol from env
         curr_scope = self.env.peek()
         # TODO: Catch case of symbol not existing. Need to return an error
-        return curr_scope.lookup_symbol(node.val)
+        symbol_val = curr_scope.lookup_symbol(node.val)
+
+        if symbol_val is None:
+            err_msg = 'Variable "{}" does not exist.'.format(node.val)
+            raise InternalRuntimeErr(err_msg)
+        else:
+            return symbol_val
 
     def visit_string(self, node):
         return String_Object(node.val)
@@ -176,19 +182,24 @@ class YAPL_VM:
         assert value is not None
 
         scope = self.env.peek()
+
         status = scope.add_symbol(symbol, value, False)
-        # TODO: Throw an error here if return value is False. This means that
-        # the variale does not exist in the environment.
+        if status is False:
+            err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
+                symbol
+            )
+            raise InternalRuntimeErr(err_msg)
 
     def visit_new_assign(self, node):
         symbol = node.symbol
         # Evaluate the right hand side
         value = node.value.accept(self)
+
         assert symbol is not None
         assert value is not None
+
         scope = self.env.peek()
         scope.add_symbol(symbol, value, True)
-        # TODO: Should we return its value after assignment?
 
     def visit_block(self, node):
         # Create a new scope to evaluate the current block in
