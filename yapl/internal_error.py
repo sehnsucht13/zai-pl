@@ -1,8 +1,15 @@
-class InternalSyntaxErr(Exception):
-    "Exception used when a syntax error is encountered during parsing."
+class InternalErr(Exception):
+    def __init__(self,):
+        raise NotImplementedError()
 
-    def __init__(self, error_msg, line_num=0, col_num=0):
-        self.error_msg = error_msg
-        # Line and column number data
-        self.line_num = line_num
-        self.col_num = col_num
+
+class InternalRuntimeErr(InternalErr):
+    def __init__(self, message):
+        "Class representing internal errors encountered during runtime."
+        self.message = message
+
+    def __str__(self):
+        return "Runtime Error: {}".format(self.message)
+
+    def __repr__(self):
+        "Internal Runtime Error: {}".format(self.message)
