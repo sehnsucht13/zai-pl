@@ -5,7 +5,7 @@ by the interpreter.
 
 from yapl.ast_nodes import *
 from yapl.tokens import Token, Tok_Type
-from yapl.internal_error import InternalSyntaxErr
+from yapl.internal_error import InternalParseErr
 
 
 class Parser:
@@ -55,9 +55,6 @@ class Parser:
             curr_token = self.curr_tok
             self.advance(1)
             return curr_token
-
-        # TODO: Throw error here if there is a mismatch and use error_str to display it.
-        raise InternalSyntaxErr(args, self.curr_tok)
 
     def atom(self):
         """
@@ -191,7 +188,7 @@ class Parser:
         """
         Parse an equality expression:
         Grammar:
-        eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
+        and_expr := eq_expr ("&&" eq_expr)*
         """
         left = self.eq_expr()
         while self.curr_tok.tok_type == Tok_Type.AND:
@@ -205,7 +202,7 @@ class Parser:
         """
         Parse an equality expression:
         Grammar:
-        eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
+        or_expr := and_expr ("||" and_expr)*
         """
         left = self.and_expr()
         while self.curr_tok.tok_type == Tok_Type.OR:
@@ -225,7 +222,7 @@ class Parser:
             self.match(Tok_Type.LET)
             symbol = self.match(Tok_Type.ID).lexeme
             self.match(Tok_Type.ASSIGN)
-            value = self.expression()
+            value = self.or_expr()
             return New_Assign_Bin_Node(symbol, value)
         elif (
             self.curr_tok.tok_type == Tok_Type.ID
