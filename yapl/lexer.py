@@ -19,8 +19,9 @@ class Lexer:
         self.curr_lin_num = 0
         self.curr_col_num = 0
 
-        # Characters which break up identification tokens
-        self.ident_sep = "\n\t#;(),[]*/+-<=>!{}\"' "
+        # Special characters which are restricted/permitted in ID tokens.
+        self.restricted_ident_chars = ".,;()[]*/+-<=>!{}#\"'\s\n\t"
+        self.permitted_ident_chars = "?@$"
 
     def _advance(self):
         """ Advance the current character by one and return it. If there is no next character,
@@ -46,7 +47,9 @@ class Lexer:
         """ Tokenize an identifier and return its lexeme."""
         ident_str = str(self.curr_char)
         # ident_str += self.curr_char
-        while self._peek() is not None and self._peek() not in self.ident_sep:
+        while (
+            self._peek() is not None and self._peek() not in self.restricted_ident_chars
+        ):
             self._advance()
             ident_str += self.curr_char
         return ident_str
@@ -199,7 +202,9 @@ class Lexer:
                     self.token_stream.append(
                         Token(Tok_Type.GT, self.curr_lin_num, self.curr_col_num)
                     )
-            elif self.curr_char in ["$", "@", "?"] or self.curr_char.isalpha():
+            elif (
+                self.curr_char in self.permitted_ident_chars or self.curr_char.isalpha()
+            ):
                 # Store the column at the start of the identifier
                 ident_start_col = self.curr_col_num
                 ident = self._tokenize_ident()
