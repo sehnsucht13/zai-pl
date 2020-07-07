@@ -111,6 +111,10 @@ class Lexer:
                 self.token_stream.append(
                     Token(Tok_Type.RROUND, None, self.curr_lin_num, self.curr_col_num)
                 )
+            elif self.curr_char == ".":
+                self.token_stream.append(
+                    Token(Tok_Type.DOT, self.curr_lin_num, self.curr_col_num)
+                )
             elif self.curr_char == ",":
                 self.token_stream.append(
                     Token(Tok_Type.COMMA, self.curr_lin_num, self.curr_col_num)
