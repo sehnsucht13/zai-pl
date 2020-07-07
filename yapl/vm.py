@@ -255,7 +255,19 @@ class YAPL_VM:
             self.env.exit_scope()
 
         elif call_object.obj_type == ObjectType.CLASS_DEF:
-            print("got a class")
             return Class_Instance_Object(
                 call_object.class_name, call_object.class_methods
             )
+
+    def visit_dot_node(self, node):
+        l = node.left.accept(self)
+        if l.obj_type == ObjectType.CLASS_INSTANCE:
+            val = l.get_field(node.right.lexeme)
+            if val is not None:
+                return val
+            else:
+                # TODO: Throw error for field not existing.
+                print("Value does not exist")
+        # TODO: Throw error here for object not being callable.
+        else:
+            print("Not class instance")
