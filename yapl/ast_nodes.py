@@ -46,6 +46,21 @@ class Bin_Node(AST_Node):
         raise NotImplementedError()
 
 
+class Dot_Bin_Node(AST_Node):
+    def __init__(self, left, right):
+        self.object_name = left
+        self.prop_name = right
+
+    def __str__(self):
+        return "DOT_NODE {} {}".format(self.object_name, self.prop_name)
+
+    def __repr__(self):
+        return "DOT_NODE {} {}".format(self.object_name, self.prop_name)
+
+    def accept(self, visitor):
+        return visitor.visit_dot_node(self)
+
+
 class Replace_Assign_Bin_Node(AST_Node):
     def __init__(self, symbol, value, local_assign=False):
         self.symbol = symbol
