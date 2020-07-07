@@ -117,6 +117,11 @@ class Class_Instance_Object(Internal_Object):
         # Register all class methods in the internal environment
         for method in class_methods:
             self.internal_namespace.add_symbol(method.name, method, True)
+        self.internal_namespace.add_symbol("field", Num_Object(13), True)
+        print(self.internal_namespace.scope)
+
+    def get_field(self, field_name):
+        return self.internal_namespace.lookup_symbol(field_name)
 
 
 def pprint_internal_object(internal_obj):
