@@ -17,6 +17,7 @@ class ObjectType(Enum):
     FUNC = auto()
     CLASS_DEF = auto()
     CLASS_INSTANCE = auto()
+    CLASS_METHOD = auto()
 
 
 class Internal_Object:
@@ -107,6 +108,26 @@ class Class_Def_Object(Internal_Object):
         return "CLASS_OBJ: Name: {}".format(self.class_name)
 
 
+class Class_Method_Object(Internal_Object):
+    """
+    Internal object used to represent a class function.
+    """
+
+    def __init__(self, name, arg_symbols, body, class_env):
+        self.obj_type = ObjectType.CLASS_METHOD
+        self.name = name
+        self.args = arg_symbols
+        self.arity = len(arg_symbols)
+        self.body = body
+        # Reference to the class env
+        self.class_env = class_env
+
+    def __str__(self):
+        return "CLASS_METHOD_OBJ: Name: {}, Args: {}, Arity: {}".format(
+            self.name, self.args, self.arity,
+        )
+
+
 class Class_Instance_Object(Internal_Object):
     def __init__(self, class_name, class_methods):
         "Object representing a class instance."
@@ -116,9 +137,18 @@ class Class_Instance_Object(Internal_Object):
 
         # Register all class methods in the internal environment
         for method in class_methods:
-            self.internal_namespace.add_symbol(method.name, method, True)
+            self.internal_namespace.add_symbol(
+                method.name,
+                Class_Method_Object(
+                    method.name, method.args, method.body, self.internal_namespace
+                ),
+                True,
+            )
+        # "field" is a test variable used to check access before implementing assignment of
+        # class instance fields.
         self.internal_namespace.add_symbol("field", Num_Object(13), True)
-        print(self.internal_namespace.scope)
+
+        # print(self.internal_namespace.scope)
 
     def get_field(self, field_name):
         return self.internal_namespace.lookup_symbol(field_name)

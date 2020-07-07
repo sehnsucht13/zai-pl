@@ -260,16 +260,44 @@ class YAPL_VM:
             return Class_Instance_Object(
                 call_object.class_name, call_object.class_methods
             )
+        elif call_object.obj_type == ObjectType.CLASS_METHOD:
+            print("got a class method")
+            # Create a new scope
+            # self.env.enter_scope()
+            self.env.enter_scope(call_object.class_env)
+            print(self.env.peek().parent.scope)
+
+            # Evaluate the arguments
+            arg_values = list()
+            for arg in node.call_args:
+                val = arg.accept(self)
+                arg_values.append(val)
+
+            if len(arg_values) != call_object.arity:
+                # TODO: Add error handling for mismatched arity
+                print("Not enough values!")
+
+            # Add arguments to the current environment
+            for arg_pair in zip(call_object.args, arg_values):
+                self.env.peek().add_symbol(arg_pair[0].lexeme, arg_pair[1], True)
+
+            for stmnt in call_object.body:
+                stmnt.accept(self)
+
+            self.env.exit_scope()
 
     def visit_dot_node(self, node):
         l = node.left.accept(self)
         if l.obj_type == ObjectType.CLASS_INSTANCE:
             val = l.get_field(node.right.lexeme)
+            print(val)
             if val is not None:
                 return val
             else:
-                # TODO: Throw error for field not existing.
-                print("Value does not exist")
-        # TODO: Throw error here for object not being callable.
+                err_msg = 'Class instance "{}" of class "{}" does not contain a field with name "{}"'.format(
+                    node.left.val, l.class_name, node.right.lexeme
+                )
+                raise InternalRuntimeErr(err_msg)
         else:
-            print("Not class instance")
+            err_msg = "variable {} is not an instance of a class!".format(node.left.val)
+            raise InternalRuntimeErr(err_msg)

@@ -112,7 +112,7 @@ class Parser:
             while self.curr_tok.tok_type in [Tok_Type.LROUND, Tok_Type.DOT]:
                 if self.curr_tok.tok_type == Tok_Type.DOT:
                     self.match(Tok_Type.DOT)
-                    prop_name = self.match(Tok_Type.ID).lexeme
+                    prop_name = self.match(Tok_Type.ID)
                     left = Dot_Bin_Node(left, prop_name)
                 elif self.curr_tok.tok_type == Tok_Type.LROUND:
                     self.match(Tok_Type.LROUND)
