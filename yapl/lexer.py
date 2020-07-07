@@ -20,7 +20,7 @@ class Lexer:
         self.curr_col_num = 0
 
         # Special characters which are restricted/permitted in ID tokens.
-        self.restricted_ident_chars = ".,;()[]*/+-<=>!{}#\"'\s\n\t"
+        self.restricted_ident_chars = ".,;()[]*/+-<=>!{}#\"'\n\t "
         self.permitted_ident_chars = "?@$"
 
     def _advance(self):
