@@ -84,6 +84,15 @@ class Parser:
             node = self.match(Tok_Type.TRUE, Tok_Type.FALSE)
             return Bool_Node(node.tok_type)
 
+    def arglist(self):
+        func_args = list()
+        while self.curr_tok.tok_type != Tok_Type.RROUND:
+            arg_value = self.or_expr()
+            func_args.append(arg_value)
+            if self.curr_tok.tok_type != Tok_Type.RROUND:
+                self.match(Tok_Type.COMMA)
+        return func_args
+
     def factor(self):
         """
         Parse a factor rule.
