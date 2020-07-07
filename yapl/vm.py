@@ -45,6 +45,7 @@ class YAPL_VM:
             # print(tok_stream)
             parser = Parser(tok_stream)
             root = parser.parse()
+            # print(root)
             val = self.execute(root)
         except InternalRuntimeErr as e:
             print(e)
@@ -176,8 +177,9 @@ class YAPL_VM:
 
     def visit_replace_assign(self, node):
         symbol = node.symbol
-        # Evaluate the right hand side
+        # Evaluate the right hand side containing the value to be assigned
         value = node.value.accept(self)
+
         assert symbol is not None
         assert value is not None
 
@@ -192,7 +194,7 @@ class YAPL_VM:
 
     def visit_new_assign(self, node):
         symbol = node.symbol
-        # Evaluate the right hand side
+        # Evaluate the right hand side containing the value which will be assigned
         value = node.value.accept(self)
 
         assert symbol is not None

@@ -13,7 +13,6 @@ class Scope:
                 self.scope[symbol] = value
                 return True
             elif self.parent is None:
-                # TODO: Add error handling here. It will be a "runtime" error.
                 return False
             else:
                 return self.parent.add_symbol(symbol, value, local)
