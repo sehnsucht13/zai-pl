@@ -56,15 +56,17 @@ class Tok_Type(Enum):
     CASE = auto()
     DEFAULT = auto()
 
+    # Variable Assignment
+    ASSIGN = auto()
+    LET = auto()
+
+    # MISC.
     FUNC = auto()
     CLASS = auto()
     DOT = auto()
     THIS = auto()
     PRINT = auto()
-
-    # Variable Assignment
-    ASSIGN = auto()
-    LET = auto()
+    RETURN = auto()
     EOF = auto()
 
 
@@ -133,4 +135,5 @@ keywords = {
     "default": Token(Tok_Type.DEFAULT),
     "class": Token(Tok_Type.CLASS),
     "this": Token(Tok_Type.THIS),
+    "return": Token(Tok_Type.RETURN),
 }

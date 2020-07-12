@@ -351,6 +351,7 @@ class Class_Def_Node(AST_Node):
     def accept(self, visitor):
         return visitor.visit_class_def(self)
 
+
 class This_Node(AST_Node):
     def __init__(self):
         pass
@@ -361,3 +362,13 @@ class This_Node(AST_Node):
     def accept(self, visitor):
         return visitor.visit_this(self)
 
+
+class Return_Node(AST_Node):
+    def __init__(self, return_expr):
+        self.expr = return_expr
+
+    def __str__(self):
+        return "RETURN_NODE {}".format(self.expr)
+
+    def accept(self, visitor):
+        return visitor.visit_return(self)
