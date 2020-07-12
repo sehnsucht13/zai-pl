@@ -13,6 +13,8 @@ class Tok_Type(Enum):
     COMMA = auto()
     # A semicolon ";"
     SEMIC = auto()
+    # A colon ":"
+    COLON = auto()
     # Single quote '
     QUOTE = auto()
     # Double quote "
@@ -130,6 +132,5 @@ keywords = {
     "case": Token(Tok_Type.CASE),
     "default": Token(Tok_Type.DEFAULT),
     "class": Token(Tok_Type.CLASS),
-    ".": Token(Tok_Type.DOT),
     "this": Token(Tok_Type.THIS),
 }

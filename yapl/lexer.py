@@ -20,7 +20,7 @@ class Lexer:
         self.curr_col_num = 0
 
         # Special characters which are restricted/permitted in ID tokens.
-        self.restricted_ident_chars = ".,;()[]*/+-<=>!{}#\"'\n\t "
+        self.restricted_ident_chars = ".,:;()[]*/+-<=>!{}#\"'\n\t "
         self.permitted_ident_chars = "?@$"
 
     def _advance(self):
@@ -118,6 +118,10 @@ class Lexer:
             elif self.curr_char == ",":
                 self.token_stream.append(
                     Token(Tok_Type.COMMA, self.curr_lin_num, self.curr_col_num)
+                )
+            elif self.curr_char == ":":
+                self.token_stream.append(
+                    Token(Tok_Type.COLON, self.curr_lin_num, self.curr_col_num)
                 )
             elif self.curr_char == ";":
                 self.token_stream.append(
