@@ -42,10 +42,10 @@ class YAPL_VM:
         lexer = Lexer()
         try:
             tok_stream = lexer.tokenize_string(input_str)
-            #print(tok_stream)
+            # print(tok_stream)
             parser = Parser(tok_stream)
             root = parser.parse()
-            #print(root)
+            # print(root)
             val = self.execute(root)
         except InternalRuntimeErr as e:
             print(e)
@@ -211,6 +211,14 @@ class YAPL_VM:
             stmnt.accept(self)
         self.env.exit_scope()
 
+    def visit_switch(self, node):
+        # Create a new scope to evaluate the current block in
+        test_cond = node.switch_cond.accept(self)
+        for case, body in node.switch_cases:
+            case_cond = case.accept(self)
+            if case_cond == test_cond:
+                body.accept(self)
+
     def visit_func_def(self, node):
         scope = self.env.peek()
         # Register the function in the current frame
@@ -292,8 +300,8 @@ class YAPL_VM:
             if val is not None:
                 return val
             else:
-                err_msg = 'Current class environment does not contain the variable {}'.format(
-                        node.right.lexeme
+                err_msg = "Current class environment does not contain the variable {}".format(
+                    node.right.lexeme
                 )
                 raise InternalRuntimeErr(err_msg)
         elif l.obj_type == ObjectType.CLASS_INSTANCE:
