@@ -359,10 +359,22 @@ class Parser:
         self.match(Tok_Type.LROUND)
         condition = self.or_expr()
         self.match(Tok_Type.RROUND)
+        self.match(Tok_Type.LCURLY)
 
         cases = list()
         while self.curr_tok.tok_type == Tok_Type.CASE:
-            pass
+            self.match(Tok_Type.CASE)
+            test_cond = self.or_expr()
+            self.match(Tok_Type.COLON)
+            block = self.block()
+            cases.append(tuple((test_cond, block)))
+
+        self.match(Tok_Type.DEFAULT)
+        self.match(Tok_Type.COLON)
+        default_block = self.block()
+        self.match(Tok_Type.RCURLY)
+
+        return Switch_Node(condition, cases, default_block)
 
     def simple_expr(self):
         """
@@ -423,6 +435,8 @@ class Parser:
             return self.block()
         elif self.curr_tok.tok_type == Tok_Type.PRINT:
             return self.print_statement()
+        elif self.curr_tok.tok_type == Tok_Type.SWITCH:
+            return self.switch_statement()
         else:
             return self.simple_expr()
 
