@@ -322,3 +322,13 @@ class YAPL_VM:
         while curr_scope.parent != None:
             curr_scope = curr_scope.parent
         return curr_scope
+
+    def visit_return(self, node):
+        return_val = node.expr.accept(self)
+        return Return_Object(return_val)
+
+    def visit_continue(self, node):
+        return Continue_Object()
+
+    def visit_break(self, node):
+        return Break_Object()

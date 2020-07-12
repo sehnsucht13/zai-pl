@@ -407,6 +407,24 @@ class Parser:
 
         return Class_Def_Node(class_name, class_methods)
 
+    def flow_statement(self):
+        node = None
+        if self.curr_tok.tok_type == Tok_Type.RETURN:
+            return_val = None
+            self.match(Tok_Type.RETURN)
+            # Check if the return statement contains an expression or not.
+            if self.curr_tok.tok_type != Tok_Type.SEMIC:
+                return_val = self.or_expr()
+
+            node = Return_Node(return_val)
+        elif self.curr_tok.tok_type == Tok_Type.BREAK:
+            node = Break_Node()
+        elif self.curr_tok.tok_type == Tok_Type.CONTINUE:
+            node = Continue_Node()
+
+        self.match(Tok_Type.SEMIC)
+        return node
+
     def statement(self):
         """
         Parse a statement.
@@ -437,6 +455,12 @@ class Parser:
             return self.print_statement()
         elif self.curr_tok.tok_type == Tok_Type.SWITCH:
             return self.switch_statement()
+        elif self.curr_tok.tok_type in [
+            Tok_Type.RETURN,
+            Tok_Type.CONTINUE,
+            Tok_Type.BREAK,
+        ]:
+            return self.flow_statement()
         else:
             return self.simple_expr()
 
