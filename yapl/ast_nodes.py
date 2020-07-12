@@ -25,9 +25,10 @@ class Program_Node(AST_Node):
         return visitor.visit_program(self)
 
     def __str__(self):
-        stmnt_string = str()
-        for stmnt in self.stmnts:
-            stmnt_string += "\n" + stmnt.__str__()
+        # print(self.stmnts)
+        for stmn in self.stmnts:
+            print(stmn)
+        return "Program_node"
 
 
 class Print_Node(AST_Node):
@@ -232,7 +233,7 @@ class ID_Node(AST_Node):
         self.val = node_val
 
     def __str__(self):
-        return "{}".format(self.val)
+        return "ID_NODE: {}".format(self.val)
 
     def accept(self, visitor):
         """
@@ -294,7 +295,6 @@ class Func_Node(AST_Node):
         self.body = body
 
     def __str__(self):
-        print("caled print")
         return "FUNC_NODE {}".format(self.name)
 
     def accept(self, visitor):
@@ -350,3 +350,14 @@ class Class_Def_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_class_def(self)
+
+class This_Node(AST_Node):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return "THIS_NODE"
+
+    def accept(self, visitor):
+        return visitor.visit_this(self)
+

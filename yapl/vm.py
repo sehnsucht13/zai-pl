@@ -42,10 +42,10 @@ class YAPL_VM:
         lexer = Lexer()
         try:
             tok_stream = lexer.tokenize_string(input_str)
-            # print(tok_stream)
+            #print(tok_stream)
             parser = Parser(tok_stream)
             root = parser.parse()
-            # print(root)
+            #print(root)
             val = self.execute(root)
         except InternalRuntimeErr as e:
             print(e)
@@ -261,7 +261,6 @@ class YAPL_VM:
                 call_object.class_name, call_object.class_methods
             )
         elif call_object.obj_type == ObjectType.CLASS_METHOD:
-            print("got a class method")
             # Create a new scope
             # self.env.enter_scope()
             self.env.enter_scope(call_object.class_env)
@@ -288,9 +287,17 @@ class YAPL_VM:
 
     def visit_dot_node(self, node):
         l = node.left.accept(self)
-        if l.obj_type == ObjectType.CLASS_INSTANCE:
+        if isinstance(l, Scope):
+            val = l.lookup_symbol(node.right.lexeme)
+            if val is not None:
+                return val
+            else:
+                err_msg = 'Current class environment does not contain the variable {}'.format(
+                        node.right.lexeme
+                )
+                raise InternalRuntimeErr(err_msg)
+        elif l.obj_type == ObjectType.CLASS_INSTANCE:
             val = l.get_field(node.right.lexeme)
-            print(val)
             if val is not None:
                 return val
             else:
@@ -301,3 +308,9 @@ class YAPL_VM:
         else:
             err_msg = "variable {} is not an instance of a class!".format(node.left.val)
             raise InternalRuntimeErr(err_msg)
+
+    def visit_this(self, node):
+        curr_scope = self.env.peek()
+        while curr_scope.parent != None:
+            curr_scope = curr_scope.parent
+        return curr_scope

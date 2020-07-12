@@ -71,6 +71,9 @@ class Parser:
         if self.curr_tok.tok_type == Tok_Type.ID:
             node = self.match(Tok_Type.ID)
             return ID_Node(node.lexeme)
+        elif self.curr_tok.tok_type == Tok_Type.THIS:
+            node = self.match(Tok_Type.THIS)
+            return This_Node()
         elif self.curr_tok.tok_type == Tok_Type.DQUOTE:
             self.match(Tok_Type.DQUOTE)
             str_token = self.match(Tok_Type.STRING)
@@ -103,10 +106,10 @@ class Parser:
         """
         # TODO: There will be a problem with the first if statement. Nonetype does not
         # does not have a "tok_type" so it will fail if there is no next token.
-        if self.curr_tok.tok_type == Tok_Type.ID and self.peek().tok_type in [
-            Tok_Type.LROUND,
-            Tok_Type.DOT,
-        ]:
+        if self.curr_tok.tok_type in [
+            Tok_Type.ID,
+            Tok_Type.THIS,
+        ] and self.peek().tok_type in [Tok_Type.LROUND, Tok_Type.DOT,]:
             # Create ID node
             left = self.atom()
             while self.curr_tok.tok_type in [Tok_Type.LROUND, Tok_Type.DOT]:
