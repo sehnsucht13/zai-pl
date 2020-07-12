@@ -55,6 +55,8 @@ class Tok_Type(Enum):
     SWITCH = auto()
     CASE = auto()
     DEFAULT = auto()
+    BREAK = auto()
+    CONTINUE = auto()
 
     # Variable Assignment
     ASSIGN = auto()
@@ -136,4 +138,6 @@ keywords = {
     "class": Token(Tok_Type.CLASS),
     "this": Token(Tok_Type.THIS),
     "return": Token(Tok_Type.RETURN),
+    "break": Token(Tok_Type.BREAK),
+    "continue": Token(Tok_Type.CONTINUE),
 }

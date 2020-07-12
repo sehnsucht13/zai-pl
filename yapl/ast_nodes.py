@@ -363,6 +363,28 @@ class This_Node(AST_Node):
         return visitor.visit_this(self)
 
 
+class Break_Node(AST_Node):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return "BREAK_NODE"
+
+    def accept(self, visitor):
+        return visitor.visit_break(self)
+
+
+class Continue_Node(AST_Node):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return "CONTINUE_NODE"
+
+    def accept(self, visitor):
+        return visitor.visit_continue(self)
+
+
 class Return_Node(AST_Node):
     def __init__(self, return_expr):
         self.expr = return_expr
