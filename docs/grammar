@@ -9,6 +9,7 @@ statement := if_stmnt    |
 			 block_stmnt |
 			 print_stmnt |
 			 switch_stmnt| ; not done
+             flow_stmnt  |
 			 simple_expr
 
 if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
@@ -17,7 +18,8 @@ class_def := "class" ID "{" func_def* "}"
 func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
 block_stmnt := "{" statement* "}"
 print_stmnt := "print" expr ";"
-switch_stmnt := "switch" "(" or_expr ")" ("case" ":" or_expr block_stmnt)* "default" ":" block_stmnt
+switch_stmnt := "switch" "(" or_expr ")" ("case"  or_expr ":" block_stmnt)* "default" ":" block_stmnt
+flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";" 
 
 
 ;; Expressions
