@@ -18,6 +18,10 @@ class ObjectType(Enum):
     CLASS_DEF = auto()
     CLASS_INSTANCE = auto()
     CLASS_METHOD = auto()
+    RETURN = auto()
+    NIL = auto()
+    BREAK = auto()
+    CONTINUE = auto()
 
 
 class Internal_Object:
@@ -67,9 +71,85 @@ class String_Object(Internal_Object):
         return self.obj_type == other.obj_type and self.value == other.value
 
 
+class Return_Object(Internal_Object):
+    """
+    Internal object used to represent return objects within the interpreter.
+    """
+
+    def __init__(self, return_val=None):
+        self.value = return_val
+        self.obj_type = ObjectType.RETURN
+
+    def __str__(self):
+        return "RETURN_OBJ {}".format(self.value)
+
+    def __repr__(self):
+        return "RETURN_OBJ {}".format(self.value)
+
+    def __eq__(self, other):
+        if other == None:
+            return False
+        else:
+            return self.obj_type == other.obj_type and self.value == other.value
+
+
+class Nil_Object(Internal_Object):
+    """
+    Internal object used to represent nil/null values.
+    """
+
+    def __init__(self):
+        self.obj_type = ObjectType.NIL
+
+    def __str__(self):
+        return "RETURN_OBJ"
+
+    def __repr__(self):
+        return "RETURN_OBJ"
+
+    def __eq__(self, other):
+        return self.obj_type == other.obj_type
+
+
+class Break_Object(Internal_Object):
+    """
+    Internal object used to break statements produced during code execution.
+    """
+
+    def __init__(self):
+        self.obj_type = ObjectType.BREAK
+
+    def __str__(self):
+        return "BREAK_OBJ"
+
+    def __repr__(self):
+        return "BREAK_OBJ"
+
+    def __eq__(self, other):
+        return self.obj_type == other.obj_type
+
+
+class Continue_Object(Internal_Object):
+    """
+    Internal object used to continue statements produced during code execution.
+    """
+
+    def __init__(self):
+        self.obj_type = ObjectType.CONTINUE
+
+    def __str__(self):
+        return "CONTINUE_OBJ"
+
+    def __repr__(self):
+        return "CONTINUE_OBJ"
+
+    def __eq__(self, other):
+        return self.obj_type == other.obj_type
+
+
 class Bool_Object(Internal_Object):
     """
-    Internal object used to represent boolean values within the interpreter.
+    Internal object used to represent a return value from a function.
     """
 
     def __init__(self, bool_val):
