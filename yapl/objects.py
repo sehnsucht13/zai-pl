@@ -303,6 +303,12 @@ def pprint_internal_object(internal_obj):
     elif internal_obj.obj_type == ObjectType.CLASS_INSTANCE:
         output_str = "<class instance object {}>".format(internal_obj.class_name)
         print(output_str)
+    elif internal_obj.obj_type == ObjectType.ARRAY:
+        output_str = "["
+        for elem in internal_obj.elements:
+            output_str += elem.__str__() + " "
+        output_str += "]"
+        print(output_str)
 
 
 def is_truthy(internal_object):
