@@ -459,3 +459,6 @@ class YAPL_VM:
         node_val = node.value.accept(self)
         node_val.value -= 1
         return node_val
+
+    def visit_nil(self, node):
+        return Nil_Object()
