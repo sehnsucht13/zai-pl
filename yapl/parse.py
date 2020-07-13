@@ -153,6 +153,22 @@ class Parser:
             op = self.match(Tok_Type.BANG, Tok_Type.MINUS)
             fact = self.factor()
             return Unary_Node(op.tok_type, fact)
+        # TODO: Handle case of it being an "ID" token instead of just num.
+        elif self.curr_tok.tok_type in [Tok_Type.NUM, Tok_Type.ID] and self.peek() in [
+            Tok_Type.INCR,
+            Tok_Type.DECR,
+        ]:
+            # Evaluate the initial number token
+            node = self.atom()
+
+            # "++" or "--" operators can be nested
+            while self.curr_tok.tok_type in [Tok_Type.INCR, Tok_Type.DECR]:
+                op = self.match(Tok_Type.INCR, Tok_Type.DECR)
+                if op.tok_type == Tok_Type.INCR:
+                    node = Incr_Node(node)
+                elif op.tok_type == Tok_Type.DECR:
+                    node = Decr_Node(node)
+            return node
         else:
             return self.atom()
 
