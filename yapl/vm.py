@@ -430,3 +430,6 @@ class YAPL_VM:
                 else:
                     return ret_val
             cond_value = node.cond.accept(self)
+
+    def visit_array(self, node):
+        return Array_Object(node.elements)
