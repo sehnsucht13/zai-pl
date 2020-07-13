@@ -454,3 +454,14 @@ class Decr_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_decr(self)
+
+
+class Nil_Node(AST_Node):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return "NIL_NODE"
+
+    def accept(self, visitor):
+        return visitor.visit_nil(self)
