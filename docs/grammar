@@ -11,6 +11,7 @@ statement := if_stmnt        |
 			 switch_stmnt    | ; not done
              flow_stmnt      |
              do_while_stmnt  |
+             import_stmnt  |
 			 simple_expr
 
 if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
@@ -22,6 +23,7 @@ print_stmnt := "print" expr ";"
 switch_stmnt := "switch" "(" or_expr ")" ("case"  or_expr ":" block_stmnt)* "default" ":" block_stmnt
 flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";" 
 do_while_stmnt := "do" block_stmnt "while" "(" or_expr ")"
+import_stmnt := "import" ID ("as" ID)?
 
 
 ;; Expressions
