@@ -168,7 +168,10 @@ class YAPL_VM:
     def visit_while(self, node):
         cond_value = node.condition.accept(self)
         while is_truthy(cond_value):
-            node.body.accept(self)
+            # Detect any usage of return
+            ret_val = node.body.accept(self)
+            if ret_val is not None and ret_val.obj_type == ObjectType.RETURN:
+                return ret_val.value
             cond_value = node.condition.accept(self)
 
     def visit_print(self, node):
