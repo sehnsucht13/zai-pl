@@ -39,7 +39,7 @@ incr_decr := ( ID | NUM ) ( "++" | -- )+
 arglist := (or_expr ("," or_expr)*)?
 unary_op := "!" "-"
 
-atom := | NUM | STR | ID | BOOL | ARRAY
+atom := | NUM | STR | ID | BOOL | ARRAY | "nil"
 ;; Primitives
 BOOL := "false" | "true"
 ID := LETTER (LETTER | NUM | "-" | "$" | "@")*
