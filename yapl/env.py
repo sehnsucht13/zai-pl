@@ -4,8 +4,8 @@ class Scope:
         self.parent = parent
 
     def add_symbol(self, symbol, value, local=False):
-        assert symbol != None
-        assert value != None
+        assert symbol is not None
+        assert value is not None
         if local is True:
             self.scope[symbol] = value
         else:
@@ -19,7 +19,7 @@ class Scope:
 
     def lookup_symbol(self, symbol):
         value = self.scope.get(symbol, None)
-        if value == None and self.parent != None:
+        if value == None and self.parent is not None:
             return self.parent.lookup_symbol(symbol)
         return value
 
