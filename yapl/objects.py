@@ -22,6 +22,7 @@ class ObjectType(Enum):
     NIL = auto()
     BREAK = auto()
     CONTINUE = auto()
+    ARRAY = auto()
 
 
 class Internal_Object:
@@ -54,6 +55,40 @@ class Num_Object(Internal_Object):
             return False
         else:
             return self.obj_type == other.obj_type and self.value == other.value
+
+
+class Array_Object(Internal_Object):
+    """
+    Array internal object used to store a variable amount of elements.
+    """
+
+    def __init__(self, elements):
+        self.elements = elements
+        self.size = len(elements)
+        self.obj_type = ObjectType.ARRAY
+
+    def __repr__(self):
+        return "ARRAY_OBJ elements: {}, size: {}".format(self.elements, self.size)
+
+    def __str__(self):
+        return "ARRAY_OBJ elements: {}, size: {}".format(self.elements, self.size)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        else:
+            if self.obj_type == other.obj_type:
+                # Check if size of both arrays are equal
+                if self.size == other.size:
+                    # Deep comparison of each element inside
+                    for idx in range(0, self.size):
+                        if self.elements[idx] != other.elements[idx]:
+                            return False
+                    return True
+                else:
+                    return False
+            else:
+                return False
 
 
 class String_Object(Internal_Object):
