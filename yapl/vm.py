@@ -319,6 +319,7 @@ class YAPL_VM:
                         raise InternalRuntimeErr(msg)
 
             self.env.exit_scope()
+            return Nil_Object()
 
         elif call_object.obj_type == ObjectType.CLASS_DEF:
             return Class_Instance_Object(
@@ -357,6 +358,7 @@ class YAPL_VM:
                         raise InternalRuntimeErr(msg)
 
             self.env.exit_scope()
+            return Nil_Object()
 
     def visit_dot_node(self, node):
         l = node.left.accept(self)
