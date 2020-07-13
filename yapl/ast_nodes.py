@@ -315,6 +315,20 @@ class Block_Node(AST_Node):
         return visitor.visit_block(self)
 
 
+class Switch_Case_Node(AST_Node):
+    def __init__(self, switch_stmnts):
+        self.stmnts = switch_stmnts
+
+    def __str__(self):
+        output = str()
+        for stmtn in self.stmnts:
+            output += "\n" + stmtn.__str__()
+        return "SWITCH_CASE_NODE \n{}".format(output)
+
+    def accept(self, visitor):
+        return visitor.visit_switch_case(self)
+
+
 class Call_Node(AST_Node):
     def __init__(self, object_name, call_args):
         self.object_name = object_name

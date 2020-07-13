@@ -354,10 +354,25 @@ class Parser:
         body = self.block()
         return While_Node(condition, body)
 
+    def switch_stmnt_case(self):
+        stmnt_block = list()
+        while self.curr_tok.tok_type not in [
+            Tok_Type.CASE,
+            Tok_Type.DEFAULT,
+            Tok_Type.RCURLY,
+        ]:
+            stmnt = self.statement()
+            stmnt_block.append(stmnt)
+
+        # We can reuse the block node to evaluate the statements inside of a switch case.
+        # The only difference between the two is how parsing is done. Block nodes require curly brackets
+        # while switch case statements do not necessarily require them.
+        return Switch_Case_Node(stmnt_block)
+
     def switch_statement(self):
         self.match(Tok_Type.SWITCH)
         self.match(Tok_Type.LROUND)
-        condition = self.or_expr()
+        switch_cond = self.or_expr()
         self.match(Tok_Type.RROUND)
         self.match(Tok_Type.LCURLY)
 
@@ -366,15 +381,15 @@ class Parser:
             self.match(Tok_Type.CASE)
             test_cond = self.or_expr()
             self.match(Tok_Type.COLON)
-            block = self.block()
+            block = self.switch_stmnt_case()
             cases.append(tuple((test_cond, block)))
 
         self.match(Tok_Type.DEFAULT)
         self.match(Tok_Type.COLON)
-        default_block = self.block()
+        default_block = self.switch_stmnt_case()
         self.match(Tok_Type.RCURLY)
 
-        return Switch_Node(condition, cases, default_block)
+        return Switch_Node(switch_cond, cases, default_block)
 
     def simple_expr(self):
         """
