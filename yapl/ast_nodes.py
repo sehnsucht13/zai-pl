@@ -406,3 +406,15 @@ class Do_While_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_do_while(self)
+
+
+class Array_Node(AST_Node):
+    def __init__(self, elements):
+        # elements is a list of "or_expr"
+        self.elements = elements
+
+    def __str__(self):
+        return "ARRAY_NODE elements: {}".format(self.elements)
+
+    def accept(self, visitor):
+        return visitor.visit_array(self)
