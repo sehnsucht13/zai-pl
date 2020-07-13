@@ -354,6 +354,15 @@ class Visitor:
                     node.left.val, l.class_name, node.right.lexeme
                 )
                 raise InternalRuntimeErr(err_msg)
+        elif l.obj_type == ObjectType.MODULE:
+            val = l.namespace.lookup_symbol(node.right.lexeme)
+            if val is not None:
+                return val
+            else:
+                err_msg = "Module {} does not contain the variable {}".format(
+                    l.name, node.right.lexeme
+                )
+                raise InternalRuntimeErr(err_msg)
         else:
             err_msg = "variable {} is not an instance of a class!".format(node.left.val)
             raise InternalRuntimeErr(err_msg)
