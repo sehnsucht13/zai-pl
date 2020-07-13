@@ -38,6 +38,8 @@ class Tok_Type(Enum):
     MINUS = auto()
     DIV = auto()
     MUL = auto()
+    INCR = auto()
+    DECR = auto()
 
     # Boolean op
     BANG = auto()
