@@ -52,9 +52,20 @@ class YAPL_VM:
 
     def visit_program(self, node):
         for stmnt in node.stmnts:
-            val = stmnt.accept(self)
-            if is_atom(val) and self.repl_mode_flag:
-                pprint_internal_object(val)
+            ret_val = stmnt.accept(self)
+
+            if ret_val is not None:
+                if ret_val.obj_type == ObjectType.RETURN:
+                    msg = '"return" statement not used outside of a function or class method!'
+                    raise InternalRuntimeErr(msg)
+                if ret_val.obj_type == ObjectType.BREAK:
+                    msg = '"break" statement not used within a loop or a switch block!'
+                    raise InternalRuntimeErr(msg)
+                elif ret_val.obj_type == ObjectType.CONTINUE:
+                    msg = '"continue" statement not used within a loop!'
+                    raise InternalRuntimeErr(msg)
+            if is_atom(ret_val) and self.repl_mode_flag:
+                pprint_internal_object(ret_val)
 
     def visit_num(self, node):
         return Num_Object(node.val)
@@ -297,8 +308,15 @@ class YAPL_VM:
 
             for stmnt in call_object.body:
                 ret_val = stmnt.accept(self)
-                if ret_val is not None and ret_val.obj_type == ObjectType.RETURN:
-                    return ret_val.value
+                if ret_val is not None:
+                    if ret_val.obj_type == ObjectType.RETURN:
+                        return ret_val.value
+                    elif ret_val.obj_type == ObjectType.BREAK:
+                        msg = '"break" statement not used within a loop or a switch block!'
+                        raise InternalRuntimeErr(msg)
+                    elif ret_val.obj_type == ObjectType.CONTINUE:
+                        msg = '"continue" statement not used within a loop!'
+                        raise InternalRuntimeErr(msg)
 
             self.env.exit_scope()
 
@@ -328,8 +346,15 @@ class YAPL_VM:
 
             for stmnt in call_object.body:
                 ret_val = stmnt.accept(self)
-                if ret_val is not None and ret_val.obj_type == ObjectType.RETURN:
-                    return ret_val.value
+                if ret_val is not None:
+                    if ret_val.obj_type == ObjectType.RETURN:
+                        return ret_val.value
+                    elif ret_val.obj_type == ObjectType.BREAK:
+                        msg = '"break" statement not used within a loop or a switch block!'
+                        raise InternalRuntimeErr(msg)
+                    elif ret_val.obj_type == ObjectType.CONTINUE:
+                        msg = '"continue" statement not used within a loop!'
+                        raise InternalRuntimeErr(msg)
 
             self.env.exit_scope()
 
