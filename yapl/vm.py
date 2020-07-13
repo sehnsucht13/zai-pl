@@ -205,27 +205,21 @@ class YAPL_VM:
         scope = self.env.peek()
         scope.add_symbol(symbol, value, True)
 
-    def visit_block(self, node):
+    def visit_scope_block(self, node):
         # Create a new scope to evaluate the current block in
         parent_env = self.env.peek()
         self.env.enter_scope(parent_env)
         for stmnt in node.stmnts:
             # Detect any usage of return
             ret_val = stmnt.accept(self)
-            if ret_val is not None and ret_val.obj_type == ObjectType.RETURN:
-                return ret_val.value
-        self.env.exit_scope()
-
-    def visit_switch_case(self, node):
-        # Create a new scope to evaluate the current block in
-        parent_env = self.env.peek()
-        self.env.enter_scope(parent_env)
-        for stmnt in node.stmnts:
-            # Detect any usage of return
-            ret_val = stmnt.accept(self)
-            # TODO: Handle "return" statements here
-            if ret_val is not None and ret_val.obj_type == ObjectType.BREAK:
+            if ret_val is not None and ret_val.obj_type in [
+                ObjectType.RETURN,
+                ObjectType.BREAK,
+                ObjectType.CONTINUE,
+            ]:
+                self.env.exit_scope()
                 return ret_val
+
         self.env.exit_scope()
 
     def visit_switch(self, node):
