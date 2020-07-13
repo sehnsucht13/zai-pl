@@ -62,7 +62,6 @@ class YAPL_VM:
     def visit_symbol(self, node):
         # Retrieve symbol from env
         curr_scope = self.env.peek()
-        # TODO: Catch case of symbol not existing. Need to return an error
         symbol_val = curr_scope.lookup_symbol(node.val)
 
         if symbol_val is None:
