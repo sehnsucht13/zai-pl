@@ -133,6 +133,17 @@ class Parser:
                     self.match(Tok_Type.RROUND)
                     left = Call_Node(left, func_args)
             return left
+        # Array access
+        elif (
+            self.curr_tok.tok_type == Tok_Type.ID
+            and self.peek().tok_type == Tok_Type.LSQUARE
+        ):
+            array_name = self.atom()
+            self.match(Tok_Type.LSQUARE)
+            raw_idx = self.match(Tok_Type.NUM)
+            self.match(Tok_Type.RSQUARE)
+            array_idx = Num_Node(raw_idx.lexeme)
+            return Array_Access_Node(array_name, array_idx)
         elif self.curr_tok.tok_type == Tok_Type.LROUND:
             self.match(Tok_Type.LROUND)
             expr = self.expression()
