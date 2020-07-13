@@ -27,7 +27,10 @@ def read_module_contents(module_name):
 
     module_path = get_module_path()
     for path in module_path:
-        print(listdir(path))
+        if module_name in listdir(path):
+            filepath = os.path.join(path, module_name)
+            return open(filepath, "r").read()
+    return None
 
 
 def pprint_internal_object(internal_obj):
