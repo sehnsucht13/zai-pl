@@ -1,15 +1,16 @@
 program := statement*
 
 ;; Statements
-statement := if_stmnt    |
-			 while_stmnt |
-			 for_stmnt   | ; not done
-			 class_def   | ; not done
-			 func_def    |
-			 block_stmnt |
-			 print_stmnt |
-			 switch_stmnt| ; not done
-             flow_stmnt  |
+statement := if_stmnt        |
+			 while_stmnt     |
+			 for_stmnt       | ; not done
+			 class_def       | ; not done
+			 func_def        |
+			 block_stmnt     |
+			 print_stmnt     |
+			 switch_stmnt    | ; not done
+             flow_stmnt      |
+             do_while_stmnt  |
 			 simple_expr
 
 if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
@@ -20,6 +21,7 @@ block_stmnt := "{" statement* "}"
 print_stmnt := "print" expr ";"
 switch_stmnt := "switch" "(" or_expr ")" ("case"  or_expr ":" block_stmnt)* "default" ":" block_stmnt
 flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";" 
+do_while_stmnt := "do" block_stmnt "while" "(" or_expr ")"
 
 
 ;; Expressions
