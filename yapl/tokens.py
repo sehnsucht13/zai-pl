@@ -72,6 +72,7 @@ class Tok_Type(Enum):
     THIS = auto()
     PRINT = auto()
     RETURN = auto()
+    NIL = auto()
     EOF = auto()
 
 
@@ -144,4 +145,5 @@ keywords = {
     "break": Token(Tok_Type.BREAK),
     "continue": Token(Tok_Type.CONTINUE),
     "do": Token(Tok_Type.DO),
+    "nil": Token(Tok_Type.NIL),
 }
