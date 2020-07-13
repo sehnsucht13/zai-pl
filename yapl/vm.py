@@ -299,8 +299,10 @@ class YAPL_VM:
                 arg_values.append(val)
 
             if len(arg_values) != call_object.arity:
-                # TODO: Add error handling for mismatched arity
-                print("Not enough values!")
+                msg = 'function "{}"" accepts {} arguments but only {} were given!'.format(
+                    call_object.name, len(arg_values), call_object.arity
+                )
+                raise InternalRuntimeErr(msg)
 
             # Add arguments to the current environment
             for arg_pair in zip(call_object.args, arg_values):
@@ -338,8 +340,10 @@ class YAPL_VM:
                 arg_values.append(val)
 
             if len(arg_values) != call_object.arity:
-                # TODO: Add error handling for mismatched arity
-                print("Not enough values!")
+                msg = 'function "{}" accepts {} arguments but only {} were given!'.format(
+                    call_object.name, len(arg_values), call_object.arity
+                )
+                raise InternalRuntimeErr(msg)
 
             # Add arguments to the current environment
             for arg_pair in zip(call_object.args, arg_values):
