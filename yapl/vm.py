@@ -286,7 +286,9 @@ class YAPL_VM:
                 self.env.peek().add_symbol(arg_pair[0].lexeme, arg_pair[1], True)
 
             for stmnt in call_object.body:
-                stmnt.accept(self)
+                ret_val = stmnt.accept(self)
+                if ret_val is not None and ret_val.obj_type == ObjectType.RETURN:
+                    return ret_val.value
 
             self.env.exit_scope()
 
@@ -315,7 +317,9 @@ class YAPL_VM:
                 self.env.peek().add_symbol(arg_pair[0].lexeme, arg_pair[1], True)
 
             for stmnt in call_object.body:
-                stmnt.accept(self)
+                ret_val = stmnt.accept(self)
+                if ret_val is not None and ret_val.obj_type == ObjectType.RETURN:
+                    return ret_val.value
 
             self.env.exit_scope()
 
