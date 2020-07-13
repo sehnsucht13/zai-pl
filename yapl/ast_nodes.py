@@ -394,3 +394,15 @@ class Return_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_return(self)
+
+
+class Do_While_Node(AST_Node):
+    def __init__(self, cond, body):
+        self.cond = cond
+        self.body = body
+
+    def __str__(self):
+        return "DO_WHILE_NODE {}, {}".format(self.cond, self.body)
+
+    def accept(self, visitor):
+        return visitor.visit_do_while(self)

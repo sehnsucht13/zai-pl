@@ -54,6 +54,7 @@ class Tok_Type(Enum):
     FOR = auto()
     SWITCH = auto()
     CASE = auto()
+    DO = auto()
     DEFAULT = auto()
     BREAK = auto()
     CONTINUE = auto()
@@ -140,4 +141,5 @@ keywords = {
     "return": Token(Tok_Type.RETURN),
     "break": Token(Tok_Type.BREAK),
     "continue": Token(Tok_Type.CONTINUE),
+    "do": Token(Tok_Type.DO),
 }
