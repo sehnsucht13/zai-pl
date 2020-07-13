@@ -440,7 +440,14 @@ class Visitor:
         return Nil_Object()
 
     def visit_import(self, node):
-        file_text = open(node.filename + ".yapl").read()
+        module_name = node.filename + ".yapl"
+        file_text = read_module_contents(module_name)
+        if file_text is None:
+            err_msg = "Module {} could not be found within the interpreter path.".format(
+                node.filename
+            )
+            raise InternalRuntimeErr(err_msg)
+
         lexer = Lexer()
         tok_stream = lexer.tokenize_string(file_text)
         parser = Parser(tok_stream)
@@ -451,7 +458,7 @@ class Visitor:
         import_visitor.visit(root)
         import_scope = import_visitor.env.peek()
 
-        curr_scope = self.env.peek()
-        curr_scope.merge_scopes(import_scope)
+        self.env.peek().add_symbol(
+            node.filename, Module_Object(node.filename, import_scope), True
+        )
         print(self.env.peek().scope)
-        # self.env. Module_Object(node.filename, import_env.scopes)
