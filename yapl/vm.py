@@ -449,3 +449,13 @@ class YAPL_VM:
                 array_obj.size, array_idx.value
             )
             raise InternalRuntimeErr(msg)
+
+    def visit_incr(self, node):
+        node_val = node.value.accept(self)
+        node_val.value += 1
+        return node_val
+
+    def visit_decr(self, node):
+        node_val = node.value.accept(self)
+        node_val.value -= 1
+        return node_val
