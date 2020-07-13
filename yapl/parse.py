@@ -444,6 +444,16 @@ class Parser:
         self.match(Tok_Type.SEMIC)
         return node
 
+    def do_while_statement(self):
+        self.match(Tok_Type.DO)
+        body = self.block()
+        self.match(Tok_Type.WHILE)
+        self.match(Tok_Type.LROUND)
+        test_cond = self.or_expr()
+        self.match(Tok_Type.RROUND)
+        self.match(Tok_Type.SEMIC)
+        return Do_While_Node(test_cond, body)
+
     def statement(self):
         """
         Parse a statement.
@@ -474,6 +484,8 @@ class Parser:
             return self.print_statement()
         elif self.curr_tok.tok_type == Tok_Type.SWITCH:
             return self.switch_statement()
+        elif self.curr_tok.tok_type == Tok_Type.DO:
+            return self.do_while_statement()
         elif self.curr_tok.tok_type in [
             Tok_Type.RETURN,
             Tok_Type.CONTINUE,
