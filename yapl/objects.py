@@ -49,7 +49,8 @@ class Num_Object(Internal_Object):
         return "NUM_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        if other == None:
+        # print("comparison from object", self, other)
+        if other is None:
             return False
         else:
             return self.obj_type == other.obj_type and self.value == other.value
@@ -71,7 +72,7 @@ class String_Object(Internal_Object):
         return "STR_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        if other == None:
+        if other is None:
             return False
         else:
             return self.obj_type == other.obj_type and self.value == other.value
@@ -93,7 +94,7 @@ class Return_Object(Internal_Object):
         return "RETURN_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        if other == None:
+        if other is None:
             return False
         else:
             return self.obj_type == other.obj_type and self.value == other.value
@@ -169,7 +170,7 @@ class Bool_Object(Internal_Object):
         return "BOOL_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        if other == None:
+        if other is None:
             return False
         else:
             return self.obj_type == other.obj_type and self.value == other.value
