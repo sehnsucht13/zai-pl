@@ -4,6 +4,7 @@ from yapl.objects import *
 from yapl.env import Environment, Scope
 from yapl.lexer import Lexer
 from yapl.parse import Parser
+from yapl.utils import is_atom, is_truthy, pprint_internal_object, read_module_contents
 
 import os
 
