@@ -303,6 +303,8 @@ def pprint_internal_object(internal_obj):
     elif internal_obj.obj_type == ObjectType.CLASS_INSTANCE:
         output_str = "<class instance object {}>".format(internal_obj.class_name)
         print(output_str)
+    elif internal_obj.obj_type == ObjectType.NIL:
+        print("nil")
     elif internal_obj.obj_type == ObjectType.ARRAY:
         output_str = "["
         for elem in internal_obj.elements:

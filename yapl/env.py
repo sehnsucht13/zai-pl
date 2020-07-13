@@ -19,7 +19,7 @@ class Scope:
 
     def lookup_symbol(self, symbol):
         value = self.scope.get(symbol, None)
-        if value == None and self.parent is not None:
+        if value is None and self.parent is not None:
             return self.parent.lookup_symbol(symbol)
         return value
 
