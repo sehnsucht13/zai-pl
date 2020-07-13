@@ -263,6 +263,7 @@ class Parser:
         self.match(Tok_Type.LROUND)
         if_cond = self.or_expr()
         self.match(Tok_Type.RROUND)
+
         then_block = self.block()
         conditions.append(tuple((if_cond, then_block)))
 
@@ -344,13 +345,14 @@ class Parser:
             stmnt = self.statement()
             block_stmnts.append(stmnt)
         self.match(Tok_Type.RCURLY)
-        return Block_Node(block_stmnts)
+        return Scope_Block_Node(block_stmnts)
 
     def while_statement(self):
         self.match(Tok_Type.WHILE)
         self.match(Tok_Type.LROUND)
         condition = self.or_expr()
         self.match(Tok_Type.RROUND)
+
         body = self.block()
         return While_Node(condition, body)
 
@@ -367,7 +369,7 @@ class Parser:
         # We can reuse the block node to evaluate the statements inside of a switch case.
         # The only difference between the two is how parsing is done. Block nodes require curly brackets
         # while switch case statements do not necessarily require them.
-        return Switch_Case_Node(stmnt_block)
+        return Scope_Block_Node(stmnt_block)
 
     def switch_statement(self):
         self.match(Tok_Type.SWITCH)
