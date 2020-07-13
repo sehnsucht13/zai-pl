@@ -37,10 +37,11 @@ factor := ID ( "(" arglist ")" | "." ID)* | "(" expr ")" | unary_op factor | ato
 arglist := (or_expr ("," or_expr)*)?
 unary_op := "!" "-"
 
-atom := | NUM | STR | ID | BOOL
+atom := | NUM | STR | ID | BOOL | ARRAY
 ;; Primitives
 BOOL := "false" | "true"
 ID := LETTER (LETTER | NUM | "-" | "$" | "@")*
 NUM := DIGIT (DIGIT)*
 DIGIT := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
 STR := "\"" (LETTER | NUM )* "\""
+ARRAY := "[" ( or_expr ( "," or_expr )* )? "]"
