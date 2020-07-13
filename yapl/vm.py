@@ -253,7 +253,7 @@ class YAPL_VM:
                     return ret_val
 
         if node.default_case is not None:
-            node.default_case.accept(self)
+            return node.default_case.accept(self)
 
     def visit_func_def(self, node):
         scope = self.env.peek()
