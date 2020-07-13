@@ -432,4 +432,9 @@ class YAPL_VM:
             cond_value = node.cond.accept(self)
 
     def visit_array(self, node):
-        return Array_Object(node.elements)
+        eval_elem = list()
+        for elem in node.elements:
+            elem_val = elem.accept(self)
+            eval_elem.append(elem_val)
+
+        return Array_Object(eval_elem)
