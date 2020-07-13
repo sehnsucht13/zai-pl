@@ -94,6 +94,7 @@ class Parser:
             self.match(Tok_Type.RSQUARE)
             return Array_Node(array_elem)
         elif self.curr_tok.tok_type == Tok_Type.NIL:
+            self.match(Tok_Type.NIL)
             return Nil_Node()
         else:
             node = self.match(Tok_Type.TRUE, Tok_Type.FALSE)

@@ -144,10 +144,10 @@ class Nil_Object(Internal_Object):
         self.obj_type = ObjectType.NIL
 
     def __str__(self):
-        return "RETURN_OBJ"
+        return "NIL_OBJ"
 
     def __repr__(self):
-        return "RETURN_OBJ"
+        return "NIL_OBJ"
 
     def __eq__(self, other):
         return self.obj_type == other.obj_type
