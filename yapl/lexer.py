@@ -144,13 +144,24 @@ class Lexer:
                     Token(Tok_Type.RSQUARE, self.curr_lin_num, self.curr_col_num)
                 )
             elif self.curr_char == "-":
-                self.token_stream.append(
-                    Token(Tok_Type.MINUS, self.curr_lin_num, self.curr_col_num)
-                )
+                if self._peek() == "-":
+                    self.token_stream.append(
+                        Token(Tok_Type.DECR, self.curr_lin_num, self.curr_col_num)
+                    )
+
+                else:
+                    self.token_stream.append(
+                        Token(Tok_Type.MINUS, self.curr_lin_num, self.curr_col_num)
+                    )
             elif self.curr_char == "+":
-                self.token_stream.append(
-                    Token(Tok_Type.PLUS, self.curr_lin_num, self.curr_col_num)
-                )
+                if self._peek() == "+":
+                    self.token_stream.append(
+                        Token(Tok_Type.INCR, self.curr_lin_num, self.curr_col_num)
+                    )
+                else:
+                    self.token_stream.append(
+                        Token(Tok_Type.PLUS, self.curr_lin_num, self.curr_col_num)
+                    )
             elif self.curr_char == "/":
                 self.token_stream.append(
                     Token(Tok_Type.DIV, self.curr_lin_num, self.curr_col_num)
