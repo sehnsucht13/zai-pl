@@ -397,3 +397,36 @@ class YAPL_VM:
 
     def visit_break(self, node):
         return Break_Object()
+
+    def visit_do_while(self, node):
+        # First execution of the body which always happens
+        ret_val = node.body.accept(self)
+        if ret_val is not None:
+            # Exit loop early using return
+            if ret_val.obj_type == ObjectType.BREAK:
+                return
+            # There is no need to do anything here. We need to reevaluate the test
+            # condition for the loop.
+            elif ret_val.obj_type == ObjectType.CONTINUE:
+                pass
+            # "return" value is floated up
+            else:
+                return ret_val
+
+        # Subsequent executions which depend on the ocndition
+        cond_value = node.cond.accept(self)
+        while is_truthy(cond_value):
+            # Detect any usage of return
+            ret_val = node.body.accept(self)
+            if ret_val is not None:
+                # Exit loop early using return
+                if ret_val.obj_type == ObjectType.BREAK:
+                    return
+                # There is no need to do anything here. We need to reevaluate the test
+                # condition for the loop.
+                elif ret_val.obj_type == ObjectType.CONTINUE:
+                    continue
+                # "return" value is floated up
+                else:
+                    return ret_val
+            cond_value = node.cond.accept(self)
