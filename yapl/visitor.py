@@ -1,6 +1,11 @@
 from yapl.tokens import Tok_Type
 from yapl.internal_error import InternalRuntimeErr
 from yapl.objects import *
+from yapl.env import Environment, Scope
+from yapl.lexer import Lexer
+from yapl.parse import Parser
+
+import os
 
 
 class Visitor:
@@ -432,3 +437,20 @@ class Visitor:
 
     def visit_nil(self, node):
         return Nil_Object()
+
+    def visit_import(self, node):
+        file_text = open(node.filename + ".yapl").read()
+        lexer = Lexer()
+        tok_stream = lexer.tokenize_string(file_text)
+        parser = Parser(tok_stream)
+        root = parser.parse()
+
+        import_env = Environment()
+        import_visitor = Visitor(import_env)
+        import_visitor.visit(root)
+        import_scope = import_visitor.env.peek()
+
+        curr_scope = self.env.peek()
+        curr_scope.merge_scopes(import_scope)
+        print(self.env.peek().scope)
+        # self.env. Module_Object(node.filename, import_env.scopes)
