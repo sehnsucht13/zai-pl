@@ -148,7 +148,7 @@ class Lexer:
                     self.token_stream.append(
                         Token(Tok_Type.DECR, self.curr_lin_num, self.curr_col_num)
                     )
-
+                    self._advance()
                 else:
                     self.token_stream.append(
                         Token(Tok_Type.MINUS, self.curr_lin_num, self.curr_col_num)
@@ -158,6 +158,7 @@ class Lexer:
                     self.token_stream.append(
                         Token(Tok_Type.INCR, self.curr_lin_num, self.curr_col_num)
                     )
+                    self._advance()
                 else:
                     self.token_stream.append(
                         Token(Tok_Type.PLUS, self.curr_lin_num, self.curr_col_num)
