@@ -473,7 +473,9 @@ class Import_Node(AST_Node):
         self.import_name = import_name
 
     def __str__(self):
-        return "IMPORT_NODE {} with import name: {}".format(self.name, self.import_name)
+        return "IMPORT_NODE {} with import name: {}".format(
+            self.filename, self.import_name
+        )
 
     def accept(self, visitor):
         return visitor.visit_import(self)

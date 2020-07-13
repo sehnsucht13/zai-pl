@@ -248,6 +248,7 @@ class Module_Object(Internal_Object):
         "Internal object representing an imported module."
         self.name = filename
         self.namespace = module_contents
+        self.obj_type = ObjectType.MODULE
 
     def __str__(self):
         return "MODULE_OBJ: Name: {}, contents: {}".format(
