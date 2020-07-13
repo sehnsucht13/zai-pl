@@ -433,8 +433,10 @@ class Parser:
 
             node = Return_Node(return_val)
         elif self.curr_tok.tok_type == Tok_Type.BREAK:
+            self.match(Tok_Type.BREAK)
             node = Break_Node()
         elif self.curr_tok.tok_type == Tok_Type.CONTINUE:
+            self.match(Tok_Type.CONTINUE)
             node = Continue_Node()
 
         self.match(Tok_Type.SEMIC)
