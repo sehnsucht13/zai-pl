@@ -236,10 +236,14 @@ class YAPL_VM:
         for _, case_body in node.switch_cases[start_case_idx:]:
             ret_val = case_body.accept(self)
             # TODO: Handle "return" statements here
-            if ret_val is not None and ret_val.obj_type == ObjectType.BREAK:
-                return
+            if ret_val is not None:
+                if ret_val.obj_type == ObjectType.BREAK:
+                    return
+                else:
+                    return ret_val
 
-        node.default_case.accept(self)
+        if node.default_case is not None:
+            node.default_case.accept(self)
 
     def visit_func_def(self, node):
         scope = self.env.peek()
