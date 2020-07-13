@@ -23,6 +23,10 @@ class Scope:
             return self.parent.lookup_symbol(symbol)
         return value
 
+    def merge_scopes(self, new_scope):
+        for k, v in new_scope.scope.items():
+            self.scope[k] = v
+
 
 class Environment:
     def __init__(self):
