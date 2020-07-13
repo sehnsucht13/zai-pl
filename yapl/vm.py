@@ -208,16 +208,42 @@ class YAPL_VM:
         parent_env = self.env.peek()
         self.env.enter_scope(parent_env)
         for stmnt in node.stmnts:
-            stmnt.accept(self)
+            # Detect any usage of return
+            ret_val = stmnt.accept(self)
+            if ret_val is not None and ret_val.obj_type == ObjectType.RETURN:
+                return ret_val.value
+        self.env.exit_scope()
+
+    def visit_switch_case(self, node):
+        # Create a new scope to evaluate the current block in
+        parent_env = self.env.peek()
+        self.env.enter_scope(parent_env)
+        for stmnt in node.stmnts:
+            # Detect any usage of return
+            ret_val = stmnt.accept(self)
+            # TODO: Handle "return" statements here
+            if ret_val is not None and ret_val.obj_type == ObjectType.BREAK:
+                return ret_val
         self.env.exit_scope()
 
     def visit_switch(self, node):
         # Create a new scope to evaluate the current block in
         test_cond = node.switch_cond.accept(self)
-        for case, body in node.switch_cases:
-            case_cond = case.accept(self)
+        # Index of the first switch case which has a true test condition
+        start_case_idx = None
+        for idx, switch_case in enumerate(node.switch_cases):
+            case_cond = switch_case[0].accept(self)
             if case_cond == test_cond:
-                body.accept(self)
+                start_case_idx = idx
+                break
+
+        for _, case_body in node.switch_cases[start_case_idx:]:
+            ret_val = case_body.accept(self)
+            # TODO: Handle "return" statements here
+            if ret_val is not None and ret_val.obj_type == ObjectType.BREAK:
+                return
+
+        node.default_case.accept(self)
 
     def visit_func_def(self, node):
         scope = self.env.peek()
