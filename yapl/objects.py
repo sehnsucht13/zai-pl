@@ -23,6 +23,7 @@ class ObjectType(Enum):
     BREAK = auto()
     CONTINUE = auto()
     ARRAY = auto()
+    MODULE = auto()
 
 
 class Internal_Object:
@@ -240,6 +241,18 @@ class Class_Def_Object(Internal_Object):
 
     def __str__(self):
         return "CLASS_OBJ: Name: {}".format(self.class_name)
+
+
+class Module_Object(Internal_Object):
+    def __init__(self, filename, module_contents):
+        "Internal object representing an imported module."
+        self.name = filename
+        self.namespace = module_contents
+
+    def __str__(self):
+        return "MODULE_OBJ: Name: {}, contents: {}".format(
+            self.class_name, self.namespace.scope
+        )
 
 
 class Class_Method_Object(Internal_Object):
