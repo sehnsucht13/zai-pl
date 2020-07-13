@@ -465,3 +465,15 @@ class Nil_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_nil(self)
+
+
+class Import_Node(AST_Node):
+    def __init__(self, filename, import_name=None):
+        self.filename = filename
+        self.import_name = import_name
+
+    def __str__(self):
+        return "IMPORT_NODE {} with import name: {}".format(self.name, self.import_name)
+
+    def accept(self, visitor):
+        return visitor.visit_import(self)

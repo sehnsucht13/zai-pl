@@ -73,7 +73,25 @@ class Tok_Type(Enum):
     PRINT = auto()
     RETURN = auto()
     NIL = auto()
+    IMPORT = auto()
     EOF = auto()
+
+
+def tok_type_to_str(self, tok_type):
+    lookup_dict = {
+        Tok_Type.PLUS: "+",
+        Tok_Type.MINUS: "-",
+        Tok_Type.DIV: "/",
+        Tok_Type.MUL: "*",
+        Tok_Type.DECR: "--",
+        Tok_Type.INCR: "++",
+        Tok_Type.ID: "identifier",
+        Tok_Type.STRING: "string",
+        Tok_Type.NUM: "number",
+        Tok_Type.AND: "and",
+        Tok_Type.OR: "or",
+        Tok_Type.BANG: "!",
+    }
 
 
 class Token:
@@ -146,4 +164,5 @@ keywords = {
     "continue": Token(Tok_Type.CONTINUE),
     "do": Token(Tok_Type.DO),
     "nil": Token(Tok_Type.NIL),
+    "import": Token(Tok_Type.NIL),
 }
