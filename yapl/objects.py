@@ -35,6 +35,69 @@ class Internal_Object:
         raise NotImplementedError()
 
 
+# All atomic objects
+class Nil_Object(Internal_Object):
+    """
+    Internal object used to represent nil/null values.
+    """
+
+    def __init__(self):
+        self.obj_type = ObjectType.NIL
+
+    def __str__(self):
+        return "NIL_OBJ"
+
+    def __repr__(self):
+        return "NIL_OBJ"
+
+    def __eq__(self, other):
+        return self.obj_type == other.obj_type
+
+
+class Bool_Object(Internal_Object):
+    """
+    Internal object used to represent a return value from a function.
+    """
+
+    def __init__(self, bool_val):
+        self.value = bool_val
+        self.obj_type = ObjectType.BOOL
+
+    def __str__(self):
+        return "BOOL_OBJ {}".format(self.value)
+
+    def __repr__(self):
+        return "BOOL_OBJ {}".format(self.value)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        else:
+            return self.obj_type == other.obj_type and self.value == other.value
+
+
+class String_Object(Internal_Object):
+    """
+    Internal object used to represent strings within the interpreter.
+    """
+
+    def __init__(self, string_val):
+        self.value = string_val
+        self.obj_type = ObjectType.STR
+
+    def __repr__(self):
+        return "STR_OBJ {}".format(self.value)
+
+    def __str__(self):
+        return "STR_OBJ {}".format(self.value)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        else:
+            return self.obj_type == other.obj_type and self.value == other.value
+
+
 class Num_Object(Internal_Object):
     """
     Numeric internal object used to store integers.
@@ -153,26 +216,22 @@ class Array_Object(Internal_Object):
                 return False
 
 
-class String_Object(Internal_Object):
+class Nil_Object(Internal_Object):
     """
-    Internal object used to represent strings within the interpreter.
+    Internal object used to represent nil/null values.
     """
 
-    def __init__(self, string_val):
-        self.value = string_val
-        self.obj_type = ObjectType.STR
-
-    def __repr__(self):
-        return "STR_OBJ {}".format(self.value)
+    def __init__(self):
+        self.obj_type = ObjectType.NIL
 
     def __str__(self):
-        return "STR_OBJ {}".format(self.value)
+        return "NIL_OBJ"
+
+    def __repr__(self):
+        return "NIL_OBJ"
 
     def __eq__(self, other):
-        if other is None:
-            return False
-        else:
-            return self.obj_type == other.obj_type and self.value == other.value
+        return self.obj_type == other.obj_type
 
 
 class Return_Object(Internal_Object):
@@ -195,24 +254,6 @@ class Return_Object(Internal_Object):
             return False
         else:
             return self.obj_type == other.obj_type and self.value == other.value
-
-
-class Nil_Object(Internal_Object):
-    """
-    Internal object used to represent nil/null values.
-    """
-
-    def __init__(self):
-        self.obj_type = ObjectType.NIL
-
-    def __str__(self):
-        return "NIL_OBJ"
-
-    def __repr__(self):
-        return "NIL_OBJ"
-
-    def __eq__(self, other):
-        return self.obj_type == other.obj_type
 
 
 class Break_Object(Internal_Object):
@@ -249,28 +290,6 @@ class Continue_Object(Internal_Object):
 
     def __eq__(self, other):
         return self.obj_type == other.obj_type
-
-
-class Bool_Object(Internal_Object):
-    """
-    Internal object used to represent a return value from a function.
-    """
-
-    def __init__(self, bool_val):
-        self.value = bool_val
-        self.obj_type = ObjectType.BOOL
-
-    def __str__(self):
-        return "BOOL_OBJ {}".format(self.value)
-
-    def __repr__(self):
-        return "BOOL_OBJ {}".format(self.value)
-
-    def __eq__(self, other):
-        if other is None:
-            return False
-        else:
-            return self.obj_type == other.obj_type and self.value == other.value
 
 
 class Func_Object(Internal_Object):
