@@ -438,3 +438,14 @@ class YAPL_VM:
             eval_elem.append(elem_val)
 
         return Array_Object(eval_elem)
+
+    def visit_array_access(self, node):
+        array_obj = node.array_name.accept(self)
+        array_idx = node.array_pos.accept(self)
+        if array_idx.value < array_obj.size:
+            return array_obj.elements[array_idx.value]
+        else:
+            msg = "Array has a size of {} but you want to access position {}".format(
+                array_obj.size, array_idx.value
+            )
+            raise InternalRuntimeErr(msg)
