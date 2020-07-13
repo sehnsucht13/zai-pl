@@ -83,6 +83,16 @@ class Parser:
         elif self.curr_tok.tok_type == Tok_Type.NUM:
             node = self.match(Tok_Type.NUM)
             return Num_Node(node.lexeme)
+        elif self.curr_tok.tok_type == Tok_Type.LSQUARE:
+            self.match(Tok_Type.LSQUARE)
+            array_elem = list()
+            while self.curr_tok.tok_type != Tok_Type.RSQUARE:
+                arg_value = self.or_expr()
+                array_elem.append(arg_value)
+                if self.curr_tok.tok_type != Tok_Type.RSQUARE:
+                    self.match(Tok_Type.COMMA)
+            self.match(Tok_Type.RSQUARE)
+            return Array_Node(array_elem)
         else:
             node = self.match(Tok_Type.TRUE, Tok_Type.FALSE)
             return Bool_Node(node.tok_type)
