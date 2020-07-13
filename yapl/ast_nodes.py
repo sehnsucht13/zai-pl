@@ -301,7 +301,7 @@ class Func_Node(AST_Node):
         return visitor.visit_func_def(self)
 
 
-class Block_Node(AST_Node):
+class Scope_Block_Node(AST_Node):
     def __init__(self, block_stmnts):
         self.stmnts = block_stmnts
 
@@ -312,21 +312,7 @@ class Block_Node(AST_Node):
         return "BLOCK_NODE \n{}".format(output)
 
     def accept(self, visitor):
-        return visitor.visit_block(self)
-
-
-class Switch_Case_Node(AST_Node):
-    def __init__(self, switch_stmnts):
-        self.stmnts = switch_stmnts
-
-    def __str__(self):
-        output = str()
-        for stmtn in self.stmnts:
-            output += "\n" + stmtn.__str__()
-        return "SWITCH_CASE_NODE \n{}".format(output)
-
-    def accept(self, visitor):
-        return visitor.visit_switch_case(self)
+        return visitor.visit_scope_block(self)
 
 
 class Call_Node(AST_Node):
