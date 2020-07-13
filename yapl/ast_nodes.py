@@ -418,3 +418,17 @@ class Array_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_array(self)
+
+
+class Array_Access_Node(AST_Node):
+    def __init__(self, array_id, array_position):
+        self.array_name = array_id
+        self.array_pos = array_position
+
+    def __str__(self):
+        return "ARRAY_ACCESS_NODE name: {}, position: {}".format(
+            self.array_name, self.array_pos
+        )
+
+    def accept(self, visitor):
+        return visitor.visit_array_access(self)
