@@ -57,6 +57,67 @@ class Num_Object(Internal_Object):
         else:
             return self.obj_type == other.obj_type and self.value == other.value
 
+    def __add__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value + other.value)
+
+    def __sub__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value - other.value)
+
+    def __mul__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value * other.value)
+        elif other.obj_type in ObjectType.STR:
+            return String_Object(other.value * self.value)
+
+    def __truediv__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value / other.value)
+
+    def __lt__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value < other.value)
+
+    def __le__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value <= other.value)
+
+    def __gt__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value > other.value)
+
+    def __ge__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value >= other.value)
+
+    def __eq__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Bool_Object(self.value == other.value)
+
+    def __ne__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Bool_Object(self.value != other.value)
+
+    def __neg__(self):
+        return Num_Object(-self.value)
+
+    def __invert__(self):
+        return Bool_Object(not self.value)
+
+    # These do not override the "and"/"or" keywords but instead override "&" and "|"
+    def __and__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.STR]:
+            return Bool_Object(bool(self.value) and bool(other.value))
+        elif other.obj_type == ObjectType.BOOL:
+            return Bool_Object(bool(self.value) and other.value)
+
+    def __or__(self, other):
+        if other.obj_type in [ObjectType.NUM, ObjectType.STR]:
+            return Bool_Object(bool(self.value) and bool(other.value))
+        elif other.obj_type == ObjectType.BOOL:
+            return Bool_Object(bool(self.value) and other.value)
+
 
 class Array_Object(Internal_Object):
     """
