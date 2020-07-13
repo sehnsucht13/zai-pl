@@ -494,6 +494,16 @@ class Parser:
         self.match(Tok_Type.SEMIC)
         return Do_While_Node(test_cond, body)
 
+    def import_statement(self):
+        self.match(Tok_Type.IMPORT)
+        filename = self.match(Tok_Type.ID).lexeme
+        import_name = None
+        if self.curr_tok.tok_type == Tok_Type.AS:
+            self.match(Tok_Type.AS)
+            import_name = self.match(Tok_Type.ID).lexeme
+
+        return Import_Node(filename, import_name)
+
     def statement(self):
         """
         Parse a statement.
@@ -526,6 +536,8 @@ class Parser:
             return self.switch_statement()
         elif self.curr_tok.tok_type == Tok_Type.DO:
             return self.do_while_statement()
+        elif self.curr_tok.tok_type == Tok_Type.IMPORT:
+            return self.import_statement()
         elif self.curr_tok.tok_type in [
             Tok_Type.RETURN,
             Tok_Type.CONTINUE,

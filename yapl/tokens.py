@@ -74,6 +74,7 @@ class Tok_Type(Enum):
     RETURN = auto()
     NIL = auto()
     IMPORT = auto()
+    AS = auto()
     EOF = auto()
 
 
@@ -164,5 +165,6 @@ keywords = {
     "continue": Token(Tok_Type.CONTINUE),
     "do": Token(Tok_Type.DO),
     "nil": Token(Tok_Type.NIL),
-    "import": Token(Tok_Type.NIL),
+    "import": Token(Tok_Type.IMPORT),
+    "as": Token(Tok_Type.AS),
 }
