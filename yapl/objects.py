@@ -49,7 +49,10 @@ class Num_Object(Internal_Object):
         return "NUM_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        return self.obj_type == other.obj_type and self.value == other.value
+        if other == None:
+            return False
+        else:
+            return self.obj_type == other.obj_type and self.value == other.value
 
 
 class String_Object(Internal_Object):
@@ -68,7 +71,10 @@ class String_Object(Internal_Object):
         return "STR_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        return self.obj_type == other.obj_type and self.value == other.value
+        if other == None:
+            return False
+        else:
+            return self.obj_type == other.obj_type and self.value == other.value
 
 
 class Return_Object(Internal_Object):
@@ -163,7 +169,11 @@ class Bool_Object(Internal_Object):
         return "BOOL_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        return self.obj_type == other.obj_type and self.value == other.value
+        if other == None:
+            return False
+        else:
+            return self.obj_type == other.obj_type and self.value == other.value
+
 
 class Func_Object(Internal_Object):
     """
