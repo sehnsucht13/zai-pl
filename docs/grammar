@@ -33,8 +33,9 @@ eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
 rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
 add_expr := term (("+" | "-") term)*
 term := factor (("*" | "/") factor)*
-factor := ID ( "(" arglist ")" | "." ID)* | "(" expr ")" | unary_op factor | atom | array_access
+factor := ID ( "(" arglist ")" | "." ID)* | "(" expr ")" | unary_op factor | atom | array_access | incr_decr
 array_access := ID "[" INT "]"
+incr_decr := ( ID | NUM ) ( "++" | -- )+
 arglist := (or_expr ("," or_expr)*)?
 unary_op := "!" "-"
 
