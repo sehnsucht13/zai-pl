@@ -2,6 +2,7 @@ from yapl.lexer import Lexer
 from yapl.env import Environment, Scope
 from yapl.parse import Parser
 from yapl.visitor import Visitor
+from yapl.internal_error import InternalRuntimeErr
 
 
 class YAPL_VM:
