@@ -127,49 +127,82 @@ class Bool_Object(Internal_Object):
         else:
             return self.obj_type == other.obj_type and self.value == other.value
 
+    def __ne__(self, other):
+        return Bool_Object(not (self.__eq__(other)))
+
     def __lt__(self, other):
-        pass
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Bool_Object(self.value < other.value)
+        else:
+            err_msg = "Bad operation on bool"
+            raise InternalRuntimeErr(err_msg)
 
     def __le__(self, other):
-        pass
-
-    def __eq__(self, other):
-        pass
-
-    def __ne__(self, other):
-        pass
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Bool_Object(self.value <= other.value)
+        else:
+            err_msg = "Bad operation on bool"
+            raise InternalRuntimeErr(err_msg)
 
     def __gt__(self, other):
-        pass
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Bool_Object(self.value > other.value)
+        else:
+            err_msg = "Bad operation on bool"
+            raise InternalRuntimeErr(err_msg)
 
     def __ge__(self, other):
-        pass
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Bool_Object(self.value >= other.value)
+        else:
+            err_msg = "Bad operation on bool"
+            raise InternalRuntimeErr(err_msg)
 
     def __add__(self, other):
-        pass
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value + other.value)
+        else:
+            err_msg = "Bad operation on bool"
+            raise InternalRuntimeErr(err_msg)
 
     def __sub__(self, other):
-        pass
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value - other.value)
+        else:
+            err_msg = "Bad operation on bool"
+            raise InternalRuntimeErr(err_msg)
 
     def __mul__(self, other):
-        pass
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value * other.value)
+        else:
+            err_msg = "Bad operation on bool"
+            raise InternalRuntimeErr(err_msg)
 
     def __truediv__(self, other):
-        pass
+        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+            return Num_Object(self.value / other.value)
+        else:
+            err_msg = "Bad operation on bool"
+            raise InternalRuntimeErr(err_msg)
 
     def __and__(self, other):
-        pass
+        return bool(self) and bool(other)
 
     def __or__(self, other):
-        pass
+        return bool(self) or bool(other)
 
     def __neg__(self):
-        pass
+        return -(self.value)
 
     def __invert__(self):
-        pass
+        return not (self.value)
+
+    def __bool__(self):
+        return self.value
 
 
+# TODO: Make errors for string more descriptive
 class String_Object(Internal_Object):
     """
     Internal object used to represent strings within the interpreter.
