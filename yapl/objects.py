@@ -340,19 +340,19 @@ class Num_Object(Internal_Object):
 
     def __lt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value < other.value)
+            return Bool_Object(self.value < other.value)
 
     def __le__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value <= other.value)
+            return Bool_Object(self.value <= other.value)
 
     def __gt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value > other.value)
+            return Bool_Object(self.value > other.value)
 
     def __ge__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value >= other.value)
+            return Bool_Object(self.value >= other.value)
 
     def __eq__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
