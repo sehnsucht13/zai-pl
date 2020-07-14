@@ -617,3 +617,23 @@ class Class_Instance_Object(Internal_Object):
 
     def get_field(self, field_name):
         return self.internal_namespace.lookup_symbol(field_name)
+
+
+def pprint_type(obj_type):
+    """
+    Translate an object type into human readable form.
+    """
+    type_to_str = {
+        ObjectType.NUM: "number",
+        ObjectType.STR: "string",
+        ObjectType.ID: "variable name",
+        ObjectType.BOOL: "boolean",
+        ObjectType.FUNC: "function",
+        ObjectType.CLASS_DEF: "class definition",
+        ObjectType.CLASS_INSTANCE: "class instance",
+        ObjectType.CLASS_METHOD: "class method",
+        ObjectType.NIL: "nil",
+        ObjectType.ARRAY: "array",
+        ObjectType.MODULE: "module namespace",
+    }
+    return type_to_str[obj_type]
