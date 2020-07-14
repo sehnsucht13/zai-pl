@@ -3,6 +3,7 @@ Module contains several classes used to represent internal objects within the in
 """
 from enum import Enum, auto
 from yapl.env import Scope
+from yapl.internal_error import InternalRuntimeErr
 
 
 class ObjectType(Enum):
@@ -354,52 +355,59 @@ class Array_Object(Internal_Object):
                 return False
 
     def __lt__(self, other):
-        pass
+        err_msg = "{} operation not allowed on array objects!".format("<")
+        raise InternalRuntimeErr(err_msg)
 
     def __le__(self, other):
-        pass
-
-    def __eq__(self, other):
-        pass
+        err_msg = "{} operation not allowed on array objects!".format("<=")
+        raise InternalRuntimeErr(err_msg)
 
     def __ne__(self, other):
-        pass
+        return not (self.__eq__(other))
 
     def __gt__(self, other):
-        pass
+        err_msg = "{} operation not allowed on array objects!".format(">")
+        raise InternalRuntimeErr(err_msg)
 
     def __ge__(self, other):
-        pass
+        err_msg = "{} operation not allowed on array objects!".format(">=")
+        raise InternalRuntimeErr(err_msg)
 
     def __add__(self, other):
-        pass
+        if other.obj_type == ObjectType.ARRAY:
+            self.elements.extend(other.elements)
+        else:
+            self.elements.append(other)
 
     def __sub__(self, other):
-        pass
+        err_msg = "{} operation not allowed on array objects!".format("-")
+        raise InternalRuntimeErr(err_msg)
 
     def __mul__(self, other):
-        pass
+        err_msg = "{} operation not allowed on array objects!".format("*")
+        raise InternalRuntimeErr(err_msg)
 
     def __truediv__(self, other):
-        pass
+        err_msg = "{} operation not allowed on array objects!".format("/")
+        raise InternalRuntimeErr(err_msg)
 
     def __and__(self, other):
-        pass
+        return Bool_Object(bool(self) and bool(other))
 
     def __or__(self, other):
-        pass
+        return Bool_Object(bool(self) or bool(other))
 
     def __neg__(self):
-        pass
+        err_msg = "{} operation not allowed on array objects!".format("Negation")
+        raise InternalRuntimeErr(err_msg)
 
     def __invert__(self):
-        pass
+        return not bool(self)
 
-    def __and__(self, other):
-        pass
-
-    def __or__(self, other):
-        pass
+    def __bool__(self):
+        if self.size == 0:
+            return False
+        return True
 
 
 class Return_Object(Internal_Object):
