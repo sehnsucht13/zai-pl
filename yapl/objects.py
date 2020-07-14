@@ -54,53 +54,56 @@ class Nil_Object(Internal_Object):
     def __eq__(self, other):
         return self.obj_type == other.obj_type
 
+    def __ne__(self, other):
+        return Bool_Object(self.__eq__(other))
+
     def __lt__(self, other):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format("<")
+        raise InternalRuntimeErr(err_msg)
 
     def __le__(self, other):
-        pass
-
-    def __eq__(self, other):
-        pass
-
-    def __ne__(self, other):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format("<=")
+        raise InternalRuntimeErr(err_msg)
 
     def __gt__(self, other):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format(">")
+        raise InternalRuntimeErr(err_msg)
 
     def __ge__(self, other):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format(">=")
+        raise InternalRuntimeErr(err_msg)
 
     def __add__(self, other):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format("+")
+        raise InternalRuntimeErr(err_msg)
 
     def __sub__(self, other):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format("-")
+        raise InternalRuntimeErr(err_msg)
 
     def __mul__(self, other):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format("*")
+        raise InternalRuntimeErr(err_msg)
 
     def __truediv__(self, other):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format("/")
+        raise InternalRuntimeErr(err_msg)
 
     def __and__(self, other):
-        pass
+        return Bool_Object(bool(self) and bool(other))
 
     def __or__(self, other):
-        pass
+        return Bool_Object(bool(self) or bool(other))
 
     def __neg__(self):
-        pass
+        err_msg = "{} operation not allowed on nil objects!".format("Negation")
+        raise InternalRuntimeErr(err_msg)
 
     def __invert__(self):
-        pass
+        return Bool_Object(True)
 
-    def __and__(self, other):
-        pass
-
-    def __or__(self, other):
-        pass
+    def __bool__(self):
+        return False
 
 
 class Bool_Object(Internal_Object):
