@@ -53,6 +53,54 @@ class Nil_Object(Internal_Object):
     def __eq__(self, other):
         return self.obj_type == other.obj_type
 
+    def __lt__(self, other):
+        pass
+
+    def __le__(self, other):
+        pass
+
+    def __eq__(self, other):
+        pass
+
+    def __ne__(self, other):
+        pass
+
+    def __gt__(self, other):
+        pass
+
+    def __ge__(self, other):
+        pass
+
+    def __add__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __neg__(self):
+        pass
+
+    def __invert__(self):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
 
 class Bool_Object(Internal_Object):
     """
@@ -75,6 +123,48 @@ class Bool_Object(Internal_Object):
         else:
             return self.obj_type == other.obj_type and self.value == other.value
 
+    def __lt__(self, other):
+        pass
+
+    def __le__(self, other):
+        pass
+
+    def __eq__(self, other):
+        pass
+
+    def __ne__(self, other):
+        pass
+
+    def __gt__(self, other):
+        pass
+
+    def __ge__(self, other):
+        pass
+
+    def __add__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __neg__(self):
+        pass
+
+    def __invert__(self):
+        pass
+
 
 class String_Object(Internal_Object):
     """
@@ -96,6 +186,54 @@ class String_Object(Internal_Object):
             return False
         else:
             return self.obj_type == other.obj_type and self.value == other.value
+
+    def __lt__(self, other):
+        pass
+
+    def __le__(self, other):
+        pass
+
+    def __eq__(self, other):
+        pass
+
+    def __ne__(self, other):
+        pass
+
+    def __gt__(self, other):
+        pass
+
+    def __ge__(self, other):
+        pass
+
+    def __add__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __neg__(self):
+        pass
+
+    def __invert__(self):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
 
 
 class Num_Object(Internal_Object):
@@ -215,23 +353,53 @@ class Array_Object(Internal_Object):
             else:
                 return False
 
+    def __lt__(self, other):
+        pass
 
-class Nil_Object(Internal_Object):
-    """
-    Internal object used to represent nil/null values.
-    """
-
-    def __init__(self):
-        self.obj_type = ObjectType.NIL
-
-    def __str__(self):
-        return "NIL_OBJ"
-
-    def __repr__(self):
-        return "NIL_OBJ"
+    def __le__(self, other):
+        pass
 
     def __eq__(self, other):
-        return self.obj_type == other.obj_type
+        pass
+
+    def __ne__(self, other):
+        pass
+
+    def __gt__(self, other):
+        pass
+
+    def __ge__(self, other):
+        pass
+
+    def __add__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __neg__(self):
+        pass
+
+    def __invert__(self):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
 
 
 class Return_Object(Internal_Object):
