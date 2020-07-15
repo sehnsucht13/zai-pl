@@ -2,7 +2,7 @@ from yapl.lexer import Lexer
 from yapl.env import Environment, Scope
 from yapl.parse import Parser
 from yapl.visitor import Visitor
-from yapl.internal_error import InternalRuntimeErr
+from yapl.internal_error import InternalRuntimeErr, InternalTypeError
 
 
 class YAPL_VM:
@@ -42,4 +42,6 @@ class YAPL_VM:
             # print(root)
             val = self.visitor.visit(root)
         except InternalRuntimeErr as e:
+            print(e)
+        except InternalTypeError as e:
             print(e)
