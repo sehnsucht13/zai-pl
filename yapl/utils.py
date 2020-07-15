@@ -71,4 +71,9 @@ def is_atom(obj):
     """
     if obj is None:
         return False
-    return obj.obj_type in [ObjectType.BOOL, ObjectType.NUM, ObjectType.STR]
+    return obj.obj_type in [
+        ObjectType.BOOL,
+        ObjectType.NUM,
+        ObjectType.STR,
+        ObjectType.NIL,
+    ]
