@@ -62,7 +62,7 @@ class Nil_Object(Internal_Object):
         self.obj_type = ObjectType.NIL
 
     def __str__(self):
-        return "NIL_OBJ"
+        return "nil"
 
     def __repr__(self):
         return "NIL_OBJ"
@@ -123,7 +123,7 @@ class Bool_Object(Internal_Object):
         self.obj_type = ObjectType.BOOL
 
     def __str__(self):
-        return "BOOL_OBJ {}".format(self.value)
+        return str(self.value)
 
     def __repr__(self):
         return "BOOL_OBJ {}".format(self.value)
@@ -215,7 +215,7 @@ class String_Object(Internal_Object):
         return "STR_OBJ {}".format(self.value)
 
     def __str__(self):
-        return "STR_OBJ {}".format(self.value)
+        return self.value
 
     def __eq__(self, other):
         if other is None:
@@ -300,7 +300,7 @@ class Num_Object(Internal_Object):
         return "NUM_OBJ {}".format(self.value)
 
     def __str__(self):
-        return "NUM_OBJ {}".format(self.value)
+        return str(self.value)
 
     def __eq__(self, other):
         # print("comparison from object", self, other)
@@ -393,7 +393,12 @@ class Array_Object(Internal_Object):
         return "ARRAY_OBJ elements: {}, size: {}".format(self.elements, self.size)
 
     def __str__(self):
-        return "ARRAY_OBJ elements: {}, size: {}".format(self.elements, self.size)
+        arr_str = "["
+        for idx in range(0, self.size - 1):
+            arr_str += str(self.elements[idx]) + ", "
+        arr_str += str(self.elements[self.size - 1])
+        arr_str += "]"
+        return arr_str
 
     def __eq__(self, other):
         if other is None:
@@ -533,9 +538,10 @@ class Func_Object(Internal_Object):
         self.env = env
 
     def __str__(self):
-        return "FUNC_OBJ: Name: {}, Args: {}, Arity: {}".format(
-            self.name, self.args, self.arity,
-        )
+        return "<function object {}>".format(self.name)
+        # return "FUNC_OBJ: Name: {}, Args: {}, Arity: {}".format(
+        #     self.name, self.args, self.arity,
+        # )
 
 
 class Class_Def_Object(Internal_Object):
@@ -546,21 +552,27 @@ class Class_Def_Object(Internal_Object):
         self.class_methods = class_methods
 
     def __str__(self):
-        return "CLASS_OBJ: Name: {}".format(self.class_name)
+        return "<class definition object {}>".format(self.class_name)
+        # return "CLASS_OBJ: Name: {}".format(self.class_name)
 
 
 class Module_Object(Internal_Object):
-    def __init__(self, module_name, module_path, module_contents):
+    def __init__(self, module_name, module_path, module_contents, import_as=None):
         "Internal object representing an imported module."
         self.name = module_name
+        self.import_as = import_as
         self.path = module_path
         self.namespace = module_contents
         self.obj_type = ObjectType.MODULE
 
     def __str__(self):
-        return "MODULE_OBJ: Name: {}, contents: {}".format(
-            self.class_name, self.namespace.scope
-        )
+        if self.import_as != self.name:
+            return "<module object {} imported as {}>".format(self.name, self.import_as)
+        else:
+            return "<module object {}>".format(self.name)
+        # return "MODULE_OBJ: Name: {}, contents: {}".format(
+        #     self.class_name, self.namespace.scope
+        # )
 
 
 class Class_Method_Object(Internal_Object):
@@ -578,9 +590,7 @@ class Class_Method_Object(Internal_Object):
         self.class_env = class_env
 
     def __str__(self):
-        return "CLASS_METHOD_OBJ: Name: {}, Args: {}, Arity: {}".format(
-            self.name, self.args, self.arity,
-        )
+        return "<class method object {}>".format(self.name)
 
 
 class Class_Instance_Object(Internal_Object):
@@ -604,6 +614,9 @@ class Class_Instance_Object(Internal_Object):
         self.internal_namespace.add_symbol("field", Num_Object(13), True)
 
         # print(self.internal_namespace.scope)
+
+    def __str__(self):
+        return "<class instance object {}>".format(self.class_name)
 
     def get_field(self, field_name):
         return self.internal_namespace.lookup_symbol(field_name)
