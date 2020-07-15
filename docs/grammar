@@ -28,7 +28,7 @@ import_stmnt := "import" ID ("as" ID)?
 
 ;; Expressions
 simple_expr := expr ";"
-expr := "let"? ID "=" or_expr | or_expr
+expr := "let"? call_or_access "=" or_expr | or_expr
 or_expr := and_expr ("||" and_expr)*
 and_expr := eq_expr ("&&" eq_expr)*
 eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
@@ -36,12 +36,12 @@ rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
 add_expr := term (("+" | "-") term)*
 term := factor (("*" | "/") factor)*
 factor := ID ( "(" arglist ")" | "." ID)* | "(" expr ")" | unary_op factor | atom | array_access | incr_decr
-array_access := ID "[" INT "]"
-incr_decr := ( ID | NUM ) ( "++" | -- )+
+call_or_access := ( ID | "this" ) ( "(" arglist ")" | "." ID )*
+;; array_access := ID "[" "]"
 arglist := (or_expr ("," or_expr)*)?
 unary_op := "!" "-"
 
-atom := | NUM | STR | ID | BOOL | ARRAY | "nil"
+atom := | NUM | STR | BOOL | ARRAY | "nil"
 ;; Primitives
 BOOL := "false" | "true"
 ID := LETTER (LETTER | NUM | "-" | "$" | "@")*
