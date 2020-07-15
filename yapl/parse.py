@@ -109,6 +109,31 @@ class Parser:
                 self.match(Tok_Type.COMMA)
         return func_args
 
+    def call_or_access(self):
+        if self.peek().tok_type in [
+            Tok_Type.LROUND,
+            Tok_Type.DOT,
+        ]:
+            # Create ID node
+            node = self.match(Tok_Type.ID)
+            left = ID_Node(node.lexeme)
+
+            while self.curr_tok.tok_type in [Tok_Type.LROUND, Tok_Type.DOT]:
+                if self.curr_tok.tok_type == Tok_Type.DOT:
+                    self.match(Tok_Type.DOT)
+                    prop_name = ID_Node(self.match(Tok_Type.ID).lexeme)
+                    left = Dot_Bin_Node(left, prop_name)
+                elif self.curr_tok.tok_type == Tok_Type.LROUND:
+                    self.match(Tok_Type.LROUND)
+                    func_args = self.arglist()
+                    self.match(Tok_Type.RROUND)
+                    left = Call_Node(left, func_args)
+
+            return left
+        else:
+            node = self.match(Tok_Type.ID)
+            return ID_Node(node.lexeme)
+
     def factor(self):
         """
         Parse a factor rule.
