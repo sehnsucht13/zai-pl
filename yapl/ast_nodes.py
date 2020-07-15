@@ -468,8 +468,8 @@ class Nil_Node(AST_Node):
 
 
 class Import_Node(AST_Node):
-    def __init__(self, filename, import_name=None):
-        self.filename = filename
+    def __init__(self, module_name, import_name=None):
+        self.module_name = module_name
         self.import_name = import_name
 
     def __str__(self):

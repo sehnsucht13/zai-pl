@@ -496,13 +496,13 @@ class Parser:
 
     def import_statement(self):
         self.match(Tok_Type.IMPORT)
-        filename = self.match(Tok_Type.ID).lexeme
+        module_name = self.match(Tok_Type.ID).lexeme
         import_name = None
         if self.curr_tok.tok_type == Tok_Type.AS:
             self.match(Tok_Type.AS)
             import_name = self.match(Tok_Type.ID).lexeme
 
-        return Import_Node(filename, import_name)
+        return Import_Node(module_name, import_name)
 
     def statement(self):
         """

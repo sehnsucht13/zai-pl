@@ -550,9 +550,10 @@ class Class_Def_Object(Internal_Object):
 
 
 class Module_Object(Internal_Object):
-    def __init__(self, filename, module_contents):
+    def __init__(self, module_name, module_path, module_contents):
         "Internal object representing an imported module."
-        self.name = filename
+        self.name = module_name
+        self.path = module_path
         self.namespace = module_contents
         self.obj_type = ObjectType.MODULE
 

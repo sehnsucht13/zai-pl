@@ -439,25 +439,34 @@ class Visitor:
         return Nil_Object()
 
     def visit_import(self, node):
-        module_name = node.filename + ".yapl"
-        file_text = read_module_contents(module_name)
-        if file_text is None:
+        module_name = node.module_name + ".yapl"
+        module_path, module_text = read_module_contents(module_name)
+        if module_text is None:
             err_msg = "Module {} could not be found within the interpreter path.".format(
                 node.filename
             )
             raise InternalRuntimeErr(err_msg)
 
+        # Initialize lexer and environment used to execute module contents
         lexer = Lexer()
-        tok_stream = lexer.tokenize_string(file_text)
+        import_env = Environment()
+
+        # Execute module contents
+        tok_stream = lexer.tokenize_string(module_text)
         parser = Parser(tok_stream)
         root = parser.parse()
-
-        import_env = Environment()
         import_visitor = Visitor(import_env)
         import_visitor.visit(root)
+        # Take the module's global environment to be added to the namespace.
         import_scope = import_visitor.env.peek()
 
+        # Determine the name with which the module will be accessed.
+        module_env_name = node.module_name
+        if node.import_name is not None:
+            module_env_name = node.import_name
+
         self.env.peek().add_symbol(
-            node.filename, Module_Object(node.filename, import_scope), True
+            module_env_name,
+            Module_Object(node.module_name, module_path, import_scope),
+            True,
         )
-        print(self.env.peek().scope)
