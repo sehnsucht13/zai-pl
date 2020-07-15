@@ -285,6 +285,20 @@ class Parser:
             self.match(Tok_Type.ASSIGN)
             value = self.expression()
             return Replace_Assign_Bin_Node(symbol, value)
+        elif self.curr_tok.tok_type == Tok_Type.ID and self.peek().tok_type in [
+            Tok_Type.ADDASSIGN,
+            Tok_Type.SUBASSIGN,
+        ]:
+            if self.peek().tok_type == Tok_Type.ADDASSIGN:
+                symbol = self.match(Tok_Type.ID).lexeme
+                self.match(Tok_Type.ADDASSIGN)
+                value = self.or_expr()
+                return AddAssign_Node(symbol, value)
+            elif self.peek().tok_type == Tok_Type.SUBASSIGN:
+                symbol = self.match(Tok_Type.ID).lexeme
+                self.match(Tok_Type.SUBASSIGN)
+                value = self.or_expr()
+                return SubAssign_Node(symbol, value)
         else:
             return self.or_expr()
 
