@@ -470,3 +470,25 @@ class Visitor:
             Module_Object(node.module_name, module_path, import_scope, module_env_name),
             True,
         )
+
+    def visit_add_assign(self, node):
+        val = self.env.peek().lookup_symbol(node.var_name)
+        if val is None:
+            raise InternalRuntimeErr(
+                "Variable with name {} does not exist!".format(node.var_name)
+            )
+
+        increment = node.increment_val.accept(self)
+        val = val + increment
+        self.env.peek().add_symbol(node.var_name, val, False)
+
+    def visit_sub_assign(self, node):
+        val = self.env.peek().lookup_symbol(node.var_name)
+        if val is None:
+            raise InternalRuntimeErr(
+                "Variable with name {} does not exist!".format(node.var_name)
+            )
+
+        decrement = node.decrement_val.accept(self)
+        val = val - decrement
+        self.env.peek().add_symbol(node.var_name, val, False)
