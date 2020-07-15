@@ -176,15 +176,27 @@ class Visitor:
             raise InternalRuntimeErr(err_msg)
 
     def visit_new_assign(self, node):
-        symbol = node.symbol.val
+        # Symbol name will always be an id node
+        symbol_name = node.symbol_name.val
         # Evaluate the right hand side containing the value which will be assigned
         value = node.value.accept(self)
 
-        assert symbol is not None
-        assert value is not None
+        assert (
+            symbol_name is not None
+        ), "Attempting to assign a new variable without a symbol name in visit_new_assign."
+        assert (
+            value is not None
+        ), "Attempting to assign a non existant value in visit_new_assign."
 
-        scope = self.env.peek()
-        scope.new_variable(symbol, value)
+        # Find if a path to the variable exists
+        symbol_path = None
+        if node.symbol_path is None:
+            scope = self.env.peek()
+            scope.new_variable(symbol_name, value)
+        else:
+            symbol_path = node.symbol_path.accept(self)
+            if symbol_path.obj_type == ObjectType.MODULE:
+                symbol_path.namespace.new_variable(symbol_name, value)
 
     def visit_scope_block(self, node):
         # Create a new scope to evaluate the current block in
