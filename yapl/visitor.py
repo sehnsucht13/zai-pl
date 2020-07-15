@@ -4,7 +4,7 @@ from yapl.objects import *
 from yapl.env import Environment, Scope
 from yapl.lexer import Lexer
 from yapl.parse import Parser
-from yapl.utils import is_atom, is_truthy, pprint_internal_object, read_module_contents
+from yapl.utils import is_atom, is_truthy, read_module_contents
 
 import os
 
@@ -39,7 +39,7 @@ class Visitor:
                     msg = '"continue" statement not used within a loop!'
                     raise InternalRuntimeErr(msg)
             if is_atom(ret_val) and self.repl_mode:
-                pprint_internal_object(ret_val)
+                print(ret_val)
 
     def visit_num(self, node):
         return Num_Object(node.val)
@@ -156,7 +156,7 @@ class Visitor:
 
     def visit_print(self, node):
         print_value = node.expr.accept(self)
-        pprint_internal_object(print_value)
+        print(str(print_value))
 
     def visit_replace_assign(self, node):
         symbol = node.symbol

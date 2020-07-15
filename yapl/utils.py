@@ -34,23 +34,6 @@ def read_module_contents(module_name):
     return (None, None)
 
 
-def pprint_internal_object(internal_obj):
-    """
-    Pretty print an internal object depending on it's type.
-    """
-    if is_atom(internal_obj):
-        print(internal_obj.value)
-    elif internal_obj.obj_type == ObjectType.FUNC:
-        output_str = "<function object {}>".format(internal_obj.name)
-        print(output_str)
-    elif internal_obj.obj_type == ObjectType.CLASS_DEF:
-        output_str = "<class definition object {}>".format(internal_obj.class_name)
-        print(output_str)
-    elif internal_obj.obj_type == ObjectType.CLASS_INSTANCE:
-        output_str = "<class instance object {}>".format(internal_obj.class_name)
-        print(output_str)
-
-
 def is_truthy(internal_object):
     """ Check if an internal object is truthy. Returns True or False."""
     # Truthiness will be the same as the one in python
