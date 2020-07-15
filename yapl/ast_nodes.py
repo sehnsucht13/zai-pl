@@ -63,26 +63,30 @@ class Dot_Bin_Node(AST_Node):
 
 
 class Replace_Assign_Bin_Node(AST_Node):
-    def __init__(self, symbol, value, local_assign=False):
-        self.symbol = symbol
+    def __init__(self, symbol_path, symbol_name, value):
+        self.symbol_path = symbol_path
+        self.symbol_name = symbol_name
         self.value = value
-        self.local = local_assign
 
     def __str__(self):
-        return "REPLACE_ASSIGN_NODE {} {}".format(self.symbol, self.value)
+        return "REPLACE_ASSIGN_NODE {} {} {}".format(
+            self.symbol_name, self.symbol_path, self.value
+        )
 
     def accept(self, visitor):
         return visitor.visit_replace_assign(self)
 
 
 class New_Assign_Bin_Node(AST_Node):
-    def __init__(self, symbol, value, local_assign=False):
-        self.symbol = symbol
+    def __init__(self, symbol_path, symbol_name, value):
+        self.symbol_path = symbol_path
+        self.symbol_name = symbol_name
         self.value = value
-        self.local = local_assign
 
     def __str__(self):
-        return "NEW_ASSIGN_NODE {} {}".format(self.symbol, self.value)
+        return "NEW_ASSIGN_NODE {} {} {}".format(
+            self.symbol_name, self.symbol_path, self.value
+        )
 
     def accept(self, visitor):
         return visitor.visit_new_assign(self)
@@ -474,7 +478,7 @@ class Import_Node(AST_Node):
 
     def __str__(self):
         return "IMPORT_NODE {} with import name: {}".format(
-            self.filename, self.import_name
+            self.module_name, self.import_name
         )
 
     def accept(self, visitor):
