@@ -23,7 +23,7 @@ class Scope:
         assert var_name is not None, "Variable name to be replaced is None."
         assert value is not None, "Variable value to be replaced is None"
         if var_name in self.scope.keys():
-            self.scope[symbol] = value
+            self.scope[var_name] = value
             return True
         elif self.parent is None:
             return False
