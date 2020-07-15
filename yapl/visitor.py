@@ -199,7 +199,7 @@ class Visitor:
             scope.new_variable(symbol_name, value)
         else:
             symbol_path = node.symbol_path.accept(self)
-            if symbol_path.obj_type == ObjectType.MODULE:
+            if symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
                 symbol_path.namespace.new_variable(symbol_name, value)
 
     def visit_scope_block(self, node):
@@ -354,12 +354,12 @@ class Visitor:
                 )
                 raise InternalRuntimeErr(err_msg)
         elif l.obj_type == ObjectType.CLASS_INSTANCE:
-            val = l.get_field(node.right.lexeme)
+            val = l.get_field(node.right.val)
             if val is not None:
                 return val
             else:
                 err_msg = 'Class instance "{}" of class "{}" does not contain a field with name "{}"'.format(
-                    node.left.val, l.class_name, node.right.lexeme
+                    node.left.val, l.class_name, node.right.val
                 )
                 raise InternalRuntimeErr(err_msg)
         elif l.obj_type == ObjectType.MODULE:
