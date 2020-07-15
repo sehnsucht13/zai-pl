@@ -149,6 +149,11 @@ class Lexer:
                         Token(Tok_Type.DECR, self.curr_lin_num, self.curr_col_num)
                     )
                     self._advance()
+                elif self._peek() == "=":
+                    self.token_stream.append(
+                        Token(Tok_Type.SUBASSIGN, self.curr_lin_num, self.curr_col_num)
+                    )
+                    self._advance()
                 else:
                     self.token_stream.append(
                         Token(Tok_Type.MINUS, self.curr_lin_num, self.curr_col_num)
@@ -157,6 +162,11 @@ class Lexer:
                 if self._peek() == "+":
                     self.token_stream.append(
                         Token(Tok_Type.INCR, self.curr_lin_num, self.curr_col_num)
+                    )
+                    self._advance()
+                elif self._peek() == "=":
+                    self.token_stream.append(
+                        Token(Tok_Type.ADDASSIGN, self.curr_lin_num, self.curr_col_num)
                     )
                     self._advance()
                 else:

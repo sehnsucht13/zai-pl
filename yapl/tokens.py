@@ -63,6 +63,8 @@ class Tok_Type(Enum):
 
     # Variable Assignment
     ASSIGN = auto()
+    ADDASSIGN = auto()
+    SUBASSIGN = auto()
     LET = auto()
 
     # MISC.
