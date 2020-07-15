@@ -598,20 +598,20 @@ class Class_Instance_Object(Internal_Object):
         "Object representing a class instance."
         self.obj_type = ObjectType.CLASS_INSTANCE
         self.class_name = class_name
-        self.internal_namespace = Scope(None)
+        self.namespace = Scope(None)
 
         # Register all class methods in the internal environment
         for method in class_methods:
-            self.internal_namespace.add_symbol(
+            self.namespace.new_variable(
                 method.name,
                 Class_Method_Object(
-                    method.name, method.args, method.body, self.internal_namespace
+                    method.name, method.args, method.body, self.namespace
                 ),
-                True,
             )
         # "field" is a test variable used to check access before implementing assignment of
         # class instance fields.
-        self.internal_namespace.add_symbol("field", Num_Object(13), True)
+        # self.namespace.add_symbol("field", Num_Object(13), True)
+        self.namespace.new_variable("field", Num_Object(13))
 
         # print(self.internal_namespace.scope)
 
@@ -619,4 +619,4 @@ class Class_Instance_Object(Internal_Object):
         return "<class instance object {}>".format(self.class_name)
 
     def get_field(self, field_name):
-        return self.internal_namespace.lookup_symbol(field_name)
+        return self.namespace.lookup_symbol(field_name)
