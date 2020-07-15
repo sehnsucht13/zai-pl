@@ -68,10 +68,7 @@ class Parser:
         DIGIT := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
         STR := "\"" (LETTER | NUM )* "\""
         """
-        if self.curr_tok.tok_type == Tok_Type.ID:
-            node = self.match(Tok_Type.ID)
-            return ID_Node(node.lexeme)
-        elif self.curr_tok.tok_type == Tok_Type.THIS:
+        if self.curr_tok.tok_type == Tok_Type.THIS:
             node = self.match(Tok_Type.THIS)
             return This_Node()
         elif self.curr_tok.tok_type == Tok_Type.DQUOTE:
@@ -371,7 +368,7 @@ class Parser:
         print := "print" expr ";"
         """
         self.match(Tok_Type.PRINT)
-        expr = self.expression()
+        expr = self.or_expr()
         self.match(Tok_Type.SEMIC)
         return Print_Node(expr)
 
