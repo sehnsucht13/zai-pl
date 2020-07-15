@@ -13,6 +13,10 @@ class Visitor:
     def __init__(self, environment):
         "Class implementing the visitor pattern which is used to evaluate language structures."
         self.env = environment
+        self.repl_mode = False
+
+    def set_repl_mode(self):
+        self.repl_mode = True
 
     def visit(self, ast_root):
         """
@@ -34,7 +38,7 @@ class Visitor:
                 elif ret_val.obj_type == ObjectType.CONTINUE:
                     msg = '"continue" statement not used within a loop!'
                     raise InternalRuntimeErr(msg)
-            if is_atom(ret_val) and self.repl_mode_flag:
+            if is_atom(ret_val) and self.repl_mode:
                 pprint_internal_object(ret_val)
 
     def visit_num(self, node):
