@@ -3,7 +3,7 @@ Module contains several classes used to represent internal objects within the in
 """
 from enum import Enum, auto
 from yapl.env import Scope
-from yapl.internal_error import InternalRuntimeErr
+from yapl.internal_error import InternalTypeError, InternalRuntimeErr
 
 
 class ObjectType(Enum):
@@ -74,36 +74,28 @@ class Nil_Object(Internal_Object):
         return Bool_Object(self.__eq__(other))
 
     def __lt__(self, other):
-        err_msg = "{} operation not allowed on nil objects!".format("<")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
-        err_msg = "{} operation not allowed on nil objects!".format("<=")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
-        err_msg = "{} operation not allowed on nil objects!".format(">")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
-        err_msg = "{} operation not allowed on nil objects!".format(">=")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __add__(self, other):
-        err_msg = "{} operation not allowed on nil objects!".format("+")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("+", self.obj_type, other.obj_type)
 
     def __sub__(self, other):
-        err_msg = "{} operation not allowed on nil objects!".format("-")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
-        err_msg = "{} operation not allowed on nil objects!".format("*")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
-        err_msg = "{} operation not allowed on nil objects!".format("/")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
         return Bool_Object(bool(self) and bool(other))
@@ -112,8 +104,7 @@ class Nil_Object(Internal_Object):
         return Bool_Object(bool(self) or bool(other))
 
     def __neg__(self):
-        err_msg = "{} operation not allowed on nil objects!".format("Negation")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("-", self.obj_type)
 
     def __invert__(self):
         return Bool_Object(True)
@@ -150,57 +141,49 @@ class Bool_Object(Internal_Object):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value < other.value)
         else:
-            err_msg = "Bad operation on bool"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value <= other.value)
         else:
-            err_msg = "Bad operation on bool"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value > other.value)
         else:
-            err_msg = "Bad operation on bool"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value >= other.value)
         else:
-            err_msg = "Bad operation on bool"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __add__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Num_Object(self.value + other.value)
         else:
-            err_msg = "Bad operation on bool"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("+", self.obj_type, other.obj_type)
 
     def __sub__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Num_Object(self.value - other.value)
         else:
-            err_msg = "Bad operation on bool"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Num_Object(self.value * other.value)
         else:
-            err_msg = "Bad operation on bool"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Num_Object(self.value / other.value)
         else:
-            err_msg = "Bad operation on bool"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
         return bool(self) and bool(other)
