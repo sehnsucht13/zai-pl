@@ -338,8 +338,10 @@ class Visitor:
 
     def visit_dot_node(self, node):
         l = node.left.accept(self)
-        if isinstance(l, Scope):
-            val = l.lookup_symbol(node.right.lexeme)
+        # print("dot-node left", l)
+        if l.obj_type == ObjectType.MODULE:
+            # print("got module")
+            val = l.namespace.lookup_symbol(node.right.val)
             if val is not None:
                 return val
             else:
