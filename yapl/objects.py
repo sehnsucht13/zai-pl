@@ -313,43 +313,54 @@ class Num_Object(Internal_Object):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Num_Object(self.value + other.value)
 
+        raise InternalTypeError("+", self.obj_type, other.obj_type)
+
     def __sub__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Num_Object(self.value - other.value)
+
+        raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Num_Object(self.value * other.value)
         elif other.obj_type in ObjectType.STR:
             return String_Object(other.value * self.value)
+        else:
+            raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Num_Object(self.value / other.value)
 
+        raise InternalTypeError("/", self.obj_type, other.obj_type)
+
     def __lt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value < other.value)
 
+        raise InternalTypeError("<", self.obj_type, other.obj_type)
+
     def __le__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value <= other.value)
+        raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value > other.value)
 
+        raise InternalTypeError(">", self.obj_type, other.obj_type)
+
     def __ge__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value >= other.value)
-
-    def __eq__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value == other.value)
+        raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __ne__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value != other.value)
+        raise InternalTypeError("!=", self.obj_type, other.obj_type)
 
     def __neg__(self):
         return Num_Object(-self.value)
