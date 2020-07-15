@@ -370,16 +370,13 @@ class Num_Object(Internal_Object):
 
     # These do not override the "and"/"or" keywords but instead override "&" and "|"
     def __and__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.STR]:
-            return Bool_Object(bool(self.value) and bool(other.value))
-        elif other.obj_type == ObjectType.BOOL:
-            return Bool_Object(bool(self.value) and other.value)
+        return Bool_Object(bool(self) and bool(other))
 
     def __or__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.STR]:
-            return Bool_Object(bool(self.value) and bool(other.value))
-        elif other.obj_type == ObjectType.BOOL:
-            return Bool_Object(bool(self.value) and other.value)
+        return Bool_Object(bool(self) or bool(other))
+
+    def __bool__(self):
+        return bool(self.value)
 
 
 class Array_Object(Internal_Object):
