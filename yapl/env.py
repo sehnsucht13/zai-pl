@@ -3,19 +3,32 @@ class Scope:
         self.scope = dict()
         self.parent = parent
 
-    def add_symbol(self, symbol, value, local=False):
-        assert symbol is not None
-        assert value is not None
-        if local is True:
+    def new_variable(self, var_name, value):
+        """
+        Instantiate a new variable within the current scope of the environment.
+        Return True to indicate success.
+        """
+        assert (
+            var_name is not None
+        ), "Variable name of new environment variable is None."
+        assert value is not None, "Variable value of new environment variable is None."
+        self.scope[var_name] = value
+        return True
+
+    def replace_variable(self, var_name, value):
+        """
+        Replace the value of an existing variable within the environment. Return 
+        True or False if the value exists/does not exist within the current environment.
+        """
+        assert var_name is not None, "Variable name to be replaced is None."
+        assert value is not None, "Variable value to be replaced is None"
+        if var_name in self.scope.keys():
             self.scope[symbol] = value
+            return True
+        elif self.parent is None:
+            return False
         else:
-            if symbol in self.scope.keys():
-                self.scope[symbol] = value
-                return True
-            elif self.parent is None:
-                return False
-            else:
-                return self.parent.add_symbol(symbol, value, local)
+            return self.parent.replace_variable(var_name, value)
 
     def lookup_symbol(self, symbol):
         value = self.scope.get(symbol, None)

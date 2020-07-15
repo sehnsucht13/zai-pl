@@ -168,7 +168,7 @@ class Visitor:
 
         scope = self.env.peek()
 
-        status = scope.add_symbol(symbol, value, False)
+        status = scope.replace_variable(symbol, value)
         if status is False:
             err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
                 symbol
@@ -176,7 +176,7 @@ class Visitor:
             raise InternalRuntimeErr(err_msg)
 
     def visit_new_assign(self, node):
-        symbol = node.symbol
+        symbol = node.symbol.val
         # Evaluate the right hand side containing the value which will be assigned
         value = node.value.accept(self)
 
@@ -184,7 +184,7 @@ class Visitor:
         assert value is not None
 
         scope = self.env.peek()
-        scope.add_symbol(symbol, value, True)
+        scope.new_variable(symbol, value)
 
     def visit_scope_block(self, node):
         # Create a new scope to evaluate the current block in
@@ -229,8 +229,8 @@ class Visitor:
     def visit_func_def(self, node):
         scope = self.env.peek()
         # Register the function in the current frame
-        scope.add_symbol(
-            node.name, Func_Object(node.name, node.args, node.body, scope), True
+        scope.new_variable(
+            node.name, Func_Object(node.name, node.args, node.body, scope)
         )
 
     def visit_class_def(self, node):
@@ -240,8 +240,8 @@ class Visitor:
         """
         scope = self.env.peek()
         # Register the class in the scope
-        scope.add_symbol(
-            node.class_name, Class_Def_Object(node.class_name, node.class_methods), True
+        scope.new_variable(
+            node.class_name, Class_Def_Object(node.class_name, node.class_methods)
         )
 
     def visit_call(self, node):
@@ -266,7 +266,7 @@ class Visitor:
 
             # Add arguments to the current environment
             for arg_pair in zip(call_object.args, arg_values):
-                self.env.peek().add_symbol(arg_pair[0].lexeme, arg_pair[1], True)
+                self.env.peek().new_variable(arg_pair[0].lexeme, arg_pair[1])
 
             for stmnt in call_object.body:
                 ret_val = stmnt.accept(self)
@@ -307,7 +307,7 @@ class Visitor:
 
             # Add arguments to the current environment
             for arg_pair in zip(call_object.args, arg_values):
-                self.env.peek().add_symbol(arg_pair[0].lexeme, arg_pair[1], True)
+                self.env.peek().new_variable(arg_pair[0].lexeme, arg_pair[1])
 
             for stmnt in call_object.body:
                 ret_val = stmnt.accept(self)
@@ -465,10 +465,9 @@ class Visitor:
         if node.import_name is not None:
             module_env_name = node.import_name
 
-        self.env.peek().add_symbol(
+        self.env.peek().new_variable(
             module_env_name,
             Module_Object(node.module_name, module_path, import_scope, module_env_name),
-            True,
         )
 
     def visit_add_assign(self, node):
@@ -480,7 +479,7 @@ class Visitor:
 
         increment = node.increment_val.accept(self)
         val = val + increment
-        self.env.peek().add_symbol(node.var_name, val, False)
+        self.env.peek().replace_variable(node.var_name, val)
 
     def visit_sub_assign(self, node):
         val = self.env.peek().lookup_symbol(node.var_name)
@@ -491,4 +490,4 @@ class Visitor:
 
         decrement = node.decrement_val.accept(self)
         val = val - decrement
-        self.env.peek().add_symbol(node.var_name, val, False)
+        self.env.peek().replace_variable(node.var_name, val)
