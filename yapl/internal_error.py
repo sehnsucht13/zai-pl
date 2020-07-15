@@ -1,6 +1,3 @@
-from yapl.objects import pprint_type
-
-
 class InternalErr(Exception):
     def __init__(self,):
         raise NotImplementedError()
@@ -16,13 +13,13 @@ class InternalTypeError(InternalErr):
         self.right = right_type
         self.err_msg = str()
 
-        if self.right != None:
+        if self.right == None:
             self.err_msg = "The operation {} is not allowed on a {}!".format(
-                self.operation, pprint_type(self.left)
+                self.operation, str(self.left)
             )
         else:
             self.err_msg = "The operation {} is not allowed between a {} and a {}!".format(
-                self.operation, pprint_type(self.left), pprint_type(self.right)
+                self.operation, str(self.left), str(self.right)
             )
 
     def __str__(self):
