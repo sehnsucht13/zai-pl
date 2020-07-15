@@ -405,23 +405,19 @@ class Array_Object(Internal_Object):
                 return False
 
     def __lt__(self, other):
-        err_msg = "{} operation not allowed on array objects!".format("<")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
-        err_msg = "{} operation not allowed on array objects!".format("<=")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __ne__(self, other):
         return not (self.__eq__(other))
 
     def __gt__(self, other):
-        err_msg = "{} operation not allowed on array objects!".format(">")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
-        err_msg = "{} operation not allowed on array objects!".format(">=")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __add__(self, other):
         if other.obj_type == ObjectType.ARRAY:
@@ -430,16 +426,13 @@ class Array_Object(Internal_Object):
             self.elements.append(other)
 
     def __sub__(self, other):
-        err_msg = "{} operation not allowed on array objects!".format("-")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
-        err_msg = "{} operation not allowed on array objects!".format("*")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
-        err_msg = "{} operation not allowed on array objects!".format("/")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
         return Bool_Object(bool(self) and bool(other))
@@ -448,8 +441,7 @@ class Array_Object(Internal_Object):
         return Bool_Object(bool(self) or bool(other))
 
     def __neg__(self):
-        err_msg = "{} operation not allowed on array objects!".format("Negation")
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __invert__(self):
         return not bool(self)
