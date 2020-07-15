@@ -479,3 +479,27 @@ class Import_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_import(self)
+
+
+class AddAssign_Node(AST_Node):
+    def __init__(self, var_name, increment):
+        self.var_name = var_name
+        self.increment_val = increment
+
+    def __str__(self):
+        return "ADD_ASIGN {}".format(self.var_name)
+
+    def accept(self, visitor):
+        return visitor.visit_add_assign(self)
+
+
+class SubAssign_Node(AST_Node):
+    def __init__(self, var_name, decrement):
+        self.var_name = var_name
+        self.decrement_val = decrement
+
+    def __str__(self):
+        return "SUB_ASIGN {}".format(self.var_name)
+
+    def accept(self, visitor):
+        return visitor.visit_sub_assign(self)
