@@ -159,21 +159,25 @@ class Visitor:
         print(str(print_value))
 
     def visit_replace_assign(self, node):
-        symbol = node.symbol
-        # Evaluate the right hand side containing the value to be assigned
+        # Symbol name will always be an id node
+        symbol_name = node.symbol_name.val
+        # Evaluate the right hand side containing the value which will be assigned
         value = node.value.accept(self)
 
-        assert symbol is not None
-        assert value is not None
-
-        scope = self.env.peek()
-
-        status = scope.replace_variable(symbol, value)
-        if status is False:
-            err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
-                symbol
-            )
-            raise InternalRuntimeErr(err_msg)
+        # Find if a path to the variable exists
+        symbol_path = None
+        if node.symbol_path is None:
+            scope = self.env.peek()
+            scope.new_variable(symbol_name, value)
+        else:
+            symbol_path = node.symbol_path.accept(self)
+            if symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
+                status = symbol_path.namespace.replace_variable(symbol_name, value)
+                if status is False:
+                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
+                        symbol_name
+                    )
+                    raise InternalRuntimeErr(err_msg)
 
     def visit_new_assign(self, node):
         # Symbol name will always be an id node
