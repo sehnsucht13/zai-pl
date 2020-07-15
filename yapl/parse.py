@@ -147,20 +147,8 @@ class Parser:
         if self.curr_tok.tok_type in [
             Tok_Type.ID,
             Tok_Type.THIS,
-        ] and self.peek().tok_type in [Tok_Type.LROUND, Tok_Type.DOT,]:
-            # Create ID node
-            left = self.atom()
-            while self.curr_tok.tok_type in [Tok_Type.LROUND, Tok_Type.DOT]:
-                if self.curr_tok.tok_type == Tok_Type.DOT:
-                    self.match(Tok_Type.DOT)
-                    prop_name = self.match(Tok_Type.ID)
-                    left = Dot_Bin_Node(left, prop_name)
-                elif self.curr_tok.tok_type == Tok_Type.LROUND:
-                    self.match(Tok_Type.LROUND)
-                    func_args = self.arglist()
-                    self.match(Tok_Type.RROUND)
-                    left = Call_Node(left, func_args)
-            return left
+        ]:
+            return self.call_or_access()
         # Array access
         elif (
             self.curr_tok.tok_type == Tok_Type.ID
@@ -298,18 +286,30 @@ class Parser:
         """
         if self.curr_tok.tok_type == Tok_Type.LET:
             self.match(Tok_Type.LET)
-            symbol = self.match(Tok_Type.ID).lexeme
+            symbol_path = self.call_or_access()
             self.match(Tok_Type.ASSIGN)
             value = self.or_expr()
-            return New_Assign_Bin_Node(symbol, value)
-        elif (
-            self.curr_tok.tok_type == Tok_Type.ID
-            and self.peek().tok_type == Tok_Type.ASSIGN
-        ):
-            symbol = self.match(Tok_Type.ID).lexeme
-            self.match(Tok_Type.ASSIGN)
-            value = self.expression()
-            return Replace_Assign_Bin_Node(symbol, value)
+            # Check if it is a single node
+            if isinstance(symbol_path, ID_Node):
+                return New_Assign_Bin_Node(None, symbol_path, value)
+            else:
+                # Decompose the nodes
+                return New_Assign_Bin_Node(symbol_path.left, symbol_path.right, value)
+        elif self.curr_tok.tok_type == Tok_Type.ID:
+            symbol_path = self.call_or_access()
+            if self.curr_tok.tok_type == Tok_Type.ASSIGN:
+                self.match(Tok_Type.ASSIGN)
+                value = self.expression()
+                if isinstance(symbol_path, ID_Node):
+                    return Replace_Assign_Bin_Node(None, symbol_path, value)
+                else:
+                    # Decompose the nodes
+                    return Replace_Assign_Bin_Node(
+                        symbol_path.left, symbol_path.right, value
+                    )
+            else:
+                # Case of the node not being an assignment node but a simple access
+                return symbol_path
         elif self.curr_tok.tok_type == Tok_Type.ID and self.peek().tok_type in [
             Tok_Type.ADDASSIGN,
             Tok_Type.SUBASSIGN,
