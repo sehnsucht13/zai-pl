@@ -36,10 +36,8 @@ class YAPL_VM:
         lexer = Lexer()
         try:
             tok_stream = lexer.tokenize_string(input_str)
-            # print(tok_stream)
             parser = Parser(tok_stream)
             root = parser.parse()
-            # print(root)
             val = self.visitor.visit(root)
         except InternalRuntimeErr as e:
             print(e)
