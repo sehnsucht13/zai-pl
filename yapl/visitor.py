@@ -467,6 +467,6 @@ class Visitor:
 
         self.env.peek().add_symbol(
             module_env_name,
-            Module_Object(node.module_name, module_path, import_scope),
+            Module_Object(node.module_name, module_path, import_scope, module_env_name),
             True,
         )
