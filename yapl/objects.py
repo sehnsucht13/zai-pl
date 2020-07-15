@@ -26,6 +26,22 @@ class ObjectType(Enum):
     ARRAY = auto()
     MODULE = auto()
 
+    def __str__(self):
+        type_to_str = {
+            "NUM": "number",
+            "STR": "string",
+            "ID": "variable name",
+            "BOOL": "boolean",
+            "FUNC": "function",
+            "CLASS_DEF": "class definition",
+            "CLASS_INSTANCE": "class instance",
+            "CLASS_METHOD": "class method",
+            "NIL": "nil",
+            "ARRAY": "array",
+            "MODULE": "module namespace",
+        }
+        return type_to_str[self.name]
+
 
 class Internal_Object:
     """
