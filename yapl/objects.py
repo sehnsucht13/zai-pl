@@ -201,7 +201,6 @@ class Bool_Object(Internal_Object):
         return self.value
 
 
-# TODO: Make errors for string more descriptive
 class String_Object(Internal_Object):
     """
     Internal object used to represent strings within the interpreter.
@@ -231,52 +230,44 @@ class String_Object(Internal_Object):
         if other.obj_type == ObjectType.STR:
             return Bool_Object(self.value < other.value)
         else:
-            err_msg = "Bad operation on string"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
         if other.obj_type == ObjectType.STR:
             return Bool_Object(self.value <= other.value)
         else:
-            err_msg = "Bad operation on string"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
         pass
         if other.obj_type == ObjectType.STR:
             return Bool_Object(self.value > other.value)
         else:
-            err_msg = "Bad operation on string"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
         if other.obj_type == ObjectType.STR:
             return Bool_Object(self.value >= other.value)
         else:
-            err_msg = "Bad operation on string"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __add__(self, other):
         if other.obj_type == ObjectType.STR:
             return String_Object(self.value + other.value)
         else:
-            err_msg = "Bad operation on string"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("+", self.obj_type, other.obj_type)
 
     def __sub__(self, other):
-        err_msg = "Subtraction not allowed on string objects."
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
         if other.obj_type == ObjectType.NUM:
             return String_Object(self.value * other.value)
         else:
-            err_msg = "Bad operation on string"
-            raise InternalRuntimeErr(err_msg)
+            raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
-        err_msg = "Division not allowed on string objects."
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
         return Bool_Object(bool(self) and bool(other))
@@ -285,8 +276,7 @@ class String_Object(Internal_Object):
         return Bool_Object(bool(self) or bool(other))
 
     def __neg__(self):
-        err_msg = "Negation not allowed on string objects."
-        raise InternalRuntimeErr(err_msg)
+        raise InternalTypeError("-", self.obj_type)
 
     def __invert__(self):
         return Bool_Object(not bool(self))
