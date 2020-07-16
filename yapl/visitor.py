@@ -358,7 +358,7 @@ class Visitor:
                 return val
             else:
                 err_msg = "Current class environment does not contain the variable {}".format(
-                    node.right.lexeme
+                    node.right.val
                 )
                 raise InternalRuntimeErr(err_msg)
         elif l.obj_type == ObjectType.MODULE:
