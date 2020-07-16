@@ -1,4 +1,12 @@
+""" Module contains error classes used to transfer control and signal errors 
+encountered during execution."""
+
+
 class InternalErr(Exception):
+    """
+    Base class for all internal errors used by the interpreter.
+    """
+
     def __init__(self,):
         raise NotImplementedError()
 
@@ -32,6 +40,10 @@ class InternalTypeError(InternalErr):
 
 
 class InternalRuntimeErr(InternalErr):
+    """
+    Class representing an internal error encountered during runtime.
+    """
+
     def __init__(self, message):
         "Class representing internal errors encountered during runtime."
         self.message = message
@@ -44,6 +56,10 @@ class InternalRuntimeErr(InternalErr):
 
 
 class InternalParseErr(InternalErr):
+    """
+    Class representing an internal error encountered during parsing/lexing stages.
+    """
+
     def __init__(self, message):
         "Class representing internal errors encountered during parsing/lexing stage."
         self.message = message
