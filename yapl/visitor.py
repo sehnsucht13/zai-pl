@@ -169,7 +169,14 @@ class Visitor:
             scope.new_variable(symbol_name, value)
         else:
             symbol_path = node.symbol_path.accept(self)
-            if symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
+            if isinstance(symbol_path, Scope):
+                status = symbol_path.replace_variable(symbol_name, value)
+                if status is False:
+                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the current class environment.'.format(
+                        symbol_name
+                    )
+                    raise InternalRuntimeErr(err_msg)
+            elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
                 status = symbol_path.namespace.replace_variable(symbol_name, value)
                 if status is False:
                     err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
@@ -198,7 +205,9 @@ class Visitor:
             scope.new_variable(symbol_name, value)
         else:
             symbol_path = node.symbol_path.accept(self)
-            if symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
+            if isinstance(symbol_path, Scope):
+                symbol_path.new_variable(symbol_name, value)
+            elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
                 symbol_path.namespace.new_variable(symbol_name, value)
 
     def visit_scope_block(self, node):
@@ -307,9 +316,8 @@ class Visitor:
             )
         elif call_object.obj_type == ObjectType.CLASS_METHOD:
             # Create a new scope
-            # self.env.enter_scope()
             self.env.enter_scope(call_object.class_env)
-            # print(self.env.peek().parent.scope)
+            self.env.peek().new_variable("this", call_object.class_env)
 
             # Evaluate the arguments
             arg_values = list()
@@ -344,7 +352,16 @@ class Visitor:
 
     def visit_dot_node(self, node):
         l = node.left.accept(self)
-        if l.obj_type == ObjectType.MODULE:
+        if isinstance(l, Scope):
+            val = l.lookup_symbol(node.right.val)
+            if val is not None:
+                return val
+            else:
+                err_msg = "Current class environment does not contain the variable {}".format(
+                    node.right.lexeme
+                )
+                raise InternalRuntimeErr(err_msg)
+        elif l.obj_type == ObjectType.MODULE:
             val = l.namespace.lookup_symbol(node.right.val)
             if val is not None:
                 return val
@@ -360,15 +377,6 @@ class Visitor:
             else:
                 err_msg = 'Class instance "{}" of class "{}" does not contain a field with name "{}"'.format(
                     node.left.val, l.class_name, node.right.val
-                )
-                raise InternalRuntimeErr(err_msg)
-        elif l.obj_type == ObjectType.MODULE:
-            val = l.namespace.lookup_symbol(node.right.lexeme)
-            if val is not None:
-                return val
-            else:
-                err_msg = "Module {} does not contain the variable {}".format(
-                    l.name, node.right.lexeme
                 )
                 raise InternalRuntimeErr(err_msg)
         else:

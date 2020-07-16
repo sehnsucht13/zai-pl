@@ -617,12 +617,6 @@ class Class_Instance_Object(Internal_Object):
                     method.name, method.args, method.body, self.namespace
                 ),
             )
-        # "field" is a test variable used to check access before implementing assignment of
-        # class instance fields.
-        # self.namespace.add_symbol("field", Num_Object(13), True)
-        self.namespace.new_variable("field", Num_Object(13))
-
-        # print(self.internal_namespace.scope)
 
     def __str__(self):
         return "<class instance object {}>".format(self.class_name)
