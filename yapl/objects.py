@@ -418,7 +418,8 @@ class Array_Object(Internal_Object):
         else:
             return Bool_Object(False)
 
-    def __invert__(self):
+    def __ne__(self, other):
+        assert other is not None, "Other variable in __eq__ function is None."
         return ~(self.__eq__(other))
 
     def __lt__(self, other):
@@ -461,6 +462,9 @@ class Array_Object(Internal_Object):
         raise InternalTypeError(
             "-", self.obj_type,
         )
+
+    def __invert__(self):
+        return Bool_Object(not self.__bool__())
 
     def __bool__(self):
         if self.size == 0:
