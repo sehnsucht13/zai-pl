@@ -1,3 +1,4 @@
+"""Module containing utilities functions used by the interpreter."""
 import os
 from yapl.objects import ObjectType
 

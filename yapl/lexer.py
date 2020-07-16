@@ -3,8 +3,7 @@ from yapl.tokens import Tok_Type, Token, keywords
 
 
 class Lexer:
-    """Class used to convert a string of characters into language tokens.
-    """
+    """Class used to convert a string of characters into language tokens."""
 
     def __init__(self):
         self.text = None

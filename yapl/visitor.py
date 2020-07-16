@@ -1,3 +1,5 @@
+"""Module contains a visitor class implementation used to execute the AST 
+produced by the parser."""
 from yapl.tokens import Tok_Type
 from yapl.internal_error import InternalRuntimeErr
 from yapl.objects import *

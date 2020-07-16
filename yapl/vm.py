@@ -1,3 +1,4 @@
+"""Module contains a class used to manage the entire virtual machine."""
 from yapl.lexer import Lexer
 from yapl.env import Environment, Scope
 from yapl.parse import Parser
