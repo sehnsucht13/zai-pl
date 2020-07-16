@@ -56,6 +56,15 @@ class Parser:
             curr_token = self.curr_tok
             self.advance(1)
             return curr_token
+        else:
+            raise InternalParseErr(
+                self.curr_tok.line_num,
+                self.curr_tok.col_num,
+                self.original_text,
+                "",
+                list(args),
+                self.curr_tok.tok_type,
+            )
 
     def atom(self):
         """
