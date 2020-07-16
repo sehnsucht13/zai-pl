@@ -220,13 +220,15 @@ class String_Object(Internal_Object):
         return self.value
 
     def __eq__(self, other):
-        if other is None:
-            return False
-        else:
-            return self.obj_type == other.obj_type and self.value == other.value
+        assert (
+            other is not None
+        ), "Other variable is none in __eq__ function for string object."
+        return Bool_Object(
+            self.obj_type == other.obj_type and self.value == other.value
+        )
 
     def __ne__(self, other):
-        return Bool_Object(not self.__eq__(other))
+        return ~self.__eq__(other)
 
     def __lt__(self, other):
         if other.obj_type == ObjectType.STR:
