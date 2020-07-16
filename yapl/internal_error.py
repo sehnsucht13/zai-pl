@@ -60,15 +60,41 @@ class InternalParseErr(InternalErr):
     Class representing an internal error encountered during parsing/lexing stages.
     """
 
-    def __init__(self, message):
+    def __init__(
+        self, line_num, col_num, original_text, err_details, expected_tokens, got_token,
+    ):
         "Class representing internal errors encountered during parsing/lexing stage."
-        self.message = message
+        self.line_num = line_num
+        self.col_num = col_num
+        self.text = list(filter(None, original_text.split("\n")))
+        self.err_details = err_details
+        self.got_token = got_token
+        self.expected_tokens = expected_tokens
+        print(type(expected_tokens))
+
+        wanted_tokens = ""
+        if isinstance(self.expected_tokens, list):
+            for tok in self.expected_tokens:
+                wanted_tokens += str(tok)
+        else:
+            wanted_tokens = str(self.expected_tokens)
+
+        self.err_msg = "Expected a '{}' token but received '{}'".format(
+            wanted_tokens, self.got_token
+        )
 
     def __str__(self):
-        return "Parse Error: {}".format(self.message)
+        return "Parse Error: Line: {}, Column: {}\n  {}\n{}\n{}".format(
+            self.line_num,
+            self.col_num,
+            self.text[self.line_num],
+            "  _".rjust(self.col_num - 1, " "),
+            self.err_msg,
+        )
 
     def __repr__(self):
-        "Internal Parse Error: {}".format(self.message)
+        return ""
+        # "Internal Parse Error: {}".format(self.message)
 
 
 class InternalTokenErr(InternalErr):
