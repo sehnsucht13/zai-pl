@@ -3,7 +3,12 @@ from yapl.lexer import Lexer
 from yapl.env import Environment, Scope
 from yapl.parse import Parser
 from yapl.visitor import Visitor
-from yapl.internal_error import InternalRuntimeErr, InternalTypeError
+from yapl.internal_error import (
+    InternalRuntimeErr,
+    InternalTypeError,
+    InternalTokenErr,
+    InternalParseErr,
+)
 
 
 class YAPL_VM:
@@ -38,10 +43,14 @@ class YAPL_VM:
         lexer = Lexer()
         try:
             tok_stream = lexer.tokenize_string(input_str)
-            parser = Parser(tok_stream)
+            parser = Parser(tok_stream, input_str)
             root = parser.parse()
             val = self.visitor.visit(root)
         except InternalRuntimeErr as e:
             print(e)
         except InternalTypeError as e:
+            print(e)
+        except InternalTokenErr as e:
+            print(e)
+        except InternalParseErr as e:
             print(e)

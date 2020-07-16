@@ -13,7 +13,8 @@ class Parser:
     Parse and produce an AST from the provided token stream.
     """
 
-    def __init__(self, tokens):
+    def __init__(self, tokens, original_text):
+        self.original_text = original_text
         self.tokens = tokens
         self.tok_len = len(tokens)
         self.curr_idx = 0
