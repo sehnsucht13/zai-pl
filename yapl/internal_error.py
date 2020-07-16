@@ -69,3 +69,31 @@ class InternalParseErr(InternalErr):
 
     def __repr__(self):
         "Internal Parse Error: {}".format(self.message)
+
+
+class InternalTokenErr(InternalErr):
+    """
+    Class representing an internal error encountered during lexing stages.
+    """
+
+    def __init__(self, line_num, col_num, original_text, err_details):
+        "Class representing internal errors encountered during lexing stage."
+        self.line_num = line_num
+        self.col_num = col_num
+        self.text = original_text.split("\n")
+        self.err_details = err_details
+        print("error line", self.text[self.line_num])
+
+    def __str__(self):
+        return "Token Error: Error on line {}, column {}\n  {}\n{}\n{}".format(
+            self.line_num,
+            self.col_num,
+            self.text[self.line_num],
+            "      _".rjust(self.col_num - 1, " "),
+            self.err_details,
+        )
+
+    def __repr__(self):
+        return "Internal Token Error: Error on line {}, column {}\n  {}".format(
+            self.line_num, self.col_num, self.text[self.line_num]
+        )
