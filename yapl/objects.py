@@ -68,10 +68,11 @@ class Nil_Object(Internal_Object):
         return "NIL_OBJ"
 
     def __eq__(self, other):
-        return self.obj_type == other.obj_type
+        assert other is not None, "Other is none in __eq__ function for nil object."
+        return Bool_Object(self.obj_type == other.obj_type)
 
     def __ne__(self, other):
-        return Bool_Object(self.__eq__(other))
+        return ~(self.__eq__(other))
 
     def __lt__(self, other):
         raise InternalTypeError("<", self.obj_type, other.obj_type)
