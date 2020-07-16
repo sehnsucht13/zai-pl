@@ -404,21 +404,22 @@ class Array_Object(Internal_Object):
         return arr_str
 
     def __eq__(self, other):
-        if other is None:
-            return False
-        else:
-            if self.obj_type == other.obj_type:
-                # Check if size of both arrays are equal
-                if self.size == other.size:
-                    # Deep comparison of each element inside
-                    for idx in range(0, self.size):
-                        if self.elements[idx] != other.elements[idx]:
-                            return False
-                    return True
-                else:
-                    return False
+        assert other is not None, "Other variable in __eq__ function is None."
+        if self.obj_type == other.obj_type:
+            # Check if size of both arrays are equal
+            if self.size == other.size:
+                # Deep comparison of each element inside
+                for idx in range(0, self.size):
+                    if self.elements[idx] != other.elements[idx]:
+                        return Bool_Object(False)
+                return Bool_Object(True)
             else:
-                return False
+                return Bool_Object(False)
+        else:
+            return Bool_Object(False)
+
+    def __invert__(self):
+        return ~(self.__eq__(other))
 
     def __lt__(self, other):
         raise InternalTypeError("<", self.obj_type, other.obj_type)
