@@ -133,8 +133,12 @@ class Parser:
             Tok_Type.DOT,
         ]:
             # Create ID node
-            node = self.match(Tok_Type.ID)
-            left = ID_Node(node.lexeme)
+            node = self.match(Tok_Type.ID, Tok_Type.THIS)
+            left = None
+            if node.tok_type == Tok_Type.ID:
+                left = ID_Node(node.lexeme)
+            else:
+                left = ID_Node("this")
 
             while self.curr_tok.tok_type in [Tok_Type.LROUND, Tok_Type.DOT]:
                 if self.curr_tok.tok_type == Tok_Type.DOT:
@@ -149,8 +153,13 @@ class Parser:
 
             return left
         else:
-            node = self.match(Tok_Type.ID)
-            return ID_Node(node.lexeme)
+            node = self.match(Tok_Type.ID, Tok_Type.THIS)
+            left = None
+            if node.tok_type == Tok_Type.ID:
+                left = ID_Node(node.lexeme)
+            else:
+                left = ID_Node("this")
+            return left
 
     def factor(self):
         """
@@ -313,7 +322,7 @@ class Parser:
             else:
                 # Decompose the nodes
                 return New_Assign_Bin_Node(symbol_path.left, symbol_path.right, value)
-        elif self.curr_tok.tok_type == Tok_Type.ID:
+        elif self.curr_tok.tok_type in [Tok_Type.ID, Tok_Type.THIS]:
             symbol_path = self.call_or_access()
             if self.curr_tok.tok_type == Tok_Type.ASSIGN:
                 self.match(Tok_Type.ASSIGN)
