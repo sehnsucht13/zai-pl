@@ -1,5 +1,6 @@
 """ Module containing lexer class used to convert an input string into a sequence of language tokens."""
 from yapl.tokens import Tok_Type, Token, keywords
+from yapl.internal_error import InternalTokenErr
 
 
 class Lexer:
@@ -19,7 +20,7 @@ class Lexer:
         self.curr_col_num = 0
 
         # Special characters which are restricted/permitted in ID tokens.
-        self.restricted_ident_chars = ".,:;()[]*/+-<=>!{}#\"'\n\t "
+        self.restricted_ident_chars = ".,:;()|&[]*/+-<=>!{}#\"'\n\t "
         self.permitted_ident_chars = "?@$"
 
     def _advance(self):
@@ -60,7 +61,7 @@ class Lexer:
         while self._peek() is not None and self._peek() in "1234567890":
             self._advance()
             num_str += self.curr_char
-        return int(num_str)
+        return num_str
 
     def _tokenize_str(self):
         str_content = str()
@@ -97,6 +98,7 @@ class Lexer:
     def _tokenize(self):
         """ Tokenize the current text sequence and return the tokens generated. """
         while self._advance() is not None:
+            print("Lexer status", self.curr_lin_num, self.curr_col_num)
             if self.curr_char == "\n":
                 # Increment line numbers
                 self.curr_lin_num += 1
@@ -163,12 +165,26 @@ class Lexer:
                         Token(Tok_Type.AND, self.curr_lin_num, self.curr_col_num)
                     )
                     self._advance()
+                else:
+                    raise InternalTokenErr(
+                        self.curr_lin_num,
+                        self.curr_col_num,
+                        self.text,
+                        "A single '&' is not a valid symbol or operator. Did you mean to use '&&'(AND) operator?",
+                    )
             elif self.curr_char == "|":
                 if self._peek() == "|":
                     self.token_stream.append(
                         Token(Tok_Type.OR, self.curr_lin_num, self.curr_col_num)
                     )
                     self._advance()
+                else:
+                    raise InternalTokenErr(
+                        self.curr_lin_num,
+                        self.curr_col_num,
+                        self.text,
+                        "A single '|' is not a valid symbol or operator. Did you mean to use '||'(OR) operator?",
+                    )
             elif self.curr_char == "+":
                 if self._peek() == "+":
                     self.token_stream.append(
@@ -257,9 +273,20 @@ class Lexer:
             elif self.curr_char.isdigit():
                 # Store the column at the start of the number
                 num_start_col = self.curr_col_num
-                num = self._tokenize_num()
+                num_str = self._tokenize_num()
+
+                # Check if the number being tokenized might actually be a bad identifier
+                # which starts with a number.
+                # Example: 13abc or 1Alph@
+                if self._peek() == self.permitted_ident_chars or self._peek().isalpha():
+                    raise InternalTokenErr(
+                        self.curr_lin_num,
+                        num_start_col,
+                        self.text,
+                        "Identifiers cannot start with integers!",
+                    )
                 self.token_stream.append(
-                    Token(Tok_Type.NUM, num, self.curr_lin_num, num_start_col)
+                    Token(Tok_Type.NUM, int(num_str), self.curr_lin_num, num_start_col)
                 )
 
         # Add final EOF token to indicate end of token stream
