@@ -158,6 +158,18 @@ class Lexer:
                     self.token_stream.append(
                         Token(Tok_Type.MINUS, self.curr_lin_num, self.curr_col_num)
                     )
+            elif self.curr_char == "&":
+                if self._peek() == "&":
+                    self.token_stream.append(
+                        Token(Tok_Type.AND, self.curr_lin_num, self.curr_col_num)
+                    )
+                    self._advance()
+            elif self.curr_char == "|":
+                if self._peek() == "|":
+                    self.token_stream.append(
+                        Token(Tok_Type.OR, self.curr_lin_num, self.curr_col_num)
+                    )
+                    self._advance()
             elif self.curr_char == "+":
                 if self._peek() == "+":
                     self.token_stream.append(
