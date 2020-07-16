@@ -129,13 +129,20 @@ class Bool_Object(Internal_Object):
         return "BOOL_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        if other is None:
-            return False
-        else:
-            return self.obj_type == other.obj_type and self.value == other.value
+        assert other is not None, "Other value in bool internal object __eq__ is none"
+        return Bool_Object(
+            self.obj_type == other.obj_type and self.value == other.value
+        )
 
     def __ne__(self, other):
-        return Bool_Object(not (self.__eq__(other)))
+        # Using the invert operator(~) will return a new boolean object.
+        return ~(self.__eq__(other))
+
+    def __neg__(self):
+        return Bool_Object(-(self.value))
+
+    def __invert__(self):
+        return Bool_Object(not (self.value))
 
     def __lt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
@@ -186,16 +193,10 @@ class Bool_Object(Internal_Object):
             raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
-        return bool(self) and bool(other)
+        return Bool_Object(bool(self) and bool(other))
 
     def __or__(self, other):
-        return bool(self) or bool(other)
-
-    def __neg__(self):
-        return -(self.value)
-
-    def __invert__(self):
-        return not (self.value)
+        return Bool_Object(bool(self) or bool(other))
 
     def __bool__(self):
         return self.value
