@@ -297,7 +297,9 @@ class Lexer:
                 # Check if the number being tokenized might actually be a bad identifier
                 # which starts with a number.
                 # Example: 13abc or 1Alph@
-                if self._peek() == self.permitted_ident_chars or self._peek().isalpha():
+                if self._peek() is not None and (
+                    self._peek() == self.permitted_ident_chars or self._peek().isalpha()
+                ):
                     raise InternalTokenErr(
                         self.curr_lin_num,
                         num_start_col,
