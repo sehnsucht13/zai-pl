@@ -339,9 +339,8 @@ class Parser:
         self.match(Tok_Type.LROUND)
         if_cond = self.or_expr()
         self.match(Tok_Type.RROUND)
-
         then_block = self.block()
-        conditions.append(tuple((if_cond, then_block)))
+        conditions.append({"cond": if_cond, "block": then_block})
 
         # Parse "elif ... then ..."
         while self.curr_tok.tok_type == Tok_Type.ELIF:
@@ -350,7 +349,7 @@ class Parser:
             cond = self.or_expr()
             self.match(Tok_Type.RROUND)
             then_block = self.block()
-            conditions.append(tuple((cond, then_block)))
+            conditions.append({"cond": cond, "block": then_block})
 
         else_block = None
         if self.curr_tok.tok_type == Tok_Type.ELSE:

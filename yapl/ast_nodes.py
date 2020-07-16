@@ -193,7 +193,7 @@ class Bracket_Node(AST_Node):
 
 class If_Node(AST_Node):
     def __init__(self, conditions, else_block):
-        self.conditions = conditions
+        self.cond_blocks = conditions
         self.else_block = else_block
 
     def __str__(self):

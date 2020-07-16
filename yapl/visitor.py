@@ -128,13 +128,13 @@ class Visitor:
 
     def visit_if(self, node):
         # Evaluate each condition and execute block if it is true
-        for cond in node.conditions:
-            cond_value = cond[0].accept(self)
+        for cond_block in node.cond_blocks:
+            cond_value = cond_block["cond"].accept(self)
             if is_truthy(cond_value):
-                return cond[1].accept(self)
+                return cond_block["block"].accept(self)
 
-            if node.else_block is not None:
-                return node.else_block.accept(self)
+        if node.else_block is not None:
+            return node.else_block.accept(self)
 
     def visit_while(self, node):
         cond_value = node.condition.accept(self)
