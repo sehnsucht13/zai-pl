@@ -28,6 +28,7 @@ class YAPL_VM:
             parser = Parser(tok_stream)
             root = parser.parse()
             val = self.visitor.visit(root)
+            print(str(val))
 
     def run_string(self, input_str):
         """
