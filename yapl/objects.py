@@ -458,10 +458,9 @@ class Array_Object(Internal_Object):
         return Bool_Object(bool(self) or bool(other))
 
     def __neg__(self):
-        raise InternalTypeError("-", self.obj_type, other.obj_type)
-
-    def __invert__(self):
-        return not bool(self)
+        raise InternalTypeError(
+            "-", self.obj_type,
+        )
 
     def __bool__(self):
         if self.size == 0:
@@ -485,10 +484,12 @@ class Return_Object(Internal_Object):
         return "RETURN_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        if other is None:
-            return False
-        else:
-            return self.obj_type == other.obj_type and self.value == other.value
+        assert (
+            other is not None
+        ), "Other variable in __eq__ method for a return object is None."
+        return Bool_Object(
+            self.obj_type == other.obj_type and self.value == other.value
+        )
 
 
 class Break_Object(Internal_Object):
