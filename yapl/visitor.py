@@ -191,6 +191,7 @@ class Visitor:
         # Find if a path to the variable exists
         symbol_path = None
         if node.symbol_path is None:
+            # We must be trying to access a variable within the current scope.
             scope = self.env.peek()
             scope.new_variable(symbol_name, value)
         else:
