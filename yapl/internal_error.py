@@ -70,7 +70,6 @@ class InternalParseErr(InternalErr):
         self.err_details = err_details
         self.got_token = got_token
         self.expected_tokens = expected_tokens
-        print(type(expected_tokens))
 
         wanted_tokens = ""
         if isinstance(self.expected_tokens, list):
@@ -84,12 +83,8 @@ class InternalParseErr(InternalErr):
         )
 
     def __str__(self):
-        return "Parse Error: Line: {}, Column: {}\n  {}\n{}\n{}".format(
-            self.line_num,
-            self.col_num,
-            self.text[self.line_num],
-            "  _".rjust(self.col_num - 1, " "),
-            self.err_msg,
+        return "Parse Error: Line: {}, Column: {}\n\n  {}\n\nExplanation: {}".format(
+            self.line_num, self.col_num, self.text[self.line_num], self.err_msg,
         )
 
     def __repr__(self):
