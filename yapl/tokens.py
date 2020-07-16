@@ -80,7 +80,6 @@ class Tok_Type(Enum):
     EOF = auto()
 
     def __str__(self):
-        print("print for tok type", self.name)
         tok_type_to_str = {
             "STRING": "string",
             "ID": "identifier",
