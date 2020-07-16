@@ -216,9 +216,10 @@ class Visitor:
         self.env.exit_scope()
 
     def visit_switch(self, node):
-        # Create a new scope to evaluate the current block in
+        # Evaluate the condition used for testing all cases
         test_cond = node.switch_cond.accept(self)
-        # Index of the first switch case which has a true test condition
+
+        # Find the index of the first switch case which is true.
         start_case_idx = None
         for idx, switch_case in enumerate(node.switch_cases):
             case_cond = switch_case[0].accept(self)
@@ -226,6 +227,8 @@ class Visitor:
                 start_case_idx = idx
                 break
 
+        # Execute all switch cases after that until we encounter a "break" keyword
+        # or a "return"/"continue" keywords.
         for _, case_body in node.switch_cases[start_case_idx:]:
             ret_val = case_body.accept(self)
             if ret_val is not None:
@@ -234,13 +237,14 @@ class Visitor:
                 else:
                     return ret_val
 
+        # Execute the default case if it is provided.
         if node.default_case is not None:
             return node.default_case.accept(self)
 
     def visit_func_def(self, node):
-        scope = self.env.peek()
+        curr_scope = self.env.peek()
         # Register the function in the current frame
-        scope.new_variable(
+        curr_scope.new_variable(
             node.name, Func_Object(node.name, node.args, node.body, scope)
         )
 
@@ -249,9 +253,9 @@ class Visitor:
         Keyword Arguments:
         node -- Class definition node
         """
-        scope = self.env.peek()
+        curr_scope = self.env.peek()
         # Register the class in the scope
-        scope.new_variable(
+        curr_scope.new_variable(
             node.class_name, Class_Def_Object(node.class_name, node.class_methods)
         )
 
