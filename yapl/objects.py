@@ -307,11 +307,15 @@ class Num_Object(Internal_Object):
         return str(self.value)
 
     def __eq__(self, other):
-        # print("comparison from object", self, other)
-        if other is None:
-            return False
-        else:
-            return self.obj_type == other.obj_type and self.value == other.value
+        assert (
+            other is not None
+        ), "Other variable is None in __eq__ method for numeric objects."
+        return Bool_Object(
+            self.obj_type == other.obj_type and self.value == other.value
+        )
+
+    def __ne__(self, other):
+        return ~(self.__eq__(other))
 
     def __add__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
@@ -360,11 +364,6 @@ class Num_Object(Internal_Object):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
             return Bool_Object(self.value >= other.value)
         raise InternalTypeError(">=", self.obj_type, other.obj_type)
-
-    def __ne__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value != other.value)
-        raise InternalTypeError("!=", self.obj_type, other.obj_type)
 
     def __neg__(self):
         return Num_Object(-self.value)
