@@ -60,13 +60,14 @@ class Parser:
         """
         Parse an atom(pritive) object.
         Grammar:
-        atom := | NUM | STR | ID | BOOL
+        atom := | NUM | STR | BOOL | ARRAY | "nil"
         ;; Primitives
         BOOL := "false" | "true"
         ID := LETTER (LETTER | NUM | "-" | "$" | "@")*
         NUM := DIGIT (DIGIT)*
         DIGIT := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
         STR := "\"" (LETTER | NUM )* "\""
+        ARRAY := "[" ( or_expr ( "," or_expr )* )? "]"
         """
         if self.curr_tok.tok_type == Tok_Type.THIS:
             node = self.match(Tok_Type.THIS)
@@ -98,6 +99,11 @@ class Parser:
             return Bool_Node(node.tok_type)
 
     def arglist(self):
+        """
+        Parse an arglist rule.
+        Grammar:
+        arglist := (or_expr ("," or_expr)*)?
+        """
         func_args = list()
         while self.curr_tok.tok_type != Tok_Type.RROUND:
             arg_value = self.or_expr()
@@ -107,6 +113,11 @@ class Parser:
         return func_args
 
     def call_or_access(self):
+        """
+        Parse a call or access rule.
+        Grammar:
+        call_or_access := ( ID | "this" ) ( "(" arglist ")" | "." ID )*
+        """
         if self.peek().tok_type in [
             Tok_Type.LROUND,
             Tok_Type.DOT,
@@ -279,7 +290,7 @@ class Parser:
         """
         Parse a general expression:
         Grammar:
-        expr := "let"? ID "=" or_expr | or_expr
+        expr := "let"? call_or_access "=" or_expr | or_expr
         """
         if self.curr_tok.tok_type == Tok_Type.LET:
             self.match(Tok_Type.LET)
@@ -423,6 +434,11 @@ class Parser:
         return Scope_Block_Node(block_stmnts)
 
     def while_statement(self):
+        """
+        Parse a while statement.
+        Grammar:
+        while_stmnt := "while" "(" or_expr ")" block_stmnt
+        """
         self.match(Tok_Type.WHILE)
         self.match(Tok_Type.LROUND)
         condition = self.or_expr()
@@ -432,6 +448,9 @@ class Parser:
         return While_Node(condition, body)
 
     def switch_stmnt_case(self):
+        """
+        Parse a single switch statement case.
+        """
         stmnt_block = list()
         while self.curr_tok.tok_type not in [
             Tok_Type.CASE,
@@ -447,6 +466,13 @@ class Parser:
         return Scope_Block_Node(stmnt_block)
 
     def switch_statement(self):
+        """
+        Parse a switch statement rule.
+        Grammar:
+        switch_stmnt := "switch" "(" or_expr ")" 
+                        ("case"  or_expr ":" block_stmnt)* 
+                        "default" ":" block_stmnt
+        """
         self.match(Tok_Type.SWITCH)
         self.match(Tok_Type.LROUND)
         switch_cond = self.or_expr()
@@ -480,6 +506,11 @@ class Parser:
         return expr_result
 
     def class_def(self):
+        """
+        Parse a class definition rule.
+        Grammar:
+        class_def := "class" ID "{" func_def* "}"
+        """
         self.match(Tok_Type.CLASS)
         class_name = self.match(Tok_Type.ID).lexeme
         self.match(Tok_Type.LCURLY)
@@ -500,6 +531,11 @@ class Parser:
         return Class_Def_Node(class_name, class_methods)
 
     def flow_statement(self):
+        """
+        Parse a flow statement rule.
+        Grammar:
+        flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";" 
+        """
         node = None
         if self.curr_tok.tok_type == Tok_Type.RETURN:
             return_val = None
@@ -520,6 +556,11 @@ class Parser:
         return node
 
     def do_while_statement(self):
+        """
+        Parse a do-while statement.
+        Grammar:
+        do_while_stmnt := "do" block_stmnt "while" "(" or_expr ")"
+        """
         self.match(Tok_Type.DO)
         body = self.block()
         self.match(Tok_Type.WHILE)
@@ -530,6 +571,11 @@ class Parser:
         return Do_While_Node(test_cond, body)
 
     def import_statement(self):
+        """
+        Parse an import statement.
+        Grammar:
+        import_stmnt := "import" ID ("as" ID)?
+        """
         self.match(Tok_Type.IMPORT)
         module_name = self.match(Tok_Type.ID).lexeme
         import_name = None
@@ -541,17 +587,20 @@ class Parser:
 
     def statement(self):
         """
-        Parse a statement.
+        Parse a single statement.
         Grammar:
-
-        statement := if_stmnt    |
-                     while_stmnt | ;; not done
-		     for_stmnt   | ;; not done
-		     class_def   | ;; not done
-		     func_def    |
-		     block       |
-		     print       |
-		     expr
+       statement := if_stmnt        |
+                    while_stmnt     |
+                    for_stmnt       | 
+                    class_def       |
+                    func_def        |
+                    block_stmnt     |
+                    print_stmnt     |
+                    switch_stmnt    |
+                    flow_stmnt      |
+                    do_while_stmnt  |
+                    import_stmnt    |
+                    simple_expr
         """
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
