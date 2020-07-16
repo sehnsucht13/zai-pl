@@ -3,15 +3,15 @@ program := statement*
 ;; Statements
 statement := if_stmnt        |
 			 while_stmnt     |
-			 for_stmnt       | ; not done
-			 class_def       | ; not done
+			 for_stmnt       | 
+			 class_def       |
 			 func_def        |
 			 block_stmnt     |
 			 print_stmnt     |
-			 switch_stmnt    | ; not done
+			 switch_stmnt    |
              flow_stmnt      |
              do_while_stmnt  |
-             import_stmnt  |
+             import_stmnt    |
 			 simple_expr
 
 if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
