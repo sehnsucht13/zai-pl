@@ -226,13 +226,12 @@ class Visitor:
         start_case_idx = None
         for idx, switch_case in enumerate(node.switch_cases):
             case_cond = switch_case[0].accept(self)
-            if case_cond == test_cond:
+            if is_truthy(case_cond == test_cond):
                 start_case_idx = idx
                 break
 
         for _, case_body in node.switch_cases[start_case_idx:]:
             ret_val = case_body.accept(self)
-            # TODO: Handle "return" statements here
             if ret_val is not None:
                 if ret_val.obj_type == ObjectType.BREAK:
                     return
@@ -307,7 +306,7 @@ class Visitor:
             # Create a new scope
             # self.env.enter_scope()
             self.env.enter_scope(call_object.class_env)
-            print(self.env.peek().parent.scope)
+            # print(self.env.peek().parent.scope)
 
             # Evaluate the arguments
             arg_values = list()
@@ -342,9 +341,7 @@ class Visitor:
 
     def visit_dot_node(self, node):
         l = node.left.accept(self)
-        # print("dot-node left", l)
         if l.obj_type == ObjectType.MODULE:
-            # print("got module")
             val = l.namespace.lookup_symbol(node.right.val)
             if val is not None:
                 return val
