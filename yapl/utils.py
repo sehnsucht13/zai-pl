@@ -42,9 +42,11 @@ def is_truthy(internal_object):
         ObjectType.STR,
         ObjectType.NUM,
         ObjectType.NIL,
+        ObjectType.ARRAY,
     ]:
         return bool(internal_object)
     else:
+        # Functions, class instances and class definitions are not truthy.
         return False
 
 
