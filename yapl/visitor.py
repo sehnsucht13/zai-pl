@@ -336,6 +336,10 @@ class Visitor:
             instance_ptr = Class_Instance_Object(
                 call_object.class_name, call_object.class_methods
             )
+            # Enter new scope to register "this" namespace
+            self.env.enter_scope(instance_ptr.namespace)
+            self.env.peek().new_variable("this", instance_ptr.namespace)
+
             class_constructor = instance_ptr.get_field("constructor")
             if class_constructor is None and len(node.call_args) != 0:
                 raise InternalRuntimeErr(
@@ -346,6 +350,7 @@ class Visitor:
             elif class_constructor is not None:
                 self.__run_function(class_constructor, node.call_args)
 
+            self.env.exit_scope()
             return instance_ptr
         else:
             raise InternalRuntimeErr("Object is not callable!")
