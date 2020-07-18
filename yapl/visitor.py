@@ -273,84 +273,71 @@ class Visitor:
             node.class_name, Class_Def_Object(node.class_name, node.class_methods)
         )
 
+    def __run_function(self, func_object, call_args):
+        """
+        Runs the function represented by func_object. The arguments passed are supplied by
+        the call_args in the form of a list.
+        """
+        # Evaluate the arguments
+        arg_values = list()
+        for arg in call_args:
+            val = arg.accept(self)
+            arg_values.append(val)
+
+        if len(arg_values) != func_object.arity:
+            msg = 'function "{}"" accepts {} arguments but only {} were given!'.format(
+                func_object.name, len(arg_values), func_object.arity
+            )
+            raise InternalRuntimeErr(msg)
+
+        # Add arguments to the current environment
+        for arg_pair in zip(func_object.args, arg_values):
+            self.env.peek().new_variable(arg_pair[0].lexeme, arg_pair[1])
+
+        for stmnt in func_object.body:
+            ret_val = stmnt.accept(self)
+            if ret_val is not None and ret_val.obj_type in [
+                ObjectType.RETURN,
+                ObjectType.BREAK,
+                ObjectType.CONTINUE,
+            ]:
+                if ret_val.obj_type == ObjectType.RETURN:
+                    return ret_val
+                elif ret_val.obj_type == ObjectType.BREAK:
+                    msg = '"break" statement not used within a loop or a switch block!'
+                    raise InternalRuntimeErr(msg)
+                elif ret_val.obj_type == ObjectType.CONTINUE:
+                    msg = '"continue" statement not used within a loop!'
+                    raise InternalRuntimeErr(msg)
+        return None
+
     def visit_call(self, node):
         call_object = node.object_name.accept(self)
 
         # Case of function object
-        if call_object.obj_type == ObjectType.FUNC:
-            # Create a new scope
-            self.env.enter_scope(call_object.env)
+        if call_object.obj_type in [ObjectType.FUNC, ObjectType.CLASS_METHOD]:
+            if call_object.obj_type == ObjectType.FUNC:
+                # Create a new scope
+                self.env.enter_scope(call_object.env)
+            elif call_object.obj_type == ObjectType.CLASS_METHOD:
+                self.env.enter_scope(call_object.class_env)
+                self.env.peek().new_variable("this", call_object.class_env)
 
-            # Evaluate the arguments
-            arg_values = list()
-            for arg in node.call_args:
-                val = arg.accept(self)
-                arg_values.append(val)
-
-            if len(arg_values) != call_object.arity:
-                msg = 'function "{}"" accepts {} arguments but only {} were given!'.format(
-                    call_object.name, len(arg_values), call_object.arity
-                )
-                raise InternalRuntimeErr(msg)
-
-            # Add arguments to the current environment
-            for arg_pair in zip(call_object.args, arg_values):
-                self.env.peek().new_variable(arg_pair[0].lexeme, arg_pair[1])
-
-            for stmnt in call_object.body:
-                ret_val = stmnt.accept(self)
-                if ret_val is not None:
-                    if ret_val.obj_type == ObjectType.RETURN:
-                        return ret_val.value
-                    elif ret_val.obj_type == ObjectType.BREAK:
-                        msg = '"break" statement not used within a loop or a switch block!'
-                        raise InternalRuntimeErr(msg)
-                    elif ret_val.obj_type == ObjectType.CONTINUE:
-                        msg = '"continue" statement not used within a loop!'
-                        raise InternalRuntimeErr(msg)
+            ret_val = self.__run_function(call_object, node.call_args)
+            self.env.exit_scope()
+            if ret_val is None:
+                return Nil_Object()
+            else:
+                return ret_val.value
 
             self.env.exit_scope()
-            return Nil_Object()
 
         elif call_object.obj_type == ObjectType.CLASS_DEF:
             return Class_Instance_Object(
                 call_object.class_name, call_object.class_methods
             )
-        elif call_object.obj_type == ObjectType.CLASS_METHOD:
-            # Create a new scope
-            self.env.enter_scope(call_object.class_env)
-            self.env.peek().new_variable("this", call_object.class_env)
-
-            # Evaluate the arguments
-            arg_values = list()
-            for arg in node.call_args:
-                val = arg.accept(self)
-                arg_values.append(val)
-
-            if len(arg_values) != call_object.arity:
-                msg = 'function "{}" accepts {} arguments but only {} were given!'.format(
-                    call_object.name, len(arg_values), call_object.arity
-                )
-                raise InternalRuntimeErr(msg)
-
-            # Add arguments to the current environment
-            for arg_pair in zip(call_object.args, arg_values):
-                self.env.peek().new_variable(arg_pair[0].lexeme, arg_pair[1])
-
-            for stmnt in call_object.body:
-                ret_val = stmnt.accept(self)
-                if ret_val is not None:
-                    if ret_val.obj_type == ObjectType.RETURN:
-                        return ret_val.value
-                    elif ret_val.obj_type == ObjectType.BREAK:
-                        msg = '"break" statement not used within a loop or a switch block!'
-                        raise InternalRuntimeErr(msg)
-                    elif ret_val.obj_type == ObjectType.CONTINUE:
-                        msg = '"continue" statement not used within a loop!'
-                        raise InternalRuntimeErr(msg)
-
-            self.env.exit_scope()
-            return Nil_Object()
+        else:
+            raise InternalRuntimeErr("Object is not callable!")
 
     def visit_dot_node(self, node):
         l = node.left.accept(self)
