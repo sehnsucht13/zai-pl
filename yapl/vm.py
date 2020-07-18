@@ -21,6 +21,16 @@ class YAPL_VM:
         self.env = Environment()
         self.repl_mode_flag = False
         self.visitor = Visitor(self.env)
+        self.__load_stdlib()
+
+    def __load_stdlib(self):
+        """Load both the standard library in the environment of the current VM instance."""
+        from yapl.stdlib.native_func import register_functions
+
+        native_functions = register_functions()
+        curr_scope = self.env.peek()
+        for func in native_functions:
+            curr_scope.new_variable(func.name, func)
 
     def run_repl(self):
         """
