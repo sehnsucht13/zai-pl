@@ -50,6 +50,9 @@ class Scope:
         for k, v in new_scope.scope.items():
             self.scope[k] = v
 
+    def __str__(self):
+        return str(self.scope)
+
 
 class Environment:
     """
@@ -83,3 +86,9 @@ class Environment:
         """
         self.scopes.append(Scope(parent_scope))
         self.stack_height += 1
+
+    def __str__(self):
+        env_stack = str()
+        for scope in self.scopes:
+            env_stack += str(scope) + "\n"
+        return env_stack
