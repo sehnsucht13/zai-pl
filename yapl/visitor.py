@@ -333,9 +333,20 @@ class Visitor:
             self.env.exit_scope()
 
         elif call_object.obj_type == ObjectType.CLASS_DEF:
-            return Class_Instance_Object(
+            instance_ptr = Class_Instance_Object(
                 call_object.class_name, call_object.class_methods
             )
+            class_constructor = instance_ptr.get_field("constructor")
+            if class_constructor is None and len(node.call_args) != 0:
+                raise InternalRuntimeErr(
+                    "Class '{}' does not have a constructor method but initialization detected {} arguments passed.".format(
+                        call_object.class_name, len(node.call_args)
+                    )
+                )
+            elif class_constructor is not None:
+                self.__run_function(class_constructor, node.call_args)
+
+            return instance_ptr
         else:
             raise InternalRuntimeErr("Object is not callable!")
 
