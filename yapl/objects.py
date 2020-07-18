@@ -16,6 +16,7 @@ class ObjectType(Enum):
     ID = auto()
     BOOL = auto()
     FUNC = auto()
+    NATIVE_FUNC = auto()
     CLASS_DEF = auto()
     CLASS_INSTANCE = auto()
     CLASS_METHOD = auto()
@@ -33,6 +34,7 @@ class ObjectType(Enum):
             "ID": "variable name",
             "BOOL": "boolean",
             "FUNC": "function",
+            "NATIVE_FUNC": "native function",
             "CLASS_DEF": "class definition",
             "CLASS_INSTANCE": "class instance",
             "CLASS_METHOD": "class method",
@@ -551,6 +553,21 @@ class Func_Object(Internal_Object):
         # return "FUNC_OBJ: Name: {}, Args: {}, Arity: {}".format(
         #     self.name, self.args, self.arity,
         # )
+
+
+class Native_Func_Object(Internal_Object):
+    """
+    Internal object used to represent a function.
+    """
+
+    def __init__(self, func):
+        self.obj_type = ObjectType.NATIVE_FUNC
+        self.name = func.__name__
+        self.arity = func.__code__.co_argcount
+        self.body = func
+
+    def __str__(self):
+        return "<native function object {}>".format(self.name)
 
 
 class Class_Def_Object(Internal_Object):
