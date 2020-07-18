@@ -131,6 +131,7 @@ class Parser:
         if self.peek().tok_type in [
             Tok_Type.LROUND,
             Tok_Type.DOT,
+            Tok_Type.LSQUARE,
         ]:
             # Create ID node
             node = self.match(Tok_Type.ID, Tok_Type.THIS)
@@ -140,7 +141,11 @@ class Parser:
             else:
                 left = ID_Node("this")
 
-            while self.curr_tok.tok_type in [Tok_Type.LROUND, Tok_Type.DOT]:
+            while self.curr_tok.tok_type in [
+                Tok_Type.LROUND,
+                Tok_Type.DOT,
+                Tok_Type.LSQUARE,
+            ]:
                 if self.curr_tok.tok_type == Tok_Type.DOT:
                     self.match(Tok_Type.DOT)
                     prop_name = ID_Node(self.match(Tok_Type.ID).lexeme)
@@ -150,6 +155,11 @@ class Parser:
                     func_args = self.arglist()
                     self.match(Tok_Type.RROUND)
                     left = Call_Node(left, func_args)
+                elif self.curr_tok.tok_type == Tok_Type.LSQUARE:
+                    self.match(Tok_Type.LSQUARE)
+                    arr_idx = self.atom()
+                    self.match(Tok_Type.RSQUARE)
+                    left = Array_Access_Node(left, arr_idx)
 
             return left
         else:
