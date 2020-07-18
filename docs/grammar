@@ -35,17 +35,16 @@ eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
 rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
 add_expr := term (("+" | "-") term)*
 term := factor (("*" | "/") factor)*
-factor := ID ( "(" arglist ")" | "." ID)* | "(" expr ")" | unary_op factor | atom | array_access | incr_decr
-call_or_access := ( ID | "this" ) ( "(" arglist ")" | "." ID )*
-;; array_access := ID "[" "]"
+factor := call_or_access | "(" expr ")" | unary_op factor | atom | incr_decr
+call_or_access := ( ID | "this" ) ( "(" arglist ")" | "." ID | "[" NUM "]")*
 arglist := (or_expr ("," or_expr)*)?
 unary_op := "!" "-"
-
 atom := | NUM | STR | BOOL | ARRAY | "nil"
+
 ;; Primitives
 BOOL := "false" | "true"
-ID := LETTER (LETTER | NUM | "-" | "$" | "@")*
+ID := LETTER (LETTER | NUM | "_" | "$" | "@")*
+ARRAY := "[" ( or_expr ( "," or_expr )* )? "]"
+STR := "\"" any character* "\""
 NUM := DIGIT (DIGIT)*
 DIGIT := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
-STR := "\"" (LETTER | NUM )* "\""
-ARRAY := "[" ( or_expr ( "," or_expr )* )? "]"
