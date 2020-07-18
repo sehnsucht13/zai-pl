@@ -468,6 +468,14 @@ class Visitor:
     def visit_array_access(self, node):
         array_obj = node.array_name.accept(self)
         array_idx = node.array_pos.accept(self)
+        if array_obj.obj_type != ObjectType.ARRAY:
+            err_str = "Object is not an array and cannot be accessed using '[]'!"
+            raise InternalRuntimeErr(err_str)
+        if array_idx.obj_type != ObjectType.NUM:
+            err_str = "Array index is not a number but a '{}'!".format(
+                str(array_idx.obj_type)
+            )
+            raise InternalRuntimeErr(err_str)
         if array_idx.value < array_obj.size:
             return array_obj.elements[array_idx.value]
         else:
