@@ -285,8 +285,8 @@ class Visitor:
             arg_values.append(val)
 
         if len(arg_values) != func_object.arity:
-            msg = 'function "{}"" accepts {} arguments but only {} were given!'.format(
-                func_object.name, len(arg_values), func_object.arity
+            msg = 'function "{}" accepts only {} arguments but {} were given!'.format(
+                func_object.name, func_object.arity, len(arg_values),
             )
             raise InternalRuntimeErr(msg)
 
