@@ -273,7 +273,24 @@ class Visitor:
             node.class_name, Class_Def_Object(node.class_name, node.class_methods)
         )
 
-    def __run_function(self, func_object, call_args):
+    def __run_native_function(self, func_object, call_args):
+        if func_object.arity != len(call_args):
+            raise InternalRuntimeErr(
+                "Function '{}' accepts only {} arguments but {} were given".format(
+                    func_object.name, func_object.arity, len(call_args)
+                )
+            )
+
+        evaluated_args = list()
+        for arg in call_args:
+            val = arg.accept(self)
+            evaluated_args.append(val)
+
+        # Using the "*" operator will destructure the list of evaluated internal object
+        # arguments into the arguments which the function accepts.
+        return func_object.body(*evaluated_args)
+
+    def __run_internal_function(self, func_object, call_args):
         """
         Runs the function represented by func_object. The arguments passed are supplied by
         the call_args in the form of a list.
@@ -323,7 +340,7 @@ class Visitor:
                 self.env.enter_scope(call_object.class_env)
                 self.env.peek().new_variable("this", call_object.class_env)
 
-            ret_val = self.__run_function(call_object, node.call_args)
+            ret_val = self.__run__internal_function(call_object, node.call_args)
             self.env.exit_scope()
             if ret_val is None:
                 return Nil_Object()
@@ -331,6 +348,9 @@ class Visitor:
                 return ret_val.value
 
             self.env.exit_scope()
+
+        elif call_object.obj_type == ObjectType.NATIVE_FUNC:
+            return self.__run_native_function(call_object, node.call_args)
 
         elif call_object.obj_type == ObjectType.CLASS_DEF:
             instance_ptr = Class_Instance_Object(
@@ -348,7 +368,7 @@ class Visitor:
                     )
                 )
             elif class_constructor is not None:
-                self.__run_function(class_constructor, node.call_args)
+                self.__run_internal_function(class_constructor, node.call_args)
 
             self.env.exit_scope()
             return instance_ptr
