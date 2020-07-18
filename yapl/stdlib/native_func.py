@@ -41,6 +41,36 @@ def str_len(internal_object):
         return yapl.objects.Nil_Object()
 
 
+def mod(operand1, operand2):
+    """
+    Find the modulus of operand1 and operand2. Return nil if arguments
+    are not numbers.
+    """
+    if (
+        operand1.obj_type == yapl.objects.ObjectType.NUM
+        and operand2.obj_type == yapl.objects.ObjectType.NUM
+    ):
+        if operand1.value == 0 or operand2.value == 0:
+            return yapl.objects.Nil_Object()
+        else:
+            return yapl.objects.Num_Object(operand1.value % operand2.value)
+    else:
+        return yapl.objects.Nil_Object()
+
+
+def power(base, exponent):
+    """
+    Return the argument base raised to the power represented by exponent.
+    """
+    if (
+        base.obj_type == yapl.objects.ObjectType.NUM
+        and exponent.obj_type == yapl.objects.ObjectType.NUM
+    ):
+        return yapl.objects.Num_Object(pow(base.value, exponent.value))
+    else:
+        return yapl.objects.Nil_Object()
+
+
 def register_functions():
     """
     Transform all native function defined within this module into internal objects
@@ -49,5 +79,7 @@ def register_functions():
     registered_functions = list()
     registered_functions.append(yapl.objects.Native_Func_Object(str_len))
     registered_functions.append(yapl.objects.Native_Func_Object(object_type))
+    registered_functions.append(yapl.objects.Native_Func_Object(power))
+    registered_functions.append(yapl.objects.Native_Func_Object(mod))
 
     return registered_functions
