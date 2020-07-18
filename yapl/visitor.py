@@ -26,7 +26,11 @@ class Visitor:
         for stmnt in node.stmnts:
             ret_val = stmnt.accept(self)
 
-            if ret_val is not None:
+            if ret_val is not None and ret_val.obj_type in [
+                ObjectType.RETURN,
+                ObjectType.BREAK,
+                ObjectType.CONTINUE,
+            ]:
                 if ret_val.obj_type == ObjectType.RETURN:
                     msg = '"return" statement not used outside of a function or class method!'
                     raise InternalRuntimeErr(msg)
@@ -36,8 +40,6 @@ class Visitor:
                 elif ret_val.obj_type == ObjectType.CONTINUE:
                     msg = '"continue" statement not used within a loop!'
                     raise InternalRuntimeErr(msg)
-                else:
-                    return ret_val
 
     def visit_num(self, node):
         return Num_Object(node.val)
@@ -257,7 +259,7 @@ class Visitor:
         curr_scope = self.env.peek()
         # Register the function in the current frame
         curr_scope.new_variable(
-            node.name, Func_Object(node.name, node.args, node.body, scope)
+            node.name, Func_Object(node.name, node.args, node.body, curr_scope)
         )
 
     def visit_class_def(self, node):
