@@ -1,4 +1,4 @@
-"""Module contains a visitor class implementation used to execute the AST 
+"""Module contains a visitor class implementation used to execute the AST
 produced by the parser."""
 from yapl.tokens import Tok_Type
 from yapl.internal_error import InternalRuntimeErr
@@ -179,7 +179,8 @@ class Visitor:
                     )
                     raise InternalRuntimeErr(err_msg)
             elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
-                status = symbol_path.namespace.replace_variable(symbol_name, value)
+                status = symbol_path.namespace.replace_variable(
+                    symbol_name, value)
                 if status is False:
                     err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
                         symbol_name
@@ -270,7 +271,8 @@ class Visitor:
         curr_scope = self.env.peek()
         # Register the class in the scope
         curr_scope.new_variable(
-            node.class_name, Class_Def_Object(node.class_name, node.class_methods)
+            node.class_name, Class_Def_Object(
+                node.class_name, node.class_methods)
         )
 
     def __run_native_function(self, func_object, call_args):
@@ -340,7 +342,7 @@ class Visitor:
                 self.env.enter_scope(call_object.class_env)
                 self.env.peek().new_variable("this", call_object.class_env)
 
-            ret_val = self.__run__internal_function(call_object, node.call_args)
+            ret_val = self.__run_internal_function(call_object, node.call_args)
             self.env.exit_scope()
             if ret_val is None:
                 return Nil_Object()
@@ -405,7 +407,8 @@ class Visitor:
                 )
                 raise InternalRuntimeErr(err_msg)
         else:
-            err_msg = "variable {} is not an instance of a class!".format(node.left.val)
+            err_msg = "variable {} is not an instance of a class!".format(
+                node.left.val)
             raise InternalRuntimeErr(err_msg)
 
     def visit_this(self, node):
@@ -510,10 +513,11 @@ class Visitor:
         lexer = Lexer()
         import_env = Environment()
 
-        # Execute module contents
+        # Lex and parse module contents
         tok_stream = lexer.tokenize_string(module_text)
-        parser = Parser(tok_stream)
+        parser = Parser(tok_stream, module_text)
         root = parser.parse()
+
         import_visitor = Visitor(import_env)
         import_visitor.visit(root)
         # Take the module's global environment to be added to the namespace.
@@ -526,7 +530,8 @@ class Visitor:
 
         self.env.peek().new_variable(
             module_env_name,
-            Module_Object(node.module_name, module_path, import_scope, module_env_name),
+            Module_Object(node.module_name, module_path,
+                          import_scope, module_env_name),
         )
 
     def visit_add_assign(self, node):

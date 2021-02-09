@@ -41,7 +41,7 @@ class YAPL_VM:
             lexer = Lexer()
             str_input = input(">> ")
             tok_stream = lexer.tokenize_string(str_input)
-            parser = Parser(tok_stream)
+            parser = Parser(tok_stream, "")
             root = parser.parse()
             val = self.visitor.visit(root)
             print(str(val))

@@ -596,9 +596,6 @@ class Module_Object(Internal_Object):
             return "<module object {} imported as {}>".format(self.name, self.import_as)
         else:
             return "<module object {}>".format(self.name)
-        # return "MODULE_OBJ: Name: {}, contents: {}".format(
-        #     self.class_name, self.namespace.scope
-        # )
 
 
 class Class_Method_Object(Internal_Object):
