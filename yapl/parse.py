@@ -122,54 +122,68 @@ class Parser:
                 self.match(Tok_Type.COMMA)
         return func_args
 
+    def access_ident(self):
+        # Create ID node
+        node = self.match(Tok_Type.ID)
+        left = ID_Node(node.lexeme)
+
+        while self.curr_tok.tok_type in [
+            Tok_Type.DOT,
+            Tok_Type.LSQUARE,
+        ]:
+            if self.curr_tok.tok_type == Tok_Type.DOT:
+                self.match(Tok_Type.DOT)
+                property_name = ID_Node(self.match(Tok_Type.ID).lexeme)
+                left = Dot_Bin_Node(left, property_name)
+            elif self.curr_tok.tok_type == Tok_Type.LSQUARE:
+                self.match(Tok_Type.LSQUARE)
+                arr_idx = self.atom()
+                self.match(Tok_Type.RSQUARE)
+                left = Array_Access_Node(left, arr_idx)
+
+        return left
+
+    def access_this(self):
+        node = self.match(Tok_Type.THIS)
+        left = ID_Node("this")
+
+        while self.curr_tok.tok_type in [
+            Tok_Type.DOT,
+            Tok_Type.LSQUARE,
+        ]:
+            if self.curr_tok.tok_type == Tok_Type.DOT:
+                self.match(Tok_Type.DOT)
+                property_name = ID_Node(self.match(Tok_Type.ID).lexeme)
+                left = Dot_Bin_Node(left, property_name)
+            elif self.curr_tok.tok_type == Tok_Type.LSQUARE:
+                self.match(Tok_Type.LSQUARE)
+                arr_idx = self.atom()
+                self.match(Tok_Type.RSQUARE)
+                left = Array_Access_Node(left, arr_idx)
+
+        return left
+
+    def access(self):
+        if self.curr_tok.tok_type == Tok_Type.ID:
+            return self.access_ident()
+        elif self.curr_tok.tok_type == Tok_Type.THIS:
+            return self.access_this()
+
     def call_or_access(self):
         """
         Parse a call or access rule.
         Grammar:
         call_or_access := ( ID | "this" ) ( "(" arglist ")" | "." ID )*
         """
-        if self.peek().tok_type in [
-            Tok_Type.LROUND,
-            Tok_Type.DOT,
-            Tok_Type.LSQUARE,
-        ]:
-            # Create ID node
-            node = self.match(Tok_Type.ID, Tok_Type.THIS)
-            left = None
-            if node.tok_type == Tok_Type.ID:
-                left = ID_Node(node.lexeme)
-            else:
-                left = ID_Node("this")
 
-            while self.curr_tok.tok_type in [
-                Tok_Type.LROUND,
-                Tok_Type.DOT,
-                Tok_Type.LSQUARE,
-            ]:
-                if self.curr_tok.tok_type == Tok_Type.DOT:
-                    self.match(Tok_Type.DOT)
-                    prop_name = ID_Node(self.match(Tok_Type.ID).lexeme)
-                    left = Dot_Bin_Node(left, prop_name)
-                elif self.curr_tok.tok_type == Tok_Type.LROUND:
-                    self.match(Tok_Type.LROUND)
-                    func_args = self.arglist()
-                    self.match(Tok_Type.RROUND)
-                    left = Call_Node(left, func_args)
-                elif self.curr_tok.tok_type == Tok_Type.LSQUARE:
-                    self.match(Tok_Type.LSQUARE)
-                    arr_idx = self.atom()
-                    self.match(Tok_Type.RSQUARE)
-                    left = Array_Access_Node(left, arr_idx)
-
-            return left
+        access_node = self.access()
+        if self.curr_tok.tok_type == Tok_Type.LROUND:
+            self.match(Tok_Type.LROUND)
+            func_args = self.arglist()
+            self.match(Tok_Type.RROUND)
+            return Call_Node(access_node, func_args)
         else:
-            node = self.match(Tok_Type.ID, Tok_Type.THIS)
-            left = None
-            if node.tok_type == Tok_Type.ID:
-                left = ID_Node(node.lexeme)
-            else:
-                left = ID_Node("this")
-            return left
+            return access_node
 
     def factor(self):
         """
@@ -186,20 +200,9 @@ class Parser:
             Tok_Type.THIS,
         ]:
             return self.call_or_access()
-        # Array access
-        elif (
-            self.curr_tok.tok_type == Tok_Type.ID
-            and self.peek().tok_type == Tok_Type.LSQUARE
-        ):
-            array_name = self.atom()
-            self.match(Tok_Type.LSQUARE)
-            raw_idx = self.match(Tok_Type.NUM)
-            self.match(Tok_Type.RSQUARE)
-            array_idx = Num_Node(raw_idx.lexeme)
-            return Array_Access_Node(array_name, array_idx)
         elif self.curr_tok.tok_type == Tok_Type.LROUND:
             self.match(Tok_Type.LROUND)
-            expr = self.expression()
+            expr = self.or_expr()
             self.match(Tok_Type.RROUND)
             return Bracket_Node(expr)
         elif self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
@@ -267,7 +270,8 @@ class Parser:
             Tok_Type.LT,
             Tok_Type.LTE,
         ]:
-            op = self.match(Tok_Type.GT, Tok_Type.GTE, Tok_Type.LT, Tok_Type.LTE)
+            op = self.match(Tok_Type.GT, Tok_Type.GTE,
+                            Tok_Type.LT, Tok_Type.LTE)
             right = self.add_expr()
             left = Relop_Bin_Node(left, op.tok_type, right)
 
@@ -315,54 +319,47 @@ class Parser:
 
         return left
 
-    def expression(self):
-        """
-        Parse a general expression:
-        Grammar:
-        expr := "let"? call_or_access "=" or_expr | or_expr
-        """
-        if self.curr_tok.tok_type == Tok_Type.LET:
-            self.match(Tok_Type.LET)
-            symbol_path = self.call_or_access()
-            self.match(Tok_Type.ASSIGN)
-            value = self.or_expr()
-            # Check if it is a single node
-            if isinstance(symbol_path, ID_Node):
-                return New_Assign_Bin_Node(None, symbol_path, value)
-            else:
-                # Decompose the nodes
-                return New_Assign_Bin_Node(symbol_path.left, symbol_path.right, value)
-        elif self.curr_tok.tok_type in [Tok_Type.ID, Tok_Type.THIS]:
-            symbol_path = self.call_or_access()
+    def expr_statement(self):
+        node = self.or_expr()
+        self.match(Tok_Type.SEMIC)
+        return node
+
+    def reassign_or_eval_statement(self):
+        var_name = self.or_expr()
+        if isinstance(var_name, Dot_Bin_Node) or isinstance(var_name, ID_Node) or isinstance(var_name, This_Node) or isinstance(var_name, Array_Access_Node):
+            # TODO: Throw error if we get a "This" node without anything else attached to it.
             if self.curr_tok.tok_type == Tok_Type.ASSIGN:
                 self.match(Tok_Type.ASSIGN)
-                value = self.expression()
-                if isinstance(symbol_path, ID_Node):
-                    return Replace_Assign_Bin_Node(None, symbol_path, value)
+                value = self.expr_statement()
+                if isinstance(var_name, ID_Node):
+                    return Replace_Assign_Bin_Node(None, var_name, value)
                 else:
                     # Decompose the nodes
                     return Replace_Assign_Bin_Node(
-                        symbol_path.left, symbol_path.right, value
+                        var_name.left, var_name.right, value
                     )
+            # TODO: Add augmented assign cases here.
             else:
                 # Case of the node not being an assignment node but a simple access
-                return symbol_path
-        elif self.curr_tok.tok_type == Tok_Type.ID and self.peek().tok_type in [
-            Tok_Type.ADDASSIGN,
-            Tok_Type.SUBASSIGN,
-        ]:
-            if self.peek().tok_type == Tok_Type.ADDASSIGN:
-                symbol = self.match(Tok_Type.ID).lexeme
-                self.match(Tok_Type.ADDASSIGN)
-                value = self.or_expr()
-                return AddAssign_Node(symbol, value)
-            elif self.peek().tok_type == Tok_Type.SUBASSIGN:
-                symbol = self.match(Tok_Type.ID).lexeme
-                self.match(Tok_Type.SUBASSIGN)
-                value = self.or_expr()
-                return SubAssign_Node(symbol, value)
+                self.match(Tok_Type.SEMIC)
+                return var_name
         else:
-            return self.or_expr()
+            self.match(Tok_Type.SEMIC)
+            return var_name
+
+    def new_asssign_statement(self):
+        print("called new assignment")
+        self.match(Tok_Type.LET)
+        symbol_path = self.call_or_access()
+        print("done with call assign")
+        self.match(Tok_Type.ASSIGN)
+        value = self.expr_statement()
+        # Check if it is a single node
+        if isinstance(symbol_path, ID_Node):
+            return New_Assign_Bin_Node(None, symbol_path, value)
+        else:
+            # Decompose the nodes
+            return New_Assign_Bin_Node(symbol_path.left, symbol_path.right, value)
 
     def if_statement(self):
         """
@@ -403,12 +400,10 @@ class Parser:
         """
         Parse a print statement.
         Grammar:
-
-        print := "print" expr ";"
         """
+
         self.match(Tok_Type.PRINT)
-        expr = self.or_expr()
-        self.match(Tok_Type.SEMIC)
+        expr = self.expr_statement()
         return Print_Node(expr)
 
     # TODO: Refactor match function and finish parsing functions
@@ -498,8 +493,8 @@ class Parser:
         """
         Parse a switch statement rule.
         Grammar:
-        switch_stmnt := "switch" "(" or_expr ")" 
-                        ("case"  or_expr ":" block_stmnt)* 
+        switch_stmnt := "switch" "(" or_expr ")"
+                        ("case"  or_expr ":" block_stmnt)*
                         "default" ":" block_stmnt
         """
         self.match(Tok_Type.SWITCH)
@@ -522,17 +517,6 @@ class Parser:
         self.match(Tok_Type.RCURLY)
 
         return Switch_Node(switch_cond, cases, default_block)
-
-    def simple_expr(self):
-        """
-        Parse a simple expression.
-        Grammar:
-
-        simple_expr := expr ";"
-        """
-        expr_result = self.expression()
-        self.match(Tok_Type.SEMIC)
-        return expr_result
 
     def class_def(self):
         """
@@ -563,7 +547,7 @@ class Parser:
         """
         Parse a flow statement rule.
         Grammar:
-        flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";" 
+        flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";"
         """
         node = None
         if self.curr_tok.tok_type == Tok_Type.RETURN:
@@ -620,7 +604,7 @@ class Parser:
         Grammar:
        statement := if_stmnt        |
                     while_stmnt     |
-                    for_stmnt       | 
+                    for_stmnt       |
                     class_def       |
                     func_def        |
                     block_stmnt     |
@@ -657,8 +641,12 @@ class Parser:
             Tok_Type.BREAK,
         ]:
             return self.flow_statement()
+        elif self.curr_tok.tok_type == Tok_Type.LET:
+            return self.new_asssign_statement()
+        elif self.curr_tok.tok_type in [Tok_Type.ID, Tok_Type.THIS]:
+            return self.reassign_or_eval_statement()
         else:
-            return self.simple_expr()
+            return self.expr_statement()
 
     def program(self):
         """

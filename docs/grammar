@@ -12,31 +12,34 @@ statement := if_stmnt        |
              flow_stmnt      |
              do_while_stmnt  |
              import_stmnt    |
-			 simple_expr
+			 expr_stmnt
 
 if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
 while_stmnt := "while" "(" or_expr ")" block_stmnt
 class_def := "class" ID "{" func_def* "}"
 func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
 block_stmnt := "{" statement* "}"
-print_stmnt := "print" expr ";"
+print_stmnt := "print" or_expr ";"
 switch_stmnt := "switch" "(" or_expr ")" ("case"  or_expr ":" block_stmnt)* "default" ":" block_stmnt
 flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";" 
 do_while_stmnt := "do" block_stmnt "while" "(" or_expr ")"
-import_stmnt := "import" ID ("as" ID)?
-
+import_stmnt := "import" ID ("as" ID)? ";"
+new_assign_stmnt := "let" access "=" expr_stmnt
+reassign_stmnt := access ( "=" | "+=" | "-=") expr_stmnt
+expr_stmnt := or_expr ";"
 
 ;; Expressions
-simple_expr := expr ";"
-expr := "let"? call_or_access "=" or_expr | or_expr
 or_expr := and_expr ("||" and_expr)*
 and_expr := eq_expr ("&&" eq_expr)*
 eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
 rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
 add_expr := term (("+" | "-") term)*
 term := factor (("*" | "/") factor)*
-factor := call_or_access | "(" expr ")" | unary_op factor | atom | incr_decr
-call_or_access := ( ID | "this" ) ( "(" arglist ")" | "." ID | "[" NUM "]")*
+factor := call_or_access | "(" arg_list ")" | unary_op factor | atom | incr_decr
+call_or_access := access ( "(" arglist ")" | EPSILON )
+access := access_this | access_ident
+access_this := "this" "." ID ([NUM] | "." ID)*
+access_ident := ID ("." ID | [ NUM ])*
 arglist := (or_expr ("," or_expr)*)?
 unary_op := "!" "-"
 atom := | NUM | STR | BOOL | ARRAY | "nil"
