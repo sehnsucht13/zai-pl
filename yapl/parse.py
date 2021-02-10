@@ -270,8 +270,7 @@ class Parser:
             Tok_Type.LT,
             Tok_Type.LTE,
         ]:
-            op = self.match(Tok_Type.GT, Tok_Type.GTE,
-                            Tok_Type.LT, Tok_Type.LTE)
+            op = self.match(Tok_Type.GT, Tok_Type.GTE, Tok_Type.LT, Tok_Type.LTE)
             right = self.add_expr()
             left = Relop_Bin_Node(left, op.tok_type, right)
 
@@ -326,7 +325,12 @@ class Parser:
 
     def reassign_or_eval_statement(self):
         var_name = self.or_expr()
-        if isinstance(var_name, Dot_Bin_Node) or isinstance(var_name, ID_Node) or isinstance(var_name, This_Node) or isinstance(var_name, Array_Access_Node):
+        if (
+            isinstance(var_name, Dot_Bin_Node)
+            or isinstance(var_name, ID_Node)
+            or isinstance(var_name, This_Node)
+            or isinstance(var_name, Array_Access_Node)
+        ):
             # TODO: Throw error if we get a "This" node without anything else attached to it.
             if self.curr_tok.tok_type == Tok_Type.ASSIGN:
                 self.match(Tok_Type.ASSIGN)
@@ -335,10 +339,24 @@ class Parser:
                     return Replace_Assign_Bin_Node(None, var_name, value)
                 else:
                     # Decompose the nodes
-                    return Replace_Assign_Bin_Node(
-                        var_name.left, var_name.right, value
-                    )
+                    return Replace_Assign_Bin_Node(var_name.left, var_name.right, value)
             # TODO: Add augmented assign cases here.
+            elif self.curr_tok.tok_type == Tok_Type.ADDASSIGN:
+                self.match(Tok_Type.ADDASSIGN)
+                value = self.expr_statement()
+                if isinstance(var_name, ID_Node):
+                    return AddAssign_Node(None, var_name, value)
+                else:
+                    # Decompose the nodes
+                    return AddAssign_Node(var_name.left, var_name.right, value)
+            elif self.curr_tok.tok_type == Tok_Type.SUBASSIGN:
+                self.match(Tok_Type.SUBASSIGN)
+                value = self.expr_statement()
+                if isinstance(var_name, ID_Node):
+                    return SubAssign_Node(None, var_name, value)
+                else:
+                    # Decompose the nodes
+                    return SubAssign_Node(var_name.left, var_name.right, value)
             else:
                 # Case of the node not being an assignment node but a simple access
                 self.match(Tok_Type.SEMIC)
@@ -348,10 +366,8 @@ class Parser:
             return var_name
 
     def new_asssign_statement(self):
-        print("called new assignment")
         self.match(Tok_Type.LET)
         symbol_path = self.call_or_access()
-        print("done with call assign")
         self.match(Tok_Type.ASSIGN)
         value = self.expr_statement()
         # Check if it is a single node
@@ -600,20 +616,20 @@ class Parser:
 
     def statement(self):
         """
-        Parse a single statement.
-        Grammar:
-       statement := if_stmnt        |
-                    while_stmnt     |
-                    for_stmnt       |
-                    class_def       |
-                    func_def        |
-                    block_stmnt     |
-                    print_stmnt     |
-                    switch_stmnt    |
-                    flow_stmnt      |
-                    do_while_stmnt  |
-                    import_stmnt    |
-                    simple_expr
+         Parse a single statement.
+         Grammar:
+        statement := if_stmnt        |
+                     while_stmnt     |
+                     for_stmnt       |
+                     class_def       |
+                     func_def        |
+                     block_stmnt     |
+                     print_stmnt     |
+                     switch_stmnt    |
+                     flow_stmnt      |
+                     do_while_stmnt  |
+                     import_stmnt    |
+                     simple_expr
         """
         if self.curr_tok.tok_type == Tok_Type.IF:
             return self.if_statement()
