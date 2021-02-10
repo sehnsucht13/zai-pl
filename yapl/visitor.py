@@ -41,6 +41,8 @@ class Visitor:
                 elif ret_val.obj_type == ObjectType.CONTINUE:
                     msg = '"continue" statement not used within a loop!'
                     raise InternalRuntimeErr(msg)
+            else:
+                return ret_val
 
     def visit_num(self, node):
         return Num_Object(node.val)
@@ -51,7 +53,7 @@ class Visitor:
         symbol_val = curr_scope.lookup_symbol(node.val)
 
         if symbol_val is None:
-            err_msg = 'Variable "{}" does not exist.'.format(node.val)
+            err_msg = 'Variable "{}" is not defined!.'.format(node.val)
             raise InternalRuntimeErr(err_msg)
         else:
             return symbol_val
@@ -171,7 +173,10 @@ class Visitor:
         if isinstance(node.symbol_name, Array_Access_Node):
             symbol_name = node.symbol_name.array_name.val
             array_index = node.symbol_name.array_pos.accept(self)
-            # TODO: Check if array index is a number
+            if array_index.obj_type != ObjectType.NUM:
+                err_msg = 'Array cannot be "{}" !'.format(array_index.obj_type)
+                raise InternalRuntimeErr(err_msg)
+
             array_instance = symbol_namespace.lookup_symbol(symbol_name)
             if array_instance is None:
                 err_msg = 'The array "{}" does not exist within the current environment!'.format(
@@ -191,7 +196,7 @@ class Visitor:
             if isinstance(symbol_namespace, Scope):
                 status = symbol_namespace.replace_variable(symbol_name, new_value)
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the current environment.'.format(
+                    err_msg = 'Variable "{}" cannot be reasigned because it has not been initialized!'.format(
                         symbol_name
                     )
                     raise InternalRuntimeErr(err_msg)
@@ -203,7 +208,7 @@ class Visitor:
                     symbol_name, new_value
                 )
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
+                    err_msg = 'Variable "{}" cannot be reasigned because it has not been initialized!'.format(
                         symbol_name
                     )
                     raise InternalRuntimeErr(err_msg)
@@ -239,8 +244,8 @@ class Visitor:
         parent_env = self.env.peek()
         self.env.enter_scope(parent_env)
         for stmnt in node.stmnts:
-            # Detect any usage of return
             ret_val = stmnt.accept(self)
+            # Bubble up any flow statements
             if ret_val is not None and ret_val.obj_type in [
                 ObjectType.RETURN,
                 ObjectType.BREAK,
@@ -429,7 +434,6 @@ class Visitor:
                 )
                 raise InternalRuntimeErr(err_msg)
         else:
-            print("Sending error for no scope")
             err_msg = "variable {} is not accessible!".format(node.left.val)
             raise InternalRuntimeErr(err_msg)
 

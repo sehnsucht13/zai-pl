@@ -61,7 +61,6 @@ class Parser:
                 self.curr_tok.line_num,
                 self.curr_tok.col_num,
                 self.original_text,
-                "",
                 list(args),
                 self.curr_tok.tok_type,
             )

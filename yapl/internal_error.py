@@ -1,4 +1,4 @@
-""" Module contains error classes used to transfer control and signal errors 
+""" Module contains error classes used to transfer control and signal errors
 encountered during execution."""
 
 
@@ -7,7 +7,9 @@ class InternalErr(Exception):
     Base class for all internal errors used by the interpreter.
     """
 
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         raise NotImplementedError()
 
 
@@ -26,8 +28,10 @@ class InternalTypeError(InternalErr):
                 self.operation, str(self.left)
             )
         else:
-            self.err_msg = "The operation {} is not allowed between a {} and a {}!".format(
-                self.operation, str(self.left), str(self.right)
+            self.err_msg = (
+                "The operation {} is not allowed between a {} and a {}!".format(
+                    self.operation, str(self.left), str(self.right)
+                )
             )
 
     def __str__(self):
@@ -61,13 +65,17 @@ class InternalParseErr(InternalErr):
     """
 
     def __init__(
-        self, line_num, col_num, original_text, err_details, expected_tokens, got_token,
+        self,
+        line_num,
+        col_num,
+        original_text,
+        expected_tokens,
+        got_token,
     ):
         "Class representing internal errors encountered during parsing/lexing stage."
         self.line_num = line_num
         self.col_num = col_num
-        self.text = original_text.split("\n")
-        self.err_details = err_details
+        self.source_text_lines = original_text.split("\n")
         self.got_token = got_token
         self.expected_tokens = expected_tokens
 
@@ -84,12 +92,18 @@ class InternalParseErr(InternalErr):
 
     def __str__(self):
         return "Parse Error: Line: {}, Column: {}\n\n  {}\n\nExplanation: {}".format(
-            self.line_num, self.col_num, self.text[self.line_num - 1], self.err_msg,
+            self.line_num,
+            self.col_num,
+            self.source_text_lines[self.line_num],
+            self.err_msg,
         )
 
     def __repr__(self):
         return "Internal Parse Error: Line: {}, Column: {}\n\n  {}\n\nExplanation: {}".format(
-            self.line_num, self.col_num, self.text[self.line_num - 1], self.err_msg,
+            self.line_num,
+            self.col_num,
+            self.source_text_lines[self.line_num],
+            self.err_msg,
         )
 
 

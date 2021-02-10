@@ -1,6 +1,6 @@
 """Module contains a class used to manage the entire virtual machine."""
 from yapl.lexer import Lexer
-from yapl.env import Environment, Scope
+from yapl.env import Environment
 from yapl.parse import Parser
 from yapl.visitor import Visitor
 from yapl.internal_error import (
@@ -37,19 +37,31 @@ class YAPL_VM:
         Start a REPL which evaluates every command provided within one VM context.
         """
         self.repl_mode_flag = True
+        self.__load_stdlib()
         while True:
             lexer = Lexer()
-            str_input = input(">> ")
-            tok_stream = lexer.tokenize_string(str_input)
-            parser = Parser(tok_stream, "")
-            root = parser.parse()
-            val = self.visitor.visit(root)
-            print(str(val))
+            try:
+                str_input = input(">> ")
+                tok_stream = lexer.tokenize_string(str_input)
+                parser = Parser(tok_stream, str_input)
+                root = parser.parse()
+                val = self.visitor.visit(root)
+                if val is not None:
+                    print(str(val))
+            except InternalRuntimeErr as e:
+                print(e)
+            except InternalTypeError as e:
+                print(e)
+            except InternalTokenErr as e:
+                print(e)
+            except InternalParseErr as e:
+                print(e)
 
     def run_string(self, input_str):
         """
         Run a single string within the current VM context.
         """
+        self.__load_stdlib()
         lexer = Lexer()
         try:
             tok_stream = lexer.tokenize_string(input_str)

@@ -10,14 +10,14 @@ def get_module_path():
     module_paths = list()
     # retrieve the current working directory and the interpreter path specified
     # in the environment
-    curr_path = os.getcwd()
+    curr_path = [os.getcwd()]
     environ_path = os.environ.get("YAPL_PATH").split(":")
 
     # Remove any strings containing only whitespace and combine with current working
     # directory path.
     environ_path = list(filter(None, environ_path))
-    environ_path.append(curr_path)
-    return environ_path
+    #environ_path.append(curr_path)
+    return curr_path + environ_path
 
 
 def read_module_contents(module_name):
