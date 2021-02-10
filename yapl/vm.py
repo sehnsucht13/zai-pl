@@ -26,6 +26,7 @@ class YAPL_VM:
         self.repl_mode_flag = False
         self.visitor = Visitor(self.env)
         self.__load_stdlib()
+        self.current_completions = None
 
     def __load_stdlib(self):
         """Load both the standard library in the environment of the current VM instance."""
@@ -36,6 +37,17 @@ class YAPL_VM:
         for func in native_functions:
             curr_scope.new_variable(func.name, func)
 
+    # def __complete(self, text, state):
+    #     if state == 0:
+    #         print("Text from complete", text)
+    #         new_completions = list()
+    #         curr_scope = self.env.peek()
+    #         print(curr_scope.keys())
+    #     elif state < len(a):
+    #         return a[state]
+    #     else:
+    #         return None
+
     def __setup_readline(self):
         histfile = os.path.join(os.path.expanduser("~"), ".yapl_history")
         try:
@@ -45,6 +57,10 @@ class YAPL_VM:
             pass
 
         atexit.register(readline.write_history_file, histfile)
+
+        # # Set up autocompletion with "TAB" key
+        # readline.parse_and_bind("tab: complete")
+        # readline.set_completer(self.__complete)
 
     def run_repl(self):
         """
