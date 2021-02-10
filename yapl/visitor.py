@@ -1,5 +1,6 @@
 """Module contains a visitor class implementation used to execute the AST
 produced by the parser."""
+from yapl.ast_nodes import Array_Access_Node
 from yapl.tokens import Tok_Type
 from yapl.internal_error import InternalRuntimeErr
 from yapl.objects import *
@@ -159,27 +160,48 @@ class Visitor:
         print(str(print_value))
 
     def visit_replace_assign(self, node):
-        # Symbol name will always be an id node
-        symbol_name = node.symbol_name.val
-        # Evaluate the right hand side containing the value which will be assigned
-        value = node.value.accept(self)
-
-        # Find if a path to the variable exists
-        symbol_path = None
-        if node.symbol_path is None:
-            scope = self.env.peek()
-            scope.new_variable(symbol_name, value)
+        symbol_namespace = None
+        symbol_name = None
+        new_value = node.value.accept(self)
+        if node.symbol_path is not None:
+            symbol_namespace = node.symbol_path.accept(self)
         else:
-            symbol_path = node.symbol_path.accept(self)
-            if isinstance(symbol_path, Scope):
-                status = symbol_path.replace_variable(symbol_name, value)
+            symbol_namespace = self.env.peek()
+
+        if isinstance(node.symbol_name, Array_Access_Node):
+            symbol_name = node.symbol_name.array_name.val
+            array_index = node.symbol_name.array_pos.accept(self)
+            # TODO: Check if array index is a number
+            array_instance = symbol_namespace.lookup_symbol(symbol_name)
+            if array_instance is None:
+                err_msg = 'The array "{}" does not exist within the current environment!'.format(
+                    symbol_name
+                )
+                raise InternalRuntimeErr(err_msg)
+            else:
+                if array_index.value < array_instance.size:
+                    array_instance.elements[array_index.value] = new_value
+                else:
+                    err_msg = '"{}" exceeds the length of the array "{}"!'.format(
+                        array_index.value, symbol_name
+                    )
+                    raise InternalRuntimeErr(err_msg)
+        else:
+            symbol_name = node.symbol_name.val
+            if isinstance(symbol_namespace, Scope):
+                status = symbol_namespace.replace_variable(symbol_name, new_value)
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the current class environment.'.format(
+                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the current environment.'.format(
                         symbol_name
                     )
                     raise InternalRuntimeErr(err_msg)
-            elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
-                status = symbol_path.namespace.replace_variable(symbol_name, value)
+            elif symbol_namespace.obj_type in [
+                ObjectType.MODULE,
+                ObjectType.CLASS_INSTANCE,
+            ]:
+                status = symbol_namespace.namespace.replace_variable(
+                    symbol_name, new_value
+                )
                 if status is False:
                     err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
                         symbol_name
@@ -384,10 +406,8 @@ class Visitor:
             if val is not None:
                 return val
             else:
-                err_msg = (
-                    "Current class environment does not contain the variable {}".format(
-                        node.right.val
-                    )
+                err_msg = "Current environment does not contain the variable {}".format(
+                    node.right.val
                 )
                 raise InternalRuntimeErr(err_msg)
         elif l.obj_type == ObjectType.MODULE:
@@ -395,10 +415,8 @@ class Visitor:
             if val is not None:
                 return val
             else:
-                err_msg = (
-                    "Current class environment does not contain the variable {}".format(
-                        node.right.lexeme
-                    )
+                err_msg = "Module environment does not contain the variable {}".format(
+                    node.right.lexeme
                 )
                 raise InternalRuntimeErr(err_msg)
         elif l.obj_type == ObjectType.CLASS_INSTANCE:
@@ -411,7 +429,8 @@ class Visitor:
                 )
                 raise InternalRuntimeErr(err_msg)
         else:
-            err_msg = "variable {} is not an instance of a class!".format(node.left.val)
+            print("Sending error for no scope")
+            err_msg = "variable {} is not accessible!".format(node.left.val)
             raise InternalRuntimeErr(err_msg)
 
     def visit_this(self, node):

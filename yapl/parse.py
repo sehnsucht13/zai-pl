@@ -324,22 +324,22 @@ class Parser:
         return node
 
     def reassign_or_eval_statement(self):
+        # There are a couple of cases to handle here:
+        # 1. This is a regular expression like "a + 4;"
+        # 2. This is a simple variable access like "a.b;" or "a[3];"
+        # 3. This is a reassign operation like "a.b = 4;"
         var_name = self.or_expr()
-        if (
-            isinstance(var_name, Dot_Bin_Node)
-            or isinstance(var_name, ID_Node)
-            or isinstance(var_name, This_Node)
-            or isinstance(var_name, Array_Access_Node)
-        ):
+        if isinstance(var_name, (Dot_Bin_Node, ID_Node, This_Node, Array_Access_Node)):
             # TODO: Throw error if we get a "This" node without anything else attached to it.
             if self.curr_tok.tok_type == Tok_Type.ASSIGN:
                 self.match(Tok_Type.ASSIGN)
                 value = self.expr_statement()
-                if isinstance(var_name, ID_Node):
-                    return Replace_Assign_Bin_Node(None, var_name, value)
+                if isinstance(var_name, (ID_Node, Array_Access_Node)):
+                    a = Replace_Assign_Bin_Node(None, var_name, value)
+                    return a
                 else:
-                    # Decompose the nodes
-                    return Replace_Assign_Bin_Node(var_name.left, var_name.right, value)
+                    a = Replace_Assign_Bin_Node(var_name.left, var_name.right, value)
+                    return a
             # TODO: Add augmented assign cases here.
             elif self.curr_tok.tok_type == Tok_Type.ADDASSIGN:
                 self.match(Tok_Type.ADDASSIGN)
@@ -358,10 +358,11 @@ class Parser:
                     # Decompose the nodes
                     return SubAssign_Node(var_name.left, var_name.right, value)
             else:
-                # Case of the node not being an assignment node but a simple access
+                # Case of the node not being an assignment node but a variable access
                 self.match(Tok_Type.SEMIC)
                 return var_name
         else:
+            # Case of a regular expression like "a + 4;"
             self.match(Tok_Type.SEMIC)
             return var_name
 

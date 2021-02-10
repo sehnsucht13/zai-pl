@@ -64,8 +64,8 @@ class Dot_Bin_Node(AST_Node):
 
 class Replace_Assign_Bin_Node(AST_Node):
     def __init__(self, symbol_path, symbol_name, value):
-        self.symbol_path = symbol_path
-        self.symbol_name = symbol_name
+        self.symbol_path = symbol_path  # Path leading to the symbol
+        self.symbol_name = symbol_name  # The actualy symbol name within the environment
         self.value = value
 
     def __str__(self):
