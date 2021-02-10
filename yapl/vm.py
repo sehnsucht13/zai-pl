@@ -10,6 +10,10 @@ from yapl.internal_error import (
     InternalParseErr,
 )
 
+import atexit
+import os
+import readline
+
 
 class YAPL_VM:
     """
@@ -32,12 +36,23 @@ class YAPL_VM:
         for func in native_functions:
             curr_scope.new_variable(func.name, func)
 
+    def __setup_readline(self):
+        histfile = os.path.join(os.path.expanduser("~"), ".yapl_history")
+        try:
+            readline.read_history_file(histfile)
+            readline.set_history_length(2000)
+        except FileNotFoundError:
+            pass
+
+        atexit.register(readline.write_history_file, histfile)
+
     def run_repl(self):
         """
         Start a REPL which evaluates every command provided within one VM context.
         """
         self.repl_mode_flag = True
         self.__load_stdlib()
+        self.__setup_readline()
         while True:
             lexer = Lexer()
             try:
