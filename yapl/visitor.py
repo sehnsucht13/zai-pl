@@ -124,7 +124,6 @@ class Visitor:
 
     def visit_unary(self, node):
         result = node.value.accept(self)
-        print("Unary result", result)
         if node.op == Tok_Type.MINUS:
             return -result
         elif node.op == Tok_Type.BANG:
@@ -339,8 +338,16 @@ class Visitor:
             )
             raise InternalRuntimeErr(msg)
 
+        if func_object.obj_type == ObjectType.FUNC:
+            # Create a new scope
+            self.env.enter_scope(func_object.env)
+        elif func_object.obj_type == ObjectType.CLASS_METHOD:
+            self.env.enter_scope(func_object.class_env)
+            self.env.peek().new_variable("this", func_object.class_env)
+
         # Add arguments to the current environment
         for arg_pair in zip(func_object.args, arg_values):
+            # print("Adding pair to environment", arg_pair)
             self.env.peek().new_variable(arg_pair[0].lexeme, arg_pair[1])
 
         for stmnt in func_object.body:
@@ -365,21 +372,12 @@ class Visitor:
 
         # Case of function object
         if call_object.obj_type in [ObjectType.FUNC, ObjectType.CLASS_METHOD]:
-            if call_object.obj_type == ObjectType.FUNC:
-                # Create a new scope
-                self.env.enter_scope(call_object.env)
-            elif call_object.obj_type == ObjectType.CLASS_METHOD:
-                self.env.enter_scope(call_object.class_env)
-                self.env.peek().new_variable("this", call_object.class_env)
-
             ret_val = self.__run_internal_function(call_object, node.call_args)
             self.env.exit_scope()
-            if ret_val is None:
+            if ret_val is None or ret_val.value is None:
                 return Nil_Object()
             else:
                 return ret_val.value
-
-            self.env.exit_scope()
 
         elif call_object.obj_type == ObjectType.NATIVE_FUNC:
             return self.__run_native_function(call_object, node.call_args)
@@ -447,6 +445,9 @@ class Visitor:
         return curr_scope
 
     def visit_return(self, node):
+        if node.expr is None:
+            return Return_Object(Nil_Object())
+
         return_val = node.expr.accept(self)
         return Return_Object(return_val)
 
