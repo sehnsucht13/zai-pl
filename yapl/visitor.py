@@ -41,8 +41,8 @@ class Visitor:
                 elif ret_val.obj_type == ObjectType.CONTINUE:
                     msg = '"continue" statement not used within a loop!'
                     raise InternalRuntimeErr(msg)
-            else:
-                return ret_val
+            # else:
+            #     return ret_val
 
     def visit_num(self, node):
         return Num_Object(node.val)
@@ -124,10 +124,11 @@ class Visitor:
 
     def visit_unary(self, node):
         result = node.value.accept(self)
+        print("Unary result", result)
         if node.op == Tok_Type.MINUS:
-            return -node
+            return -result
         elif node.op == Tok_Type.BANG:
-            return ~node
+            return ~result
 
     def visit_if(self, node):
         # Evaluate each condition and execute block if it is true
@@ -194,7 +195,8 @@ class Visitor:
         else:
             symbol_name = node.symbol_name.val
             if isinstance(symbol_namespace, Scope):
-                status = symbol_namespace.replace_variable(symbol_name, new_value)
+                status = symbol_namespace.replace_variable(
+                    symbol_name, new_value)
                 if status is False:
                     err_msg = 'Variable "{}" cannot be reasigned because it has not been initialized!'.format(
                         symbol_name
@@ -297,7 +299,8 @@ class Visitor:
         curr_scope = self.env.peek()
         # Register the class in the scope
         curr_scope.new_variable(
-            node.class_name, Class_Def_Object(node.class_name, node.class_methods)
+            node.class_name, Class_Def_Object(
+                node.class_name, node.class_methods)
         )
 
     def __run_native_function(self, func_object, call_args):
@@ -558,7 +561,8 @@ class Visitor:
 
         self.env.peek().new_variable(
             module_env_name,
-            Module_Object(node.module_name, module_path, import_scope, module_env_name),
+            Module_Object(node.module_name, module_path,
+                          import_scope, module_env_name),
         )
 
     def visit_add_assign(self, node):
@@ -572,7 +576,8 @@ class Visitor:
         if node.symbol_path is None:
             current_scope = self.env.peek()
             old_val = current_scope.lookup_symbol(symbol_name)
-            status = current_scope.replace_variable(symbol_name, old_val + new_value)
+            status = current_scope.replace_variable(
+                symbol_name, old_val + new_value)
             if status is False:
                 err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the  environment.'.format(
                     symbol_name
@@ -582,7 +587,8 @@ class Visitor:
             symbol_path = node.symbol_path.accept(self)
             if isinstance(symbol_path, Scope):
                 old_val = symbol_path.lookup_symbol(symbol_name)
-                status = symbol_path.replace_variable(symbol_name, old_val + new_value)
+                status = symbol_path.replace_variable(
+                    symbol_name, old_val + new_value)
                 if status is False:
                     err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the current class environment.'.format(
                         symbol_name
@@ -610,7 +616,8 @@ class Visitor:
         if node.symbol_path is None:
             current_scope = self.env.peek()
             old_val = current_scope.lookup_symbol(symbol_name)
-            status = current_scope.replace_variable(symbol_name, old_val - new_value)
+            status = current_scope.replace_variable(
+                symbol_name, old_val - new_value)
             if status is False:
                 err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the  environment.'.format(
                     symbol_name
@@ -620,7 +627,8 @@ class Visitor:
             symbol_path = node.symbol_path.accept(self)
             if isinstance(symbol_path, Scope):
                 old_val = symbol_path.lookup_symbol(symbol_name)
-                status = symbol_path.replace_variable(symbol_name, old_val - new_value)
+                status = symbol_path.replace_variable(
+                    symbol_name, old_val - new_value)
                 if status is False:
                     err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the current class environment.'.format(
                         symbol_name
