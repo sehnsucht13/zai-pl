@@ -3,7 +3,7 @@ import yapl.objects
 
 def object_type(internal_object):
     """
-    Return the type of an internal object as a string. If the type is 
+    Return the type of an internal object as a string. If the type is
     unknown, return 'nil'.
     """
     if internal_object.obj_type == yapl.objects.ObjectType.ARRAY:

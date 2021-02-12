@@ -29,7 +29,9 @@ class YAPL_VM:
         self.current_completions = None
 
     def __load_stdlib(self):
-        """Load both the standard library in the environment of the current VM instance."""
+        """
+        Load both the standard library in the environment of the current VM instance.
+        """
         from yapl.stdlib.native_func import register_functions
 
         native_functions = register_functions()
@@ -98,7 +100,7 @@ class YAPL_VM:
             tok_stream = lexer.tokenize_string(input_str)
             parser = Parser(tok_stream, input_str)
             root = parser.parse()
-            val = self.visitor.visit(root)
+            self.visitor.visit(root)
         except InternalRuntimeErr as e:
             print(e)
         except InternalTypeError as e:

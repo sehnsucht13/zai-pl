@@ -3,8 +3,45 @@ Module containing the parser class used to produce the AST to be evaluated
 by the interpreter.
 """
 
-from yapl.ast_nodes import *
-from yapl.tokens import Token, Tok_Type
+from yapl.ast_nodes import (
+    This_Node,
+    String_Node,
+    Num_Node,
+    Array_Node,
+    Array_Access_Node,
+    Nil_Node,
+    Bool_Node,
+    Arith_Bin_Node,
+    ID_Node,
+    Dot_Bin_Node,
+    Bracket_Node,
+    Unary_Node,
+    Incr_Node,
+    Decr_Node,
+    Call_Node,
+    AddAssign_Node,
+    SubAssign_Node,
+    New_Assign_Bin_Node,
+    If_Node,
+    Print_Node,
+    Func_Node,
+    Scope_Block_Node,
+    While_Node,
+    Break_Node,
+    Continue_Node,
+    Do_While_Node,
+    Import_Node,
+    Program_Node,
+    Switch_Node,
+    Class_Def_Node,
+    Class_Method_Node,
+    Return_Node,
+    Replace_Assign_Bin_Node,
+    Relop_Bin_Node,
+    Eq_Bin_Node,
+    Logic_Bin_Node,
+)
+from yapl.tokens import Tok_Type
 from yapl.internal_error import InternalParseErr
 
 
@@ -143,7 +180,7 @@ class Parser:
         return left
 
     def access_this(self):
-        node = self.match(Tok_Type.THIS)
+        self.match(Tok_Type.THIS)
         left = ID_Node("this")
 
         while self.curr_tok.tok_type in [
@@ -329,7 +366,8 @@ class Parser:
         # 3. This is a reassign operation like "a.b = 4;"
         var_name = self.or_expr()
         if isinstance(var_name, (Dot_Bin_Node, ID_Node, This_Node, Array_Access_Node)):
-            # TODO: Throw error if we get a "This" node without anything else attached to it.
+            # TODO: Throw error if we get a "This" node without anything else attached
+            # to it.
             if self.curr_tok.tok_type == Tok_Type.ASSIGN:
                 self.match(Tok_Type.ASSIGN)
                 value = self.expr_statement()
@@ -500,9 +538,10 @@ class Parser:
             stmnt = self.statement()
             stmnt_block.append(stmnt)
 
-        # We can reuse the block node to evaluate the statements inside of a switch case.
-        # The only difference between the two is how parsing is done. Block nodes require curly brackets
-        # while switch case statements do not necessarily require them.
+        # We can reuse the block node to evaluate the statements inside of a switch
+        # case. The only difference between the two is how parsing is done. Block nodes
+        # require curly brackets while switch case statements do not necessarily
+        # require them.
         return Scope_Block_Node(stmnt_block)
 
     def switch_statement(self):

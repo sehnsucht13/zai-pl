@@ -3,18 +3,33 @@ produced by the parser."""
 from yapl.ast_nodes import Array_Access_Node
 from yapl.tokens import Tok_Type
 from yapl.internal_error import InternalRuntimeErr
-from yapl.objects import *
 from yapl.env import Environment, Scope
 from yapl.lexer import Lexer
 from yapl.parse import Parser
-from yapl.utils import is_atom, is_truthy, read_module_contents
-
-import os
+from yapl.utils import is_truthy, read_module_contents
+from yapl.objects import (
+    ObjectType,
+    Bool_Object,
+    Nil_Object,
+    Num_Object,
+    Func_Object,
+    String_Object,
+    Return_Object,
+    Class_Def_Object,
+    Class_Instance_Object,
+    Continue_Object,
+    Break_Object,
+    Array_Object,
+    Module_Object,
+)
 
 
 class Visitor:
     def __init__(self, environment):
-        "Class implementing the visitor pattern which is used to evaluate language structures."
+        """
+        Class implementing the visitor pattern which is used to evaluate
+        language structures.
+        """
         self.env = environment
 
     def visit(self, ast_root):
@@ -33,7 +48,10 @@ class Visitor:
                 ObjectType.CONTINUE,
             ]:
                 if ret_val.obj_type == ObjectType.RETURN:
-                    msg = '"return" statement not used outside of a function or class method!'
+                    msg = (
+                        '"return" statement not used outside of a function or class'
+                        "method!"
+                    )
                     raise InternalRuntimeErr(msg)
                 elif ret_val.obj_type == ObjectType.BREAK:
                     msg = '"break" statement not used within a loop or a switch block!'
@@ -179,9 +197,9 @@ class Visitor:
 
             array_instance = symbol_namespace.lookup_symbol(symbol_name)
             if array_instance is None:
-                err_msg = 'The array "{}" does not exist within the current environment!'.format(
-                    symbol_name
-                )
+                err_msg = (
+                    'The array "{}" does not exist within the current' "environment!"
+                ).format(symbol_name)
                 raise InternalRuntimeErr(err_msg)
             else:
                 if array_index.value < array_instance.size:
@@ -194,12 +212,12 @@ class Visitor:
         else:
             symbol_name = node.symbol_name.val
             if isinstance(symbol_namespace, Scope):
-                status = symbol_namespace.replace_variable(
-                    symbol_name, new_value)
+                status = symbol_namespace.replace_variable(symbol_name, new_value)
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it has not been initialized!'.format(
-                        symbol_name
-                    )
+                    err_msg = (
+                        'Variable "{}" cannot be reasigned because it has not'
+                        "been initialized!"
+                    ).format(symbol_name)
                     raise InternalRuntimeErr(err_msg)
             elif symbol_namespace.obj_type in [
                 ObjectType.MODULE,
@@ -209,9 +227,10 @@ class Visitor:
                     symbol_name, new_value
                 )
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it has not been initialized!'.format(
-                        symbol_name
-                    )
+                    err_msg = (
+                        'Variable "{}" cannot be reasigned because it has not'
+                        "been initialized!"
+                    ).format(symbol_name)
                     raise InternalRuntimeErr(err_msg)
 
     def visit_new_assign(self, node):
@@ -220,9 +239,10 @@ class Visitor:
         # Evaluate the right hand side containing the value which will be assigned
         value = node.value.accept(self)
 
-        assert (
-            symbol_name is not None
-        ), "Attempting to assign a new variable without a symbol name in visit_new_assign."
+        assert symbol_name is not None, (
+            "Attempting to assign a new variable without a symbol name in"
+            "visit_new_assign."
+        )
         assert (
             value is not None
         ), "Attempting to assign a non existant value in visit_new_assign."
@@ -298,8 +318,7 @@ class Visitor:
         curr_scope = self.env.peek()
         # Register the class in the scope
         curr_scope.new_variable(
-            node.class_name, Class_Def_Object(
-                node.class_name, node.class_methods)
+            node.class_name, Class_Def_Object(node.class_name, node.class_methods)
         )
 
     def __run_native_function(self, func_object, call_args):
@@ -321,8 +340,8 @@ class Visitor:
 
     def __run_internal_function(self, func_object, call_args):
         """
-        Runs the function represented by func_object. The arguments passed are supplied by
-        the call_args in the form of a list.
+        Runs the function represented by func_object. The arguments passed are supplied
+        by the call_args in the form of a list.
         """
         # Evaluate the arguments
         arg_values = list()
@@ -393,9 +412,10 @@ class Visitor:
             class_constructor = instance_ptr.get_field("constructor")
             if class_constructor is None and len(node.call_args) != 0:
                 raise InternalRuntimeErr(
-                    "Class '{}' does not have a constructor method but initialization detected {} arguments passed.".format(
-                        call_object.class_name, len(node.call_args)
-                    )
+                    (
+                        "Class '{}' does not have a constructor method but "
+                        "initialization detected {} arguments passed."
+                    ).format(call_object.class_name, len(node.call_args))
                 )
             elif class_constructor is not None:
                 self.__run_internal_function(class_constructor, node.call_args)
@@ -406,9 +426,9 @@ class Visitor:
             raise InternalRuntimeErr("Object is not callable!")
 
     def visit_dot_node(self, node):
-        l = node.left.accept(self)
-        if isinstance(l, Scope):
-            val = l.lookup_symbol(node.right.val)
+        left_side = node.left.accept(self)
+        if isinstance(left_side, Scope):
+            val = left_side.lookup_symbol(node.right.val)
             if val is not None:
                 return val
             else:
@@ -416,8 +436,8 @@ class Visitor:
                     node.right.val
                 )
                 raise InternalRuntimeErr(err_msg)
-        elif l.obj_type == ObjectType.MODULE:
-            val = l.namespace.lookup_symbol(node.right.val)
+        elif left_side.obj_type == ObjectType.MODULE:
+            val = left_side.namespace.lookup_symbol(node.right.val)
             if val is not None:
                 return val
             else:
@@ -425,14 +445,15 @@ class Visitor:
                     node.right.lexeme
                 )
                 raise InternalRuntimeErr(err_msg)
-        elif l.obj_type == ObjectType.CLASS_INSTANCE:
-            val = l.get_field(node.right.val)
+        elif left_side.obj_type == ObjectType.CLASS_INSTANCE:
+            val = left_side.get_field(node.right.val)
             if val is not None:
                 return val
             else:
-                err_msg = 'Class instance "{}" of class "{}" does not contain a field with name "{}"'.format(
-                    node.left.val, l.class_name, node.right.val
-                )
+                err_msg = (
+                    'Class instance "{}" of class "{}" does not contain a field '
+                    'with name "{}"'
+                ).format(node.left.val, left_side.class_name, node.right.val)
                 raise InternalRuntimeErr(err_msg)
         else:
             err_msg = "variable {} is not accessible!".format(node.left.val)
@@ -440,7 +461,7 @@ class Visitor:
 
     def visit_this(self, node):
         curr_scope = self.env.peek()
-        while curr_scope.parent != None:
+        while curr_scope.parent is not None:
             curr_scope = curr_scope.parent
         return curr_scope
 
@@ -562,8 +583,7 @@ class Visitor:
 
         self.env.peek().new_variable(
             module_env_name,
-            Module_Object(node.module_name, module_path,
-                          import_scope, module_env_name),
+            Module_Object(node.module_name, module_path, import_scope, module_env_name),
         )
 
     def visit_add_assign(self, node):
@@ -577,23 +597,23 @@ class Visitor:
         if node.symbol_path is None:
             current_scope = self.env.peek()
             old_val = current_scope.lookup_symbol(symbol_name)
-            status = current_scope.replace_variable(
-                symbol_name, old_val + new_value)
+            status = current_scope.replace_variable(symbol_name, old_val + new_value)
             if status is False:
-                err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the  environment.'.format(
-                    symbol_name
-                )
+                err_msg = (
+                    'Variable "{}" cannot be reasigned because it does not exist'
+                    " within the environment."
+                ).format(symbol_name)
                 raise InternalRuntimeErr(err_msg)
         else:
             symbol_path = node.symbol_path.accept(self)
             if isinstance(symbol_path, Scope):
                 old_val = symbol_path.lookup_symbol(symbol_name)
-                status = symbol_path.replace_variable(
-                    symbol_name, old_val + new_value)
+                status = symbol_path.replace_variable(symbol_name, old_val + new_value)
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the current class environment.'.format(
-                        symbol_name
-                    )
+                    err_msg = (
+                        'Variable "{}" cannot be reasigned because it does not'
+                        "exist within the current class environment."
+                    ).format(symbol_name)
                     raise InternalRuntimeErr(err_msg)
             elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
                 old_val = symbol_path.namespace.lookup_symbol(symbol_name)
@@ -601,9 +621,10 @@ class Visitor:
                     symbol_name, old_val + new_value
                 )
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
-                        symbol_name
-                    )
+                    err_msg = (
+                        'Variable "{}" cannot be reasigned because it does not '
+                        "exist."
+                    ).format(symbol_name)
                     raise InternalRuntimeErr(err_msg)
 
     def visit_sub_assign(self, node):
@@ -617,31 +638,32 @@ class Visitor:
         if node.symbol_path is None:
             current_scope = self.env.peek()
             old_val = current_scope.lookup_symbol(symbol_name)
-            status = current_scope.replace_variable(
-                symbol_name, old_val - new_value)
+            status = current_scope.replace_variable(symbol_name, old_val - new_value)
             if status is False:
-                err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the  environment.'.format(
-                    symbol_name
-                )
+                err_msg = (
+                    'Variable "{}" cannot be reasigned because it does not exist'
+                    " within the  environment."
+                ).format(symbol_name)
                 raise InternalRuntimeErr(err_msg)
         else:
             symbol_path = node.symbol_path.accept(self)
             if isinstance(symbol_path, Scope):
                 old_val = symbol_path.lookup_symbol(symbol_name)
-                status = symbol_path.replace_variable(
-                    symbol_name, old_val - new_value)
+                status = symbol_path.replace_variable(symbol_name, old_val - new_value)
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist within the current class environment.'.format(
-                        symbol_name
-                    )
+                    err_msg = (
+                        'Variable "{}" cannot be reasigned because it does not '
+                        "exist within the current class environment."
+                    ).format(symbol_name)
                     raise InternalRuntimeErr(err_msg)
             elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
                 old_val = symbol_path.namespace.lookup_symbol(symbol_name)
                 status = symbol_path.namespace.replace_variable(
-                    symbol_name, oldVal - new_value
+                    symbol_name, old_val - new_value
                 )
                 if status is False:
-                    err_msg = 'Variable "{}" cannot be reasigned because it does not exist.'.format(
-                        symbol_name
-                    )
+                    err_msg = (
+                        'Variable "{}" cannot be reasigned because it does not '
+                        "exist."
+                    ).format(symbol_name)
                     raise InternalRuntimeErr(err_msg)

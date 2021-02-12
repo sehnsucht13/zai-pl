@@ -1,9 +1,10 @@
 """
-Module contains several classes used to represent internal objects within the interpreter.
+Module contains several classes used to represent internal objects within the
+interpreter.
 """
 from enum import Enum, auto
 from yapl.env import Scope
-from yapl.internal_error import InternalTypeError, InternalRuntimeErr
+from yapl.internal_error import InternalTypeError
 
 
 class ObjectType(Enum):
@@ -50,7 +51,9 @@ class Internal_Object:
     Base class for all internal objects used in the interpreter.
     """
 
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         raise NotImplementedError()
 
 
@@ -420,9 +423,9 @@ class Array_Object(Internal_Object):
         else:
             return Bool_Object(False)
 
-    def __ne__(self, other):
-        assert other is not None, "Other variable in __eq__ function is None."
-        return ~(self.__eq__(other))
+    # def __ne__(self, other):
+    #     assert other is not None, "Other variable in __eq__ function is None."
+    #     return ~(self.__eq__(other))
 
     def __lt__(self, other):
         raise InternalTypeError("<", self.obj_type, other.obj_type)
@@ -462,7 +465,8 @@ class Array_Object(Internal_Object):
 
     def __neg__(self):
         raise InternalTypeError(
-            "-", self.obj_type,
+            "-",
+            self.obj_type,
         )
 
     def __invert__(self):

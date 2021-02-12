@@ -8,7 +8,9 @@ from sys import exit
 def main():
     vm = YAPL_VM()
     arg_parser = argparse.ArgumentParser(
-        "yapl", description="An interpreter for yapl.", add_help="Interpreter for yapl",
+        "yapl",
+        description="An interpreter for yapl.",
+        add_help="Interpreter for yapl",
     )
     arg_parser.add_argument(
         "file_path",
@@ -46,4 +48,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

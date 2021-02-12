@@ -7,7 +7,6 @@ def get_module_path():
     """
     Retrieve the interpreter's module path from the environment.
     """
-    module_paths = list()
     # retrieve the current working directory and the interpreter path specified
     # in the environment
     curr_path = [os.getcwd()]
@@ -16,7 +15,6 @@ def get_module_path():
     # Remove any strings containing only whitespace and combine with current working
     # directory path.
     environ_path = list(filter(None, environ_path))
-    #environ_path.append(curr_path)
     return curr_path + environ_path
 
 

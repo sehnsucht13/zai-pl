@@ -1,4 +1,7 @@
-"""Module containing classes related to managing the interpreter environment and nested scopes."""
+"""
+Module containing classes related to managing the interpreter environment
+and nested scopes.
+"""
 
 
 class Scope:
@@ -20,8 +23,9 @@ class Scope:
 
     def replace_variable(self, var_name, value):
         """
-        Replace the value of an existing variable within the environment. Return 
-        True or False if the value exists/does not exist within the current environment.
+        Replace the value of an existing variable within the environment.
+        Return True or False if the value exists/does not exist within
+        the current environment.
         """
         assert var_name is not None, "Variable name to be replaced is None."
         assert value is not None, "Variable value to be replaced is None"
@@ -35,7 +39,7 @@ class Scope:
 
     def lookup_symbol(self, symbol):
         """
-        Lookupt the value of a symbol in the current scope and all parent scopes 
+        Lookupt the value of a symbol in the current scope and all parent scopes
         and return it. If the symbol does not exist, return None.
         """
         value = self.scope.get(symbol, None)

@@ -1,4 +1,7 @@
-""" Module containing lexer class used to convert an input string into a sequence of language tokens."""
+"""
+Module containing lexer class used to convert an input string into a sequence
+of language tokens.
+"""
 from yapl.tokens import Tok_Type, Token, keywords
 from yapl.internal_error import InternalTokenErr
 
@@ -24,8 +27,8 @@ class Lexer:
         self.permitted_ident_chars = "?@$"
 
     def _advance(self):
-        """ Advance the current character by one and return it. If there is no next character,
-            return None."""
+        """Advance the current character by one and return it. If there is no next character,
+        return None."""
         if self.curr_idx + 1 < self.input_len:
             self.curr_idx += 1
             self.curr_char = self.text[self.curr_idx]
@@ -36,8 +39,8 @@ class Lexer:
             return None
 
     def _peek(self):
-        """ Return the next character in the input text sequence. If there is no next
-            character, return None."""
+        """Return the next character in the input text sequence. If there is no next
+        character, return None."""
         if self.curr_idx + 1 < self.input_len:
             return self.text[self.curr_idx + 1]
         else:
@@ -176,7 +179,10 @@ class Lexer:
                         self.curr_lin_num,
                         self.curr_col_num,
                         self.text,
-                        "A single '&' is not a valid symbol or operator. Did you mean to use '&&'(AND) operator?",
+                        (
+                            "A single '&' is not a valid symbol or operator. Did you"
+                            "mean to use '&&'(AND) operator?"
+                        ),
                     )
             elif self.curr_char == "|":
                 if self._peek() == "|":
@@ -189,7 +195,10 @@ class Lexer:
                         self.curr_lin_num,
                         self.curr_col_num,
                         self.text,
-                        "A single '|' is not a valid symbol or operator. Did you mean to use '||'(OR) operator?",
+                        (
+                            "A single '|' is not a valid symbol or operator. Did you "
+                            "mean to use '||'(OR) operator?"
+                        ),
                     )
             elif self.curr_char == "+":
                 if self._peek() == "+":
@@ -316,8 +325,7 @@ class Lexer:
         )
 
     def _reset_internal_state(self):
-        """Reset the internal state of the lexer for a new input string.
-        """
+        """Reset the internal state of the lexer for a new input string."""
         self.input_len = len(self.text)
 
         # Reset all other variables

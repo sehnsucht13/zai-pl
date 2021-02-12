@@ -7,7 +7,7 @@ def test_sym_retrieval_DNE():
 
     # look up a non-existant symbol
     sym = f.lookup_symbol("does_not_exist")
-    assert sym == None
+    assert sym is None
 
 
 def test_scope_overwrite_sym():

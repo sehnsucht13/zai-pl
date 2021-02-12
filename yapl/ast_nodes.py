@@ -443,7 +443,7 @@ class Incr_Node(AST_Node):
         self.value = value
 
     def __str__(self):
-        return "INCR_NODE".format(self.value)
+        return "INCR_NODE {}".format(self.value)
 
     def accept(self, visitor):
         return visitor.visit_incr(self)
@@ -454,7 +454,7 @@ class Decr_Node(AST_Node):
         self.value = value
 
     def __str__(self):
-        return "DECR_NODE".format(self.value)
+        return "DECR_NODE {}".format(self.value)
 
     def accept(self, visitor):
         return visitor.visit_decr(self)

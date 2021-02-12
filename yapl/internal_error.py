@@ -23,7 +23,7 @@ class InternalTypeError(InternalErr):
         self.right = right_type
         self.err_msg = str()
 
-        if self.right == None:
+        if self.right is None:
             self.err_msg = "The operation {} is not allowed on a {}!".format(
                 self.operation, str(self.left)
             )
@@ -99,7 +99,9 @@ class InternalParseErr(InternalErr):
         )
 
     def __repr__(self):
-        return "Internal Parse Error: Line: {}, Column: {}\n\n  {}\n\nExplanation: {}".format(
+        return (
+            "Internal Parse Error: Line: {}, Column: {}\n\n  {}\n\n" "Explanation: {}"
+        ).format(
             self.line_num,
             self.col_num,
             self.source_text_lines[self.line_num],
