@@ -91,7 +91,7 @@ class Lexer:
                 )
                 self._advance()
                 self.token_stream.append(
-                    Token(Tok_Type.DQUOTE, self.curr_lin_num, self.curr_col_num)
+                    Token(Tok_Type.DQUOTE, None, self.curr_lin_num, self.curr_col_num)
                 )
                 return
             else:
@@ -331,8 +331,7 @@ class Lexer:
         # Reset all other variables
         self.token_stream = list()
         self.curr_char = None
-        self.curr_idx = 0
-        self.input_len = 0
+        self.curr_idx = -1
         self.curr_lin_num = 0
         self.curr_col_num = 0
 
@@ -341,10 +340,9 @@ class Lexer:
         if self.text is not None:
             self.text = input_str
             self._reset_internal_state()
-
-        # set input text string and its length
-        self.text = input_str
-        self.input_len = len(input_str)
+        else:
+            self.text = input_str
+            self.input_len = len(input_str)
 
         if self.input_len > 0:
             self._tokenize()
