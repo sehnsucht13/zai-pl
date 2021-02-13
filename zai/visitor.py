@@ -552,7 +552,7 @@ class Visitor:
         return Nil_Object()
 
     def visit_import(self, node):
-        module_name = node.module_name + ".yapl"
+        module_name = node.module_name + ".zai"
         module_path, module_text = read_module_contents(module_name)
         if module_text is None:
             err_msg = (

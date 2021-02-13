@@ -51,7 +51,7 @@ class YAPL_VM:
     #         return None
 
     def __setup_readline(self):
-        histfile = os.path.join(os.path.expanduser("~"), ".yapl_history")
+        histfile = os.path.join(os.path.expanduser("~"), ".zai_history")
         try:
             readline.read_history_file(histfile)
             readline.set_history_length(2000)

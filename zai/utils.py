@@ -10,7 +10,7 @@ def get_module_path():
     # retrieve the current working directory and the interpreter path specified
     # in the environment
     curr_path = [os.getcwd()]
-    environ_path = os.environ.get("YAPL_PATH").split(":")
+    environ_path = os.environ.get("ZAI_PATH").split(":")
 
     # Remove any strings containing only whitespace and combine with current working
     # directory path.
