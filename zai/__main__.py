@@ -1,6 +1,6 @@
 import argparse
 
-from yapl.vm import YAPL_VM
+from zai.vm import YAPL_VM
 from pathlib import Path
 from sys import exit
 

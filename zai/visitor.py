@@ -1,13 +1,13 @@
 """Module contains a visitor class implementation used to execute the AST
 produced by the parser."""
-from yapl.ast_nodes import Array_Access_Node
-from yapl.tokens import Tok_Type
-from yapl.internal_error import InternalRuntimeErr
-from yapl.env import Environment, Scope
-from yapl.lexer import Lexer
-from yapl.parse import Parser
-from yapl.utils import is_truthy, read_module_contents
-from yapl.objects import (
+from zai.ast_nodes import Array_Access_Node
+from zai.tokens import Tok_Type
+from zai.internal_error import InternalRuntimeErr
+from zai.env import Environment, Scope
+from zai.lexer import Lexer
+from zai.parse import Parser
+from zai.utils import is_truthy, read_module_contents
+from zai.objects import (
     ObjectType,
     Bool_Object,
     Nil_Object,
@@ -552,7 +552,7 @@ class Visitor:
         return Nil_Object()
 
     def visit_import(self, node):
-        module_name = node.module_name + ".yapl"
+        module_name = node.module_name + ".zai"
         module_path, module_text = read_module_contents(module_name)
         if module_text is None:
             err_msg = (

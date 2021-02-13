@@ -1,2 +1,5 @@
 __pycache__
 env
+build
+dist
+zai_pl.egg-info

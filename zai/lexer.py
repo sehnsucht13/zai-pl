@@ -2,8 +2,8 @@
 Module containing lexer class used to convert an input string into a sequence
 of language tokens.
 """
-from yapl.tokens import Tok_Type, Token, keywords
-from yapl.internal_error import InternalTokenErr
+from zai.tokens import Tok_Type, Token, keywords
+from zai.internal_error import InternalTokenErr
 
 
 class Lexer:

@@ -3,7 +3,7 @@ Module containing the parser class used to produce the AST to be evaluated
 by the interpreter.
 """
 
-from yapl.ast_nodes import (
+from zai.ast_nodes import (
     This_Node,
     String_Node,
     Num_Node,
@@ -41,8 +41,8 @@ from yapl.ast_nodes import (
     Eq_Bin_Node,
     Logic_Bin_Node,
 )
-from yapl.tokens import Tok_Type
-from yapl.internal_error import InternalParseErr
+from zai.tokens import Tok_Type
+from zai.internal_error import InternalParseErr
 
 
 class Parser:

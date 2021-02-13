@@ -1,5 +1,5 @@
-from yapl.lexer import Lexer
-from yapl.tokens import Tok_Type, Token
+from zai.lexer import Lexer
+from zai.tokens import Tok_Type, Token
 
 
 def compare_tokens(l1, l2):
