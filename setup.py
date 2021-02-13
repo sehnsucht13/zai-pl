@@ -17,7 +17,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Development Status :: 4 - Beta",
-        "Intended Audience :: Education",
+        "Programming Language :: Other",
         "Topic :: Software Development :: Interpreters",
     ],
     packages=['zai'],
