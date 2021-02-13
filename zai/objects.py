@@ -3,8 +3,8 @@ Module contains several classes used to represent internal objects within the
 interpreter.
 """
 from enum import Enum, auto
-from yapl.env import Scope
-from yapl.internal_error import InternalTypeError
+from zai.env import Scope
+from zai.internal_error import InternalTypeError
 
 
 class ObjectType(Enum):
