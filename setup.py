@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="zai-pl", 
+    name="zai-pl",
     version="0.8.0",
     author="Yavor Konstantinov",
     author_email="ykonstantinov1@gmail.com",
@@ -20,6 +20,6 @@ setuptools.setup(
         "Intended Audience :: Education",
         "Topic :: Software Development :: Interpreters",
     ],
-    packages=['zai']
+    packages=['zai'],
     python_requires='>=3.6',
 )
