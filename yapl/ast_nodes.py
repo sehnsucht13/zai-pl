@@ -30,6 +30,17 @@ class Program_Node(AST_Node):
             print(stmn)
         return "Program_node"
 
+    def __eq__(self, other):
+        if isinstance(other, Program_Node):
+            if len(self.stmnts) != len(other.stmnts):
+                return False
+            for i in range(0, len(self.stmnts)):
+                if self.stmnts[i] != other.stmnts[i]:
+                    return False
+            return True
+        else:
+            return False
+
 
 class Print_Node(AST_Node):
     def __init__(self, expr):
@@ -175,6 +186,15 @@ class Unary_Node(AST_Node):
     def __str__(self):
         return "UNARY_NODE: {} {}".format(self.op, self.right)
 
+    def __eq__(self, other):
+        if (
+            isinstance(other, Unary_Node)
+            and self.value == other.value
+            and self.op == other.op
+        ):
+            return True
+        return False
+
 
 class Bracket_Node(AST_Node):
     def __init__(self, expr):
@@ -246,6 +266,11 @@ class ID_Node(AST_Node):
         """
         return visitor.visit_symbol(self)
 
+    def __eq__(self, other):
+        if isinstance(other, ID_Node) and self.val == other.val:
+            return True
+        return False
+
 
 class Bool_Node(AST_Node):
     def __init__(self, node_val):
@@ -260,6 +285,11 @@ class Bool_Node(AST_Node):
         visitor -- The visitor instance used to evaluate the node.
         """
         return visitor.visit_bool(self)
+
+    def __eq__(self, other):
+        if isinstance(other, Bool_Node) and self.val == other.val:
+            return True
+        return False
 
 
 class String_Node(AST_Node):
@@ -276,6 +306,11 @@ class String_Node(AST_Node):
         """
         return visitor.visit_string(self)
 
+    def __eq__(self, other):
+        if isinstance(other, String_Node) and self.val == other.val:
+            return True
+        return False
+
 
 class Num_Node(AST_Node):
     def __init__(self, node_val):
@@ -290,6 +325,11 @@ class Num_Node(AST_Node):
         visitor -- The visitor instance used to evaluate the node.
         """
         return visitor.visit_num(self)
+
+    def __eq__(self, other):
+        if isinstance(other, Num_Node) and self.val == other.val:
+            return True
+        return False
 
 
 class Func_Node(AST_Node):
@@ -366,6 +406,11 @@ class This_Node(AST_Node):
     def accept(self, visitor):
         return visitor.visit_this(self)
 
+    def __eq__(self, other):
+        if isinstance(other, This_Node):
+            return True
+        return False
+
 
 class Break_Node(AST_Node):
     def __init__(self):
@@ -376,6 +421,11 @@ class Break_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_break(self)
+
+    def __eq__(self, other):
+        if isinstance(other, Break_Node):
+            return True
+        return False
 
 
 class Continue_Node(AST_Node):
@@ -388,6 +438,11 @@ class Continue_Node(AST_Node):
     def accept(self, visitor):
         return visitor.visit_continue(self)
 
+    def __eq__(self, other):
+        if isinstance(other, Continue_Node):
+            return True
+        return False
+
 
 class Return_Node(AST_Node):
     def __init__(self, return_expr):
@@ -398,6 +453,11 @@ class Return_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_return(self)
+
+    def __eq__(self, other):
+        if isinstance(other, Return_Node) and self.expr == other.expr:
+            return True
+        return False
 
 
 class Do_While_Node(AST_Node):
@@ -469,6 +529,11 @@ class Nil_Node(AST_Node):
 
     def accept(self, visitor):
         return visitor.visit_nil(self)
+
+    def __eq__(self, other):
+        if isinstance(other, Nil_Node):
+            return True
+        return False
 
 
 class Import_Node(AST_Node):
