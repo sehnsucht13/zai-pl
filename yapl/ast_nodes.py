@@ -136,6 +136,16 @@ class Arith_Bin_Node(Bin_Node):
     def __str__(self):
         return "ARITH_NODE: {} {} {}".format(self.left, self.op, self.right)
 
+    def __eq__(self, other):
+        if (
+            isinstance(other, Arith_Bin_Node)
+            and self.left == other.left
+            and self.right == other.right
+            and self.op == other.op
+        ):
+            return True
+        return False
+
 
 class Logic_Bin_Node(Bin_Node):
     def __init__(self, left, op, right):
@@ -153,6 +163,16 @@ class Logic_Bin_Node(Bin_Node):
     def __str__(self):
         return "LOGIC_NODE: {} {} {}".format(self.left, self.op, self.right)
 
+    def __eq__(self, other):
+        if (
+            isinstance(other, Logic_Bin_Node)
+            and self.left == other.left
+            and self.right == other.right
+            and self.op == other.op
+        ):
+            return True
+        return False
+
 
 class Relop_Bin_Node(Bin_Node):
     def __init__(self, left, op, right):
@@ -169,6 +189,16 @@ class Relop_Bin_Node(Bin_Node):
 
     def __str__(self):
         return "RELOP_NODE: {} {} {}".format(self.left, self.op, self.right)
+
+    def __eq__(self, other):
+        if (
+            isinstance(other, Relop_Bin_Node)
+            and self.left == other.left
+            and self.right == other.right
+            and self.op == other.op
+        ):
+            return True
+        return False
 
 
 class Unary_Node(AST_Node):
