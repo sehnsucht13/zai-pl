@@ -1,6 +1,6 @@
 """Module containing utilities functions used by the interpreter."""
 import os
-from yapl.objects import ObjectType
+from zai.objects import ObjectType
 
 
 def get_module_path():

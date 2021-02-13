@@ -1,4 +1,4 @@
-from yapl.env import Scope, Environment
+from zai.env import Scope, Environment
 
 
 # Test a symbol which does not exist

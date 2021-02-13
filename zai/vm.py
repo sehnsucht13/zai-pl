@@ -1,9 +1,9 @@
 """Module contains a class used to manage the entire virtual machine."""
-from yapl.lexer import Lexer
-from yapl.env import Environment
-from yapl.parse import Parser
-from yapl.visitor import Visitor
-from yapl.internal_error import (
+from zai.lexer import Lexer
+from zai.env import Environment
+from zai.parse import Parser
+from zai.visitor import Visitor
+from zai.internal_error import (
     InternalRuntimeErr,
     InternalTypeError,
     InternalTokenErr,
@@ -32,7 +32,7 @@ class YAPL_VM:
         """
         Load both the standard library in the environment of the current VM instance.
         """
-        from yapl.stdlib.native_func import register_functions
+        from zai.stdlib.native_func import register_functions
 
         native_functions = register_functions()
         curr_scope = self.env.peek()
