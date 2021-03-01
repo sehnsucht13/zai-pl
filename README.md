@@ -1,3 +1,5 @@
+[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html) [![zai](https://circleci.com/gh/sehnsucht13/zai-pl.svg?style=shield)](https://app.circleci.com/pipelines/github/sehnsucht13/zai-pl)
+
 # Zai
 
 Zai is a small programming language which I wrote for fun. The language:
@@ -21,8 +23,8 @@ Here is a list of the features which are currently missing but will be implement
 - [ ] Importing and calling native python functions(Maybe...)
 
 # Internals and Documentation
-- The language grammar can be found within the [docs/grammar file](docs/grammar)
-- Some more in-depth details about the implementation(how objects are represented internally, environment...) can be found within [docs/architecture.md file](docs/architecture.md)
+- The language grammar can be found within the [docs/grammar file](https://github.com/sehnsucht13/zai-pl/blob/master/docs/grammar)
+- Some more in-depth details about the implementation(how objects are represented internally, environment...) can be found within [docs/architecture.md file](https://github.com/sehnsucht13/zai-pl/blob/master/docs/architecture.md)
 
 # Resources
 Below are some of the resources which I found helpful while making this.
