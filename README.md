@@ -1,4 +1,4 @@
-[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html) [![zai](https://circleci.com/gh/sehnsucht13/zai-pl.svg?style=shield)](https://app.circleci.com/pipelines/github/sehnsucht13/zai-pl)
+[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html) [![zai](https://circleci.com/gh/sehnsucht13/zai-pl.svg?style=shield)](https://app.circleci.com/pipelines/github/sehnsucht13/zai-pl) [![PyPI version fury.io](https://badge.fury.io/py/zai-pl.svg)](https://pypi.python.org/pypi/zai-pl/) [![PyPI status](https://img.shields.io/pypi/status/zai-pl.svg)](https://pypi.python.org/pypi/zai-pl/)
 
 # Zai
 
