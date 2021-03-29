@@ -20,6 +20,7 @@ def compare_tokens(l1, l2):
     for idx, token in enumerate(l1):
         assert token == l2[idx], "Tokens are not equal"
 
+
 def test_newline():
     lexer = Lexer()
     lexer_output = lexer.tokenize_string("\n")
@@ -30,6 +31,7 @@ def test_newline():
     lexer_output = lexer.tokenize_string("\r\n")
     expected = [Token(Tok_Type.EOF)]
     compare_tokens(lexer_output, expected)
+
 
 def test_empty_string():
     lexer = Lexer()
@@ -512,15 +514,16 @@ def test_language_keywords():
     ]
     compare_tokens(lexer_output, expected)
 
+
 def test_lexer_errors():
     with pytest.raises(InternalTokenErr):
         lexer = Lexer()
-        lexer_output = lexer.tokenize_string("|")
+        lexer.tokenize_string("|")
 
     with pytest.raises(InternalTokenErr):
         lexer = Lexer()
-        lexer_output = lexer.tokenize_string("&")
+        lexer.tokenize_string("&")
 
     with pytest.raises(InternalTokenErr):
         lexer = Lexer()
-        lexer_output = lexer.tokenize_string("4ab")
+        lexer.tokenize_string("4ab")
