@@ -41,7 +41,7 @@ class Lexer:
 
         # Special characters which are restricted/permitted in ID tokens.
         self.restricted_ident_chars = ".,:;()|&[]*/+-<=>!{}#\"'\n\t "
-        self.permitted_ident_chars = "?@$"
+        self.permitted_ident_chars = "?@$_"
 
     def _advance(self):
         """Advance the current character by one and return it. If there is no next character,
@@ -118,7 +118,7 @@ class Lexer:
     def _tokenize(self):
         """ Tokenize the current text sequence and return the tokens generated. """
         while self._advance() is not None:
-            if self.curr_char == "\n":
+            if self.curr_char in ["\n", "\r\n"]:
                 # Increment line numbers
                 self.curr_lin_num += 1
                 # Reset current column number
@@ -238,9 +238,17 @@ class Lexer:
                         Token(Tok_Type.PLUS, None, self.curr_lin_num, self.curr_col_num)
                     )
             elif self.curr_char == "/":
-                self.token_stream.append(
-                    Token(Tok_Type.DIV, None, self.curr_lin_num, self.curr_col_num)
-                )
+                if self._peek() == "/":
+                    # Case of a comment. Consume characters until the end of line.
+                    # While in the REPL mode, there are no line terminating
+                    # characters(\n or \r\n) Instead, the end of the
+                    # stream is marked with None value.
+                    while self._peek() not in ["\n", "\r\n", None]:
+                        self._advance()
+                else:
+                    self.token_stream.append(
+                        Token(Tok_Type.DIV, None, self.curr_lin_num, self.curr_col_num)
+                    )
             elif self.curr_char == "*":
                 self.token_stream.append(
                     Token(Tok_Type.MUL, None, self.curr_lin_num, self.curr_col_num)
