@@ -40,6 +40,15 @@ Zai supports:
 - Integers
 - Booleans
 - Arrays
+- Symbols
+
+## Source Code Comments
+Comments are created using `//`. Anything after `//` is ignored until the end of the line.
+```
+// This is a comment!
+
+print 1 + 1; // This is also a comment!
+```
 ## Printing
 To print a variable you can use the print keyword. Note: For now, `print` can only print one variable at a time.
 ```
@@ -349,13 +358,16 @@ reassignedModule.sayHello(); // Prints "Hello from myModule"
 ```
 # Missing Features and Future Improvements
 Here is a list of the features which are currently missing but will be implemented in the future
+## Language Features
 - [ ] Basic class inheritance
-- [ ] Make lexer ignore comments
+- [ ] Prefix/Postfix increment and decrement operators
 - [ ] Printing more than one variable at a time.
 - [ ] Floating Point Numbers
-- [ ] Prefix/Postfix increment and decrement operators
-- [ ] Better test suite
-- [ ] Importing and calling native python functions(Maybe...)
+- [x] Add support for source code comments
+
+## Dev Features
+- [ ] Improve test coverage
+- [ ] Automatic Deploy of new versions with CircleCI
 
 # Internals and Documentation
 - The language grammar can be found within the [docs/grammar file](https://github.com/sehnsucht13/zai-pl/blob/master/docs/grammar)
@@ -364,5 +376,5 @@ Here is a list of the features which are currently missing but will be implement
 # Resources
 Below are some of the resources which I found helpful while making this.
 - [Crafting Interpreters](https://craftinginterpreters.com/ "Crafting Interpreters Homepage")
-- [Modern Compiler Design](https://dickgrune.com/Books/MCD_2nd_Edition/ "Modern Compiler Design")
+- [Modern Compiler Design](https://dickgrune.com/Books/MCD_2nd_Edition/ "Modern Compiler Design Textbook Page")
 - [Max Bernstein's Blog](https://bernsteinbear.com/blog/ "bernsteinbear")
