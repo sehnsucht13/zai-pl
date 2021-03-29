@@ -30,8 +30,6 @@ class Tok_Type(Enum):
     COMMA = auto()
     # A semicolon ";"
     SEMIC = auto()
-    # A colon ":"
-    COLON = auto()
     # Single quote '
     QUOTE = auto()
     # Double quote "

@@ -1,5 +1,8 @@
 test:
-	python3 -m pytest -v
+	python3 -m pytest -v tests/
+
+test-cov:
+	python3 -m pytest -v --cov-report term-missing --cov-config=.coveragerc --cov=zai tests/
 
 run:
 	python3 -m zai
