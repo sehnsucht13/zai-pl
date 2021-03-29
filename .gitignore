@@ -1,5 +1,6 @@
 __pycache__
-env
+venv
 build
 dist
 zai_pl.egg-info
+.coverage
