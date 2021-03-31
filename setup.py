@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="zai-pl",
-    version="0.8.1",
+    version="0.8.2",
     author="Yavor Konstantinov",
     author_email="ykonstantinov1@gmail.com",
     description="A small programming language written for learning purposes.",
