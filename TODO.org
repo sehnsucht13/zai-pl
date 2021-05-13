@@ -1,0 +1,27 @@
+* Zai-pl To Do
+- [ ] Pre-Increment operators [0/3]
+  + [ ] Update Grammar
+  + [ ] Implement node
+  + [ ] Add tests
+- [ ] Post-Increment operators [0/3]
+  + [ ] Update Grammar
+  + [ ] Implement node
+  + [ ] Add tests
+- [ ] For Loops [0/3]
+  + [ ] Update Grammar
+  + [ ] Implement node
+  + [ ] Add tests
+- [ ] Fix inheritance for internal nodes
+- [ ] Add floating point numbers
+- [ ] Update Docs [0/1]
+  + [ ] Add docs for arbitrary scopes
+- [ ] try/catch statements(Maybe)
+- [ ] Add thorough tests
+- [ ] Implement printing of result while user is in REPL mode.
+- [ ] Refactor function names to obey PEP8 standards
+- [ ] Add more standard library functions [0/4]
+  + [ ] String join
+  + [ ] Array join
+  + [ ] String formatting
+  + [ ] Casting (to_string, to_int...)
+* Implementation Notes
