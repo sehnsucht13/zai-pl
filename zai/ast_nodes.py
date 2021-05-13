@@ -16,15 +16,21 @@
 # along with zai-pl. If not, see <https://www.gnu.org/licenses/>.
 
 """ Module defining nodes used in the abstract syntax tree created by the parser. """
+from abc import ABC, abstractmethod
 
 
-class ASTNode:
+class ASTNode(ABC):
     """
     Base class from which all AST nodes are derived.
     """
 
-    def __init__(self):
-        raise NotImplementedError()
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @abstractmethod
+    def accept(self, visitor):
+        pass
 
 
 class ProgramNode(ASTNode):
@@ -42,7 +48,6 @@ class ProgramNode(ASTNode):
         return visitor.visit_program(self)
 
     def __str__(self):
-        # print(self.stmnts)
         for stmn in self.stmnts:
             print(stmn)
         return "Program_node"
@@ -59,20 +64,12 @@ class PrintNode(ASTNode):
         return "{}".format(self.expr)
 
 
-class BinNode(ASTNode):
-    def __init__(self):
-        raise NotImplementedError()
-
-
 class DotBinNode(ASTNode):
     def __init__(self, left, right):
         self.left = left
         self.right = right
 
     def __str__(self):
-        return "DOT_NODE {} {}".format(self.left, self.right)
-
-    def __repr__(self):
         return "DOT_NODE {} {}".format(self.left, self.right)
 
     def accept(self, visitor):
@@ -82,7 +79,7 @@ class DotBinNode(ASTNode):
 class ReplaceAssignBinNode(ASTNode):
     def __init__(self, symbol_path, symbol_name, value):
         self.symbol_path = symbol_path  # Path leading to the symbol
-        self.symbol_name = symbol_name  # The actualy symbol name within the environment
+        self.symbol_name = symbol_name  # The actual symbol name within the environment
         self.value = value
 
     def __str__(self):
@@ -109,12 +106,14 @@ class NewAssignBinNode(ASTNode):
         return visitor.visit_new_assign(self)
 
 
-class EqBinNode(BinNode):
+class BinOpNode(ASTNode):
+    """Base class for all binary nodes with an associated operation."""
     def __init__(self, left, op, right):
         self.left = left
         self.right = right
         self.op = op
 
+class EqBinNode(BinOpNode):
     def accept(self, visitor):
         """
         Keyword Arguments:
@@ -126,12 +125,7 @@ class EqBinNode(BinNode):
         return "EQ_NODE: {} {} {}".format(self.left, self.op, self.right)
 
 
-class ArithBinNode(BinNode):
-    def __init__(self, left, op, right):
-        self.left = left
-        self.right = right
-        self.op = op
-
+class ArithBinNode(BinOpNode):
     def accept(self, visitor):
         """
         Keyword Arguments:
@@ -143,12 +137,7 @@ class ArithBinNode(BinNode):
         return "ARITH_NODE: {} {} {}".format(self.left, self.op, self.right)
 
 
-class LogicBinNode(BinNode):
-    def __init__(self, left, op, right):
-        self.left = left
-        self.right = right
-        self.op = op
-
+class LogicBinNode(BinOpNode):
     def accept(self, visitor):
         """
         Keyword Arguments:
@@ -160,7 +149,7 @@ class LogicBinNode(BinNode):
         return "LOGIC_NODE: {} {} {}".format(self.left, self.op, self.right)
 
 
-class RelopBinNode(BinNode):
+class RelopBinNode(BinOpNode):
     def __init__(self, left, op, right):
         self.left = left
         self.right = right
@@ -182,15 +171,15 @@ class UnaryNode(ASTNode):
         self.value = right
         self.op = op
 
+    def __str__(self):
+        return "UNARY_NODE: {} {}".format(self.op, self.value)
+
     def accept(self, visitor):
         """
         Keyword Arguments:
         visitor -- The visitor instance used to evaluate the node.
         """
         return visitor.visit_unary(self)
-
-    def __str__(self):
-        return "UNARY_NODE: {} {}".format(self.op, self.value)
 
 
 class BracketNode(ASTNode):
@@ -248,11 +237,12 @@ class SwitchNode(ASTNode):
     def accept(self, visitor):
         return visitor.visit_switch(self)
 
+class PrimitiveValueNode(ASTNode):
+    """Base class for all primitive values."""
+    def __init__(self, val=None):
+        self.val = val
 
-class IdNode(ASTNode):
-    def __init__(self, node_val):
-        self.val = node_val
-
+class SymbolNode(PrimitiveValueNode):
     def __str__(self):
         return "ID_NODE: {}".format(self.val)
 
@@ -264,10 +254,7 @@ class IdNode(ASTNode):
         return visitor.visit_symbol(self)
 
 
-class BoolNode(ASTNode):
-    def __init__(self, node_val):
-        self.val = node_val
-
+class BoolNode(PrimitiveValueNode):
     def __str__(self):
         return "BOOL_NODE: {}".format(self.val)
 
@@ -279,10 +266,7 @@ class BoolNode(ASTNode):
         return visitor.visit_bool(self)
 
 
-class StringNode(ASTNode):
-    def __init__(self, node_val):
-        self.val = node_val
-
+class StringNode(PrimitiveValueNode):
     def __str__(self):
         return "STR_NODE: {}".format(self.val)
 
@@ -294,10 +278,7 @@ class StringNode(ASTNode):
         return visitor.visit_string(self)
 
 
-class NumNode(ASTNode):
-    def __init__(self, node_val):
-        self.val = node_val
-
+class NumNode(PrimitiveValueNode):
     def __str__(self):
         return "NUM_NODE: {}".format(self.val)
 
@@ -307,6 +288,13 @@ class NumNode(ASTNode):
         visitor -- The visitor instance used to evaluate the node.
         """
         return visitor.visit_num(self)
+
+class NilNode(PrimitiveValueNode):
+    def __str__(self):
+        return "NIL_NODE"
+
+    def accept(self, visitor):
+        return visitor.visit_nil(self)
 
 
 class FuncNode(ASTNode):
@@ -476,16 +464,6 @@ class DecrNode(ASTNode):
     def accept(self, visitor):
         return visitor.visit_decr(self)
 
-
-class NilNode(ASTNode):
-    def __init__(self):
-        pass
-
-    def __str__(self):
-        return "NIL_NODE"
-
-    def accept(self, visitor):
-        return visitor.visit_nil(self)
 
 
 class ImportNode(ASTNode):

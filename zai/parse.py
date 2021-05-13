@@ -29,7 +29,7 @@ from zai.ast_nodes import (
     NilNode,
     BoolNode,
     ArithBinNode,
-    IdNode,
+    SymbolNode,
     DotBinNode,
     BracketNode,
     UnaryNode,
@@ -178,7 +178,7 @@ class Parser:
     def access_ident(self):
         # Create ID node
         node = self.match(TokType.ID)
-        left = IdNode(node.lexeme)
+        left = SymbolNode(node.lexeme)
 
         while self.curr_tok.tok_type in [
             TokType.DOT,
@@ -186,7 +186,7 @@ class Parser:
         ]:
             if self.curr_tok.tok_type == TokType.DOT:
                 self.match(TokType.DOT)
-                property_name = IdNode(self.match(TokType.ID).lexeme)
+                property_name = SymbolNode(self.match(TokType.ID).lexeme)
                 left = DotBinNode(left, property_name)
             elif self.curr_tok.tok_type == TokType.LSQUARE:
                 self.match(TokType.LSQUARE)
@@ -198,7 +198,7 @@ class Parser:
 
     def access_this(self):
         self.match(TokType.THIS)
-        left = IdNode("this")
+        left = SymbolNode("this")
 
         while self.curr_tok.tok_type in [
             TokType.DOT,
@@ -206,7 +206,7 @@ class Parser:
         ]:
             if self.curr_tok.tok_type == TokType.DOT:
                 self.match(TokType.DOT)
-                property_name = IdNode(self.match(TokType.ID).lexeme)
+                property_name = SymbolNode(self.match(TokType.ID).lexeme)
                 left = DotBinNode(left, property_name)
             elif self.curr_tok.tok_type == TokType.LSQUARE:
                 self.match(TokType.LSQUARE)
@@ -382,13 +382,13 @@ class Parser:
         # 2. This is a simple variable access like "a.b;" or "a[3];"
         # 3. This is a reassign operation like "a.b = 4;"
         var_name = self.or_expr()
-        if isinstance(var_name, (DotBinNode, IdNode, ThisNode, ArrayAccessNode)):
+        if isinstance(var_name, (DotBinNode, SymbolNode, ThisNode, ArrayAccessNode)):
             # TODO: Throw error if we get a "This" node without anything else attached
             # to it.
             if self.curr_tok.tok_type == TokType.ASSIGN:
                 self.match(TokType.ASSIGN)
                 value = self.expr_statement()
-                if isinstance(var_name, (IdNode, ArrayAccessNode)):
+                if isinstance(var_name, (SymbolNode, ArrayAccessNode)):
                     a = ReplaceAssignBinNode(None, var_name, value)
                     return a
                 else:
@@ -398,7 +398,7 @@ class Parser:
             elif self.curr_tok.tok_type == TokType.ADDASSIGN:
                 self.match(TokType.ADDASSIGN)
                 value = self.expr_statement()
-                if isinstance(var_name, IdNode):
+                if isinstance(var_name, SymbolNode):
                     return AddassignNode(None, var_name, value)
                 else:
                     # Decompose the nodes
@@ -406,7 +406,7 @@ class Parser:
             elif self.curr_tok.tok_type == TokType.SUBASSIGN:
                 self.match(TokType.SUBASSIGN)
                 value = self.expr_statement()
-                if isinstance(var_name, IdNode):
+                if isinstance(var_name, SymbolNode):
                     return SubassignNode(None, var_name, value)
                 else:
                     # Decompose the nodes
@@ -426,7 +426,7 @@ class Parser:
         self.match(TokType.ASSIGN)
         value = self.expr_statement()
         # Check if it is a single node
-        if isinstance(symbol_path, IdNode):
+        if isinstance(symbol_path, SymbolNode):
             return NewAssignBinNode(None, symbol_path, value)
         else:
             # Decompose the nodes
