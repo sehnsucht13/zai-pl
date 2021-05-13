@@ -59,7 +59,7 @@ from zai.ast_nodes import (
     LogicBinNode,
 )
 from zai.tokens import TokType
-from zai.internal_error import InternalParseErr
+from zai.internal_error import InternalParseError
 
 
 class Parser:
@@ -111,7 +111,7 @@ class Parser:
             self.advance(1)
             return curr_token
         else:
-            raise InternalParseErr(
+            raise InternalParseError(
                 self.curr_tok.line_num,
                 self.curr_tok.col_num,
                 self.original_text,

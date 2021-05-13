@@ -19,7 +19,7 @@
 encountered during execution."""
 
 
-class InternalErr(Exception):
+class InternalError(Exception):
     """
     Base class for all internal errors used by the interpreter.
     """
@@ -29,8 +29,13 @@ class InternalErr(Exception):
     ):
         raise NotImplementedError()
 
+    def __str__(self):
+        raise NotImplementedError()
 
-class InternalTypeError(InternalErr):
+    def __repr__(self):
+        raise NotImplementedError()
+
+class InternalTypeError(InternalError):
     def __init__(self, operation, left_type, right_type=None):
         """Class representing an internal error encountered during and basic operations
         between one or more types.
@@ -60,7 +65,7 @@ class InternalTypeError(InternalErr):
         )
 
 
-class InternalRuntimeErr(InternalErr):
+class InternalRuntimeError(InternalError):
     """
     Class representing an internal error encountered during runtime.
     """
@@ -76,7 +81,7 @@ class InternalRuntimeErr(InternalErr):
         "Internal Runtime Error: {}".format(self.message)
 
 
-class InternalParseErr(InternalErr):
+class InternalParseError(InternalError):
     """
     Class representing an internal error encountered during parsing/lexing stages.
     """
@@ -126,7 +131,7 @@ class InternalParseErr(InternalErr):
         )
 
 
-class InternalTokenErr(InternalErr):
+class InternalTokenError(InternalError):
     """
     Class representing an internal error encountered during lexing stages.
     """

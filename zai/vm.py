@@ -21,10 +21,10 @@ from zai.env import Environment
 from zai.parse import Parser
 from zai.visitor import Visitor
 from zai.internal_error import (
-    InternalRuntimeErr,
+    InternalRuntimeError,
     InternalTypeError,
-    InternalTokenErr,
-    InternalParseErr,
+    InternalTokenError,
+    InternalParseError,
 )
 
 import atexit
@@ -82,13 +82,13 @@ class YaplVm:
                 val = self.visitor.visit(root)
                 if val is not None:
                     print(str(val))
-            except InternalRuntimeErr as e:
+            except InternalRuntimeError as e:
                 print(e)
             except InternalTypeError as e:
                 print(e)
-            except InternalTokenErr as e:
+            except InternalTokenError as e:
                 print(e)
-            except InternalParseErr as e:
+            except InternalParseError as e:
                 print(e)
 
     def run_string(self, input_str):
@@ -102,11 +102,11 @@ class YaplVm:
             parser = Parser(tok_stream, input_str)
             root = parser.parse()
             self.visitor.visit(root)
-        except InternalRuntimeErr as e:
+        except InternalRuntimeError as e:
             print(e)
         except InternalTypeError as e:
             print(e)
-        except InternalTokenErr as e:
+        except InternalTokenError as e:
             print(e)
-        except InternalParseErr as e:
+        except InternalParseError as e:
             print(e)

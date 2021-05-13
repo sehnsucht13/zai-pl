@@ -20,7 +20,7 @@ Module containing lexer class used to convert an input string into a sequence
 of language tokens.
 """
 from zai.tokens import TokType, Token, keywords
-from zai.internal_error import InternalTokenErr
+from zai.internal_error import InternalTokenError
 
 
 class Lexer:
@@ -188,7 +188,7 @@ class Lexer:
                     )
                     self._advance()
                 else:
-                    raise InternalTokenErr(
+                    raise InternalTokenError(
                         self.curr_lin_num,
                         self.curr_col_num,
                         self.text,
@@ -204,7 +204,7 @@ class Lexer:
                     )
                     self._advance()
                 else:
-                    raise InternalTokenErr(
+                    raise InternalTokenError(
                         self.curr_lin_num,
                         self.curr_col_num,
                         self.text,
@@ -330,7 +330,7 @@ class Lexer:
                 if self._peek() is not None and (
                     self._peek() == self.permitted_ident_chars or self._peek().isalpha()
                 ):
-                    raise InternalTokenErr(
+                    raise InternalTokenError(
                         self.curr_lin_num,
                         num_start_col,
                         self.text,
