@@ -32,7 +32,7 @@ import os
 import readline
 
 
-class YAPL_VM:
+class YaplVm:
     """
     Class representing a single instance of the YAPL virtual machine. Each command
     is evaluate within the same context.
@@ -42,10 +42,9 @@ class YAPL_VM:
         self.env = Environment()
         self.repl_mode_flag = False
         self.visitor = Visitor(self.env)
-        self.__load_stdlib()
         self.current_completions = None
 
-    def __load_stdlib(self):
+    def _load_stdlib(self):
         """
         Load both the standard library in the environment of the current VM instance.
         """
@@ -56,38 +55,23 @@ class YAPL_VM:
         for func in native_functions:
             curr_scope.new_variable(func.name, func)
 
-    # def __complete(self, text, state):
-    #     if state == 0:
-    #         print("Text from complete", text)
-    #         new_completions = list()
-    #         curr_scope = self.env.peek()
-    #         print(curr_scope.keys())
-    #     elif state < len(a):
-    #         return a[state]
-    #     else:
-    #         return None
-
-    def __setup_readline(self):
-        histfile = os.path.join(os.path.expanduser("~"), ".zai_history")
+    def _setup_readline(self):
+        history_file = os.path.join(os.path.expanduser("~"), ".zai_history")
         try:
-            readline.read_history_file(histfile)
+            readline.read_history_file(history_file)
             readline.set_history_length(2000)
         except FileNotFoundError:
             pass
 
-        atexit.register(readline.write_history_file, histfile)
-
-        # # Set up autocompletion with "TAB" key
-        # readline.parse_and_bind("tab: complete")
-        # readline.set_completer(self.__complete)
+        atexit.register(readline.write_history_file, history_file)
 
     def run_repl(self):
         """
         Start a REPL which evaluates every command provided within one VM context.
         """
         self.repl_mode_flag = True
-        self.__load_stdlib()
-        self.__setup_readline()
+        self._load_stdlib()
+        self._setup_readline()
         while True:
             lexer = Lexer()
             try:
@@ -111,7 +95,7 @@ class YAPL_VM:
         """
         Run a single string within the current VM context.
         """
-        self.__load_stdlib()
+        self._load_stdlib()
         lexer = Lexer()
         try:
             tok_stream = lexer.tokenize_string(input_str)

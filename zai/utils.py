@@ -42,7 +42,6 @@ def read_module_contents(module_name):
     from os import listdir
 
     module_path = get_module_path()
-    full_module_path = None
     for path in module_path:
         if module_name in listdir(path):
             full_module_path = os.path.join(path, module_name)

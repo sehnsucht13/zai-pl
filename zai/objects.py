@@ -63,7 +63,7 @@ class ObjectType(Enum):
         return type_to_str[self.name]
 
 
-class Internal_Object:
+class InternalObject:
     """
     Base class for all internal objects used in the interpreter.
     """
@@ -75,7 +75,7 @@ class Internal_Object:
 
 
 # All atomic objects
-class Nil_Object(Internal_Object):
+class NilObject(InternalObject):
     """
     Internal object used to represent nil/null values.
     """
@@ -91,7 +91,7 @@ class Nil_Object(Internal_Object):
 
     def __eq__(self, other):
         assert other is not None, "Other is none in __eq__ function for nil object."
-        return Bool_Object(self.obj_type == other.obj_type)
+        return BoolObject(self.obj_type == other.obj_type)
 
     def __ne__(self, other):
         return ~(self.__eq__(other))
@@ -121,22 +121,22 @@ class Nil_Object(Internal_Object):
         raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
-        return Bool_Object(bool(self) and bool(other))
+        return BoolObject(bool(self) and bool(other))
 
     def __or__(self, other):
-        return Bool_Object(bool(self) or bool(other))
+        return BoolObject(bool(self) or bool(other))
 
     def __neg__(self):
         raise InternalTypeError("-", self.obj_type)
 
     def __invert__(self):
-        return Bool_Object(True)
+        return BoolObject(True)
 
     def __bool__(self):
         return False
 
 
-class Bool_Object(Internal_Object):
+class BoolObject(InternalObject):
     """
     Internal object used to represent a return value from a function.
     """
@@ -153,7 +153,7 @@ class Bool_Object(Internal_Object):
 
     def __eq__(self, other):
         assert other is not None, "Other value in bool internal object __eq__ is none"
-        return Bool_Object(
+        return BoolObject(
             self.obj_type == other.obj_type and self.value == other.value
         )
 
@@ -162,70 +162,70 @@ class Bool_Object(Internal_Object):
         return ~(self.__eq__(other))
 
     def __neg__(self):
-        return Bool_Object(-(self.value))
+        return BoolObject(-self.value)
 
     def __invert__(self):
-        return Bool_Object(not (self.value))
+        return BoolObject(not self.value)
 
     def __lt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value < other.value)
+            return BoolObject(self.value < other.value)
         else:
             raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value <= other.value)
+            return BoolObject(self.value <= other.value)
         else:
             raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value > other.value)
+            return BoolObject(self.value > other.value)
         else:
             raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value >= other.value)
+            return BoolObject(self.value >= other.value)
         else:
             raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __add__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value + other.value)
+            return NumObject(self.value + other.value)
         else:
             raise InternalTypeError("+", self.obj_type, other.obj_type)
 
     def __sub__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value - other.value)
+            return NumObject(self.value - other.value)
         else:
             raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value * other.value)
+            return NumObject(self.value * other.value)
         else:
             raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value / other.value)
+            return NumObject(self.value / other.value)
         else:
             raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
-        return Bool_Object(bool(self) and bool(other))
+        return BoolObject(bool(self) and bool(other))
 
     def __or__(self, other):
-        return Bool_Object(bool(self) or bool(other))
+        return BoolObject(bool(self) or bool(other))
 
     def __bool__(self):
         return self.value
 
 
-class String_Object(Internal_Object):
+class StringObject(InternalObject):
     """
     Internal object used to represent strings within the interpreter.
     """
@@ -245,7 +245,7 @@ class String_Object(Internal_Object):
         assert (
             other is not None
         ), "Other variable is none in __eq__ function for string object."
-        return Bool_Object(
+        return BoolObject(
             self.obj_type == other.obj_type and self.value == other.value
         )
 
@@ -254,32 +254,32 @@ class String_Object(Internal_Object):
 
     def __lt__(self, other):
         if other.obj_type == ObjectType.STR:
-            return Bool_Object(self.value < other.value)
+            return BoolObject(self.value < other.value)
         else:
             raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
         if other.obj_type == ObjectType.STR:
-            return Bool_Object(self.value <= other.value)
+            return BoolObject(self.value <= other.value)
         else:
             raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
         pass
         if other.obj_type == ObjectType.STR:
-            return Bool_Object(self.value > other.value)
+            return BoolObject(self.value > other.value)
         else:
             raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
         if other.obj_type == ObjectType.STR:
-            return Bool_Object(self.value >= other.value)
+            return BoolObject(self.value >= other.value)
         else:
             raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __add__(self, other):
         if other.obj_type == ObjectType.STR:
-            return String_Object(self.value + other.value)
+            return StringObject(self.value + other.value)
         else:
             raise InternalTypeError("+", self.obj_type, other.obj_type)
 
@@ -288,7 +288,7 @@ class String_Object(Internal_Object):
 
     def __mul__(self, other):
         if other.obj_type == ObjectType.NUM:
-            return String_Object(self.value * other.value)
+            return StringObject(self.value * other.value)
         else:
             raise InternalTypeError("*", self.obj_type, other.obj_type)
 
@@ -296,16 +296,16 @@ class String_Object(Internal_Object):
         raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
-        return Bool_Object(bool(self) and bool(other))
+        return BoolObject(bool(self) and bool(other))
 
     def __or__(self, other):
-        return Bool_Object(bool(self) or bool(other))
+        return BoolObject(bool(self) or bool(other))
 
     def __neg__(self):
         raise InternalTypeError("-", self.obj_type)
 
     def __invert__(self):
-        return Bool_Object(not bool(self))
+        return BoolObject(not bool(self))
 
     def __bool__(self):
         if self.str_len == 0:
@@ -313,7 +313,7 @@ class String_Object(Internal_Object):
         return True
 
 
-class Num_Object(Internal_Object):
+class NumObject(InternalObject):
     """
     Numeric internal object used to store integers.
     """
@@ -332,7 +332,7 @@ class Num_Object(Internal_Object):
         assert (
             other is not None
         ), "Other variable is None in __eq__ method for numeric objects."
-        return Bool_Object(
+        return BoolObject(
             self.obj_type == other.obj_type and self.value == other.value
         )
 
@@ -341,70 +341,70 @@ class Num_Object(Internal_Object):
 
     def __add__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value + other.value)
+            return NumObject(self.value + other.value)
 
         raise InternalTypeError("+", self.obj_type, other.obj_type)
 
     def __sub__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value - other.value)
+            return NumObject(self.value - other.value)
 
         raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value * other.value)
+            return NumObject(self.value * other.value)
         elif other.obj_type in ObjectType.STR:
-            return String_Object(other.value * self.value)
+            return StringObject(other.value * self.value)
         else:
             raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Num_Object(self.value / other.value)
+            return NumObject(self.value / other.value)
 
         raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __lt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value < other.value)
+            return BoolObject(self.value < other.value)
 
         raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value <= other.value)
+            return BoolObject(self.value <= other.value)
         raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value > other.value)
+            return BoolObject(self.value > other.value)
 
         raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
         if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return Bool_Object(self.value >= other.value)
+            return BoolObject(self.value >= other.value)
         raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __neg__(self):
-        return Num_Object(-self.value)
+        return NumObject(-self.value)
 
     def __invert__(self):
-        return Bool_Object(not self.value)
+        return BoolObject(not self.value)
 
     # These do not override the "and"/"or" keywords but instead override "&" and "|"
     def __and__(self, other):
-        return Bool_Object(bool(self) and bool(other))
+        return BoolObject(bool(self) and bool(other))
 
     def __or__(self, other):
-        return Bool_Object(bool(self) or bool(other))
+        return BoolObject(bool(self) or bool(other))
 
     def __bool__(self):
         return bool(self.value)
 
 
-class Array_Object(Internal_Object):
+class ArrayObject(InternalObject):
     """
     Array internal object used to store a variable amount of elements.
     """
@@ -433,12 +433,12 @@ class Array_Object(Internal_Object):
                 # Deep comparison of each element inside
                 for idx in range(0, self.size):
                     if self.elements[idx] != other.elements[idx]:
-                        return Bool_Object(False)
-                return Bool_Object(True)
+                        return BoolObject(False)
+                return BoolObject(True)
             else:
-                return Bool_Object(False)
+                return BoolObject(False)
         else:
-            return Bool_Object(False)
+            return BoolObject(False)
 
     # def __ne__(self, other):
     #     assert other is not None, "Other variable in __eq__ function is None."
@@ -475,10 +475,10 @@ class Array_Object(Internal_Object):
         raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __and__(self, other):
-        return Bool_Object(bool(self) and bool(other))
+        return BoolObject(bool(self) and bool(other))
 
     def __or__(self, other):
-        return Bool_Object(bool(self) or bool(other))
+        return BoolObject(bool(self) or bool(other))
 
     def __neg__(self):
         raise InternalTypeError(
@@ -487,7 +487,7 @@ class Array_Object(Internal_Object):
         )
 
     def __invert__(self):
-        return Bool_Object(not self.__bool__())
+        return BoolObject(not self.__bool__())
 
     def __bool__(self):
         if self.size == 0:
@@ -495,7 +495,7 @@ class Array_Object(Internal_Object):
         return True
 
 
-class Return_Object(Internal_Object):
+class ReturnObject(InternalObject):
     """
     Internal object used to represent return objects within the interpreter.
     """
@@ -514,12 +514,12 @@ class Return_Object(Internal_Object):
         assert (
             other is not None
         ), "Other variable in __eq__ method for a return object is None."
-        return Bool_Object(
+        return BoolObject(
             self.obj_type == other.obj_type and self.value == other.value
         )
 
 
-class Break_Object(Internal_Object):
+class BreakObject(InternalObject):
     """
     Internal object used to break statements produced during code execution.
     """
@@ -537,7 +537,7 @@ class Break_Object(Internal_Object):
         return self.obj_type == other.obj_type
 
 
-class Continue_Object(Internal_Object):
+class ContinueObject(InternalObject):
     """
     Internal object used to continue statements produced during code execution.
     """
@@ -555,7 +555,7 @@ class Continue_Object(Internal_Object):
         return self.obj_type == other.obj_type
 
 
-class Func_Object(Internal_Object):
+class FuncObject(InternalObject):
     """
     Internal object used to represent a function.
     """
@@ -576,7 +576,7 @@ class Func_Object(Internal_Object):
         # )
 
 
-class Native_Func_Object(Internal_Object):
+class NativeFuncObject(InternalObject):
     """
     Internal object used to represent a function.
     """
@@ -591,9 +591,9 @@ class Native_Func_Object(Internal_Object):
         return "<native function object {}>".format(self.name)
 
 
-class Class_Def_Object(Internal_Object):
+class ClassDefObject(InternalObject):
     def __init__(self, class_name, class_methods):
-        "setup class object"
+        """setup class object"""
         self.obj_type = ObjectType.CLASS_DEF
         self.class_name = class_name
         self.class_methods = class_methods
@@ -603,9 +603,9 @@ class Class_Def_Object(Internal_Object):
         # return "CLASS_OBJ: Name: {}".format(self.class_name)
 
 
-class Module_Object(Internal_Object):
+class ModuleObject(InternalObject):
     def __init__(self, module_name, module_path, module_contents, import_as=None):
-        "Internal object representing an imported module."
+        """Internal object representing an imported module."""
         self.name = module_name
         self.import_as = import_as
         self.path = module_path
@@ -619,7 +619,7 @@ class Module_Object(Internal_Object):
             return "<module object {}>".format(self.name)
 
 
-class Class_Method_Object(Internal_Object):
+class ClassMethodObject(InternalObject):
     """
     Internal object used to represent a class function.
     """
@@ -637,9 +637,9 @@ class Class_Method_Object(Internal_Object):
         return "<class method object {}>".format(self.name)
 
 
-class Class_Instance_Object(Internal_Object):
+class ClassInstanceObject(InternalObject):
     def __init__(self, class_name, class_methods):
-        "Object representing a class instance."
+        """Object representing a class instance."""
         self.obj_type = ObjectType.CLASS_INSTANCE
         self.class_name = class_name
         self.namespace = Scope(None)
@@ -648,7 +648,7 @@ class Class_Instance_Object(Internal_Object):
         for method in class_methods:
             self.namespace.new_variable(
                 method.name,
-                Class_Method_Object(
+                ClassMethodObject(
                     method.name, method.args, method.body, self.namespace
                 ),
             )

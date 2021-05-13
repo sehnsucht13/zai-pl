@@ -18,7 +18,7 @@
 """ Module defining nodes used in the abstract syntax tree created by the parser. """
 
 
-class AST_Node:
+class ASTNode:
     """
     Base class from which all AST nodes are derived.
     """
@@ -27,7 +27,7 @@ class AST_Node:
         raise NotImplementedError()
 
 
-class Program_Node(AST_Node):
+class ProgramNode(ASTNode):
     def __init__(self):
         self.stmnts = list()
 
@@ -48,7 +48,7 @@ class Program_Node(AST_Node):
         return "Program_node"
 
 
-class Print_Node(AST_Node):
+class PrintNode(ASTNode):
     def __init__(self, expr):
         self.expr = expr
 
@@ -59,12 +59,12 @@ class Print_Node(AST_Node):
         return "{}".format(self.expr)
 
 
-class Bin_Node(AST_Node):
-    def __init__(self, left, op, right):
+class BinNode(ASTNode):
+    def __init__(self):
         raise NotImplementedError()
 
 
-class Dot_Bin_Node(AST_Node):
+class DotBinNode(ASTNode):
     def __init__(self, left, right):
         self.left = left
         self.right = right
@@ -79,7 +79,7 @@ class Dot_Bin_Node(AST_Node):
         return visitor.visit_dot_node(self)
 
 
-class Replace_Assign_Bin_Node(AST_Node):
+class ReplaceAssignBinNode(ASTNode):
     def __init__(self, symbol_path, symbol_name, value):
         self.symbol_path = symbol_path  # Path leading to the symbol
         self.symbol_name = symbol_name  # The actualy symbol name within the environment
@@ -94,7 +94,7 @@ class Replace_Assign_Bin_Node(AST_Node):
         return visitor.visit_replace_assign(self)
 
 
-class New_Assign_Bin_Node(AST_Node):
+class NewAssignBinNode(ASTNode):
     def __init__(self, symbol_path, symbol_name, value):
         self.symbol_path = symbol_path
         self.symbol_name = symbol_name
@@ -109,7 +109,7 @@ class New_Assign_Bin_Node(AST_Node):
         return visitor.visit_new_assign(self)
 
 
-class Eq_Bin_Node(Bin_Node):
+class EqBinNode(BinNode):
     def __init__(self, left, op, right):
         self.left = left
         self.right = right
@@ -126,7 +126,7 @@ class Eq_Bin_Node(Bin_Node):
         return "EQ_NODE: {} {} {}".format(self.left, self.op, self.right)
 
 
-class Arith_Bin_Node(Bin_Node):
+class ArithBinNode(BinNode):
     def __init__(self, left, op, right):
         self.left = left
         self.right = right
@@ -143,7 +143,7 @@ class Arith_Bin_Node(Bin_Node):
         return "ARITH_NODE: {} {} {}".format(self.left, self.op, self.right)
 
 
-class Logic_Bin_Node(Bin_Node):
+class LogicBinNode(BinNode):
     def __init__(self, left, op, right):
         self.left = left
         self.right = right
@@ -160,7 +160,7 @@ class Logic_Bin_Node(Bin_Node):
         return "LOGIC_NODE: {} {} {}".format(self.left, self.op, self.right)
 
 
-class Relop_Bin_Node(Bin_Node):
+class RelopBinNode(BinNode):
     def __init__(self, left, op, right):
         self.left = left
         self.right = right
@@ -177,7 +177,7 @@ class Relop_Bin_Node(Bin_Node):
         return "RELOP_NODE: {} {} {}".format(self.left, self.op, self.right)
 
 
-class Unary_Node(AST_Node):
+class UnaryNode(ASTNode):
     def __init__(self, op, right):
         self.value = right
         self.op = op
@@ -190,10 +190,10 @@ class Unary_Node(AST_Node):
         return visitor.visit_unary(self)
 
     def __str__(self):
-        return "UNARY_NODE: {} {}".format(self.op, self.right)
+        return "UNARY_NODE: {} {}".format(self.op, self.value)
 
 
-class Bracket_Node(AST_Node):
+class BracketNode(ASTNode):
     def __init__(self, expr):
         self.expr = expr
 
@@ -208,21 +208,21 @@ class Bracket_Node(AST_Node):
         return visitor.visit_bracket(self)
 
 
-class If_Node(AST_Node):
+class IfNode(ASTNode):
     def __init__(self, conditions, else_block):
         self.cond_blocks = conditions
         self.else_block = else_block
 
     def __str__(self):
         return "IF_NODE: conditions: {} else:{}".format(
-            self.conditions, self.else_block
+            self.cond_blocks, self.else_block
         )
 
     def accept(self, visitor):
         return visitor.visit_if(self)
 
 
-class While_Node(AST_Node):
+class WhileNode(ASTNode):
     def __init__(self, condition, body):
         self.condition = condition
         self.body = body
@@ -234,7 +234,7 @@ class While_Node(AST_Node):
         return visitor.visit_while(self)
 
 
-class Switch_Node(AST_Node):
+class SwitchNode(ASTNode):
     def __init__(self, switch_cond, switch_cases, default_case):
         self.switch_cond = switch_cond
         self.switch_cases = switch_cases
@@ -249,7 +249,7 @@ class Switch_Node(AST_Node):
         return visitor.visit_switch(self)
 
 
-class ID_Node(AST_Node):
+class IdNode(ASTNode):
     def __init__(self, node_val):
         self.val = node_val
 
@@ -264,7 +264,7 @@ class ID_Node(AST_Node):
         return visitor.visit_symbol(self)
 
 
-class Bool_Node(AST_Node):
+class BoolNode(ASTNode):
     def __init__(self, node_val):
         self.val = node_val
 
@@ -279,7 +279,7 @@ class Bool_Node(AST_Node):
         return visitor.visit_bool(self)
 
 
-class String_Node(AST_Node):
+class StringNode(ASTNode):
     def __init__(self, node_val):
         self.val = node_val
 
@@ -294,7 +294,7 @@ class String_Node(AST_Node):
         return visitor.visit_string(self)
 
 
-class Num_Node(AST_Node):
+class NumNode(ASTNode):
     def __init__(self, node_val):
         self.val = node_val
 
@@ -309,7 +309,7 @@ class Num_Node(AST_Node):
         return visitor.visit_num(self)
 
 
-class Func_Node(AST_Node):
+class FuncNode(ASTNode):
     def __init__(self, name, args, body):
         self.name = name
         self.args = args
@@ -322,7 +322,7 @@ class Func_Node(AST_Node):
         return visitor.visit_func_def(self)
 
 
-class Scope_Block_Node(AST_Node):
+class ScopeBlockNode(ASTNode):
     def __init__(self, block_stmnts):
         self.stmnts = block_stmnts
 
@@ -336,7 +336,7 @@ class Scope_Block_Node(AST_Node):
         return visitor.visit_scope_block(self)
 
 
-class Call_Node(AST_Node):
+class CallNode(ASTNode):
     def __init__(self, object_name, call_args):
         self.object_name = object_name
         self.call_args = call_args
@@ -348,7 +348,7 @@ class Call_Node(AST_Node):
         return visitor.visit_call(self)
 
 
-class Class_Method_Node(AST_Node):
+class ClassMethodNode(ASTNode):
     def __init__(self, name, args, body):
         self.name = name
         self.args = args
@@ -361,7 +361,7 @@ class Class_Method_Node(AST_Node):
         return visitor.visit_class_method(self)
 
 
-class Class_Def_Node(AST_Node):
+class ClassDefNode(ASTNode):
     def __init__(self, class_name, class_methods):
         self.class_name = class_name
         self.class_methods = class_methods
@@ -373,7 +373,7 @@ class Class_Def_Node(AST_Node):
         return visitor.visit_class_def(self)
 
 
-class This_Node(AST_Node):
+class ThisNode(ASTNode):
     def __init__(self):
         pass
 
@@ -384,7 +384,7 @@ class This_Node(AST_Node):
         return visitor.visit_this(self)
 
 
-class Break_Node(AST_Node):
+class BreakNode(ASTNode):
     def __init__(self):
         pass
 
@@ -395,7 +395,7 @@ class Break_Node(AST_Node):
         return visitor.visit_break(self)
 
 
-class Continue_Node(AST_Node):
+class ContinueNode(ASTNode):
     def __init__(self):
         pass
 
@@ -406,7 +406,7 @@ class Continue_Node(AST_Node):
         return visitor.visit_continue(self)
 
 
-class Return_Node(AST_Node):
+class ReturnNode(ASTNode):
     def __init__(self, return_expr):
         self.expr = return_expr
 
@@ -417,7 +417,7 @@ class Return_Node(AST_Node):
         return visitor.visit_return(self)
 
 
-class Do_While_Node(AST_Node):
+class DoWhileNode(ASTNode):
     def __init__(self, cond, body):
         self.cond = cond
         self.body = body
@@ -429,7 +429,7 @@ class Do_While_Node(AST_Node):
         return visitor.visit_do_while(self)
 
 
-class Array_Node(AST_Node):
+class ArrayNode(ASTNode):
     def __init__(self, elements):
         # elements is a list of "or_expr"
         self.elements = elements
@@ -441,7 +441,7 @@ class Array_Node(AST_Node):
         return visitor.visit_array(self)
 
 
-class Array_Access_Node(AST_Node):
+class ArrayAccessNode(ASTNode):
     def __init__(self, array_id, array_position):
         self.array_name = array_id
         self.array_pos = array_position
@@ -455,7 +455,7 @@ class Array_Access_Node(AST_Node):
         return visitor.visit_array_access(self)
 
 
-class Incr_Node(AST_Node):
+class IncrNode(ASTNode):
     def __init__(self, value):
         self.value = value
 
@@ -466,7 +466,7 @@ class Incr_Node(AST_Node):
         return visitor.visit_incr(self)
 
 
-class Decr_Node(AST_Node):
+class DecrNode(ASTNode):
     def __init__(self, value):
         self.value = value
 
@@ -477,7 +477,7 @@ class Decr_Node(AST_Node):
         return visitor.visit_decr(self)
 
 
-class Nil_Node(AST_Node):
+class NilNode(ASTNode):
     def __init__(self):
         pass
 
@@ -488,7 +488,7 @@ class Nil_Node(AST_Node):
         return visitor.visit_nil(self)
 
 
-class Import_Node(AST_Node):
+class ImportNode(ASTNode):
     def __init__(self, module_name, import_name=None):
         self.module_name = module_name
         self.import_name = import_name
@@ -502,7 +502,7 @@ class Import_Node(AST_Node):
         return visitor.visit_import(self)
 
 
-class AddAssign_Node(AST_Node):
+class AddassignNode(ASTNode):
     def __init__(self, symbol_path, symbol_name, increment):
         self.symbol_path = symbol_path
         self.symbol_name = symbol_name
@@ -517,7 +517,7 @@ class AddAssign_Node(AST_Node):
         return visitor.visit_add_assign(self)
 
 
-class SubAssign_Node(AST_Node):
+class SubassignNode(ASTNode):
     def __init__(self, symbol_path, symbol_name, decrement):
         self.symbol_path = symbol_path
         self.symbol_name = symbol_name
