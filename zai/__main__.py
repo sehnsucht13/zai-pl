@@ -17,13 +17,13 @@
 
 import argparse
 
-from zai.vm import YAPL_VM
+from zai.vm import YaplVm
 from pathlib import Path
 from sys import exit
 
 
 def main():
-    vm = YAPL_VM()
+    vm = YaplVm()
     arg_parser = argparse.ArgumentParser(
         "yapl",
         description="An interpreter for yapl.",

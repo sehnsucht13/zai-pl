@@ -17,8 +17,8 @@
 
 """Module contains a visitor class implementation used to execute the AST
 produced by the parser."""
-from zai.ast_nodes import Array_Access_Node
-from zai.tokens import Tok_Type
+from zai.ast_nodes import ArrayAccessNode
+from zai.tokens import TokType
 from zai.internal_error import InternalRuntimeErr
 from zai.env import Environment, Scope
 from zai.lexer import Lexer
@@ -26,18 +26,18 @@ from zai.parse import Parser
 from zai.utils import is_truthy, read_module_contents
 from zai.objects import (
     ObjectType,
-    Bool_Object,
-    Nil_Object,
-    Num_Object,
-    Func_Object,
-    String_Object,
-    Return_Object,
-    Class_Def_Object,
-    Class_Instance_Object,
-    Continue_Object,
-    Break_Object,
-    Array_Object,
-    Module_Object,
+    BoolObject,
+    NilObject,
+    NumObject,
+    FuncObject,
+    StringObject,
+    ReturnObject,
+    ClassDefObject,
+    ClassInstanceObject,
+    ContinueObject,
+    BreakObject,
+    ArrayObject,
+    ModuleObject,
 )
 
 
@@ -80,7 +80,7 @@ class Visitor:
             #     return ret_val
 
     def visit_num(self, node):
-        return Num_Object(node.val)
+        return NumObject(node.val)
 
     def visit_symbol(self, node):
         # Retrieve symbol from env
@@ -94,16 +94,16 @@ class Visitor:
             return symbol_val
 
     def visit_string(self, node):
-        return String_Object(node.val)
+        return StringObject(node.val)
 
     def visit_bracket(self, node):
         return node.expr.accept(self)
 
     def visit_bool(self, node):
-        if node.val == Tok_Type.TRUE:
-            return Bool_Object(True)
+        if node.val == TokType.TRUE:
+            return BoolObject(True)
         else:
-            return Bool_Object(False)
+            return BoolObject(False)
 
     def visit_arith(self, node):
         # Evaluate left and right sides
@@ -111,13 +111,13 @@ class Visitor:
         right = node.right.accept(self)
 
         # Perform actions depeding on type
-        if node.op == Tok_Type.PLUS:
+        if node.op == TokType.PLUS:
             return left + right
-        elif node.op == Tok_Type.MINUS:
+        elif node.op == TokType.MINUS:
             return left - right
-        elif node.op == Tok_Type.MUL:
+        elif node.op == TokType.MUL:
             return left * right
-        elif node.op == Tok_Type.DIV:
+        elif node.op == TokType.DIV:
             return left / right
 
     def visit_logic(self, node):
@@ -125,10 +125,10 @@ class Visitor:
         right = node.right.accept(self)
 
         # >
-        if node.op == Tok_Type.AND:
+        if node.op == TokType.AND:
             return left & right
         # >=
-        elif node.op == Tok_Type.OR:
+        elif node.op == TokType.OR:
             return left | right
 
     def visit_relop(self, node):
@@ -136,32 +136,32 @@ class Visitor:
         right = node.right.accept(self)
 
         # >
-        if node.op == Tok_Type.GT:
+        if node.op == TokType.GT:
             return left > right
         # >=
-        elif node.op == Tok_Type.GTE:
+        elif node.op == TokType.GTE:
             return left >= right
         # <
-        elif node.op == Tok_Type.LT:
+        elif node.op == TokType.LT:
             return left < right
         # <=
-        elif node.op == Tok_Type.LTE:
+        elif node.op == TokType.LTE:
             return left <= right
 
     def visit_eq(self, node):
         left = node.left.accept(self)
         right = node.right.accept(self)
 
-        if node.op == Tok_Type.EQ:
+        if node.op == TokType.EQ:
             return left == right
-        elif node.op == Tok_Type.NEQ:
+        elif node.op == TokType.NEQ:
             return left != right
 
     def visit_unary(self, node):
         result = node.value.accept(self)
-        if node.op == Tok_Type.MINUS:
+        if node.op == TokType.MINUS:
             return -result
-        elif node.op == Tok_Type.BANG:
+        elif node.op == TokType.BANG:
             return ~result
 
     def visit_if(self, node):
@@ -205,7 +205,7 @@ class Visitor:
         else:
             symbol_namespace = self.env.peek()
 
-        if isinstance(node.symbol_name, Array_Access_Node):
+        if isinstance(node.symbol_name, ArrayAccessNode):
             symbol_name = node.symbol_name.array_name.val
             array_index = node.symbol_name.array_pos.accept(self)
             if array_index.obj_type != ObjectType.NUM:
@@ -324,7 +324,7 @@ class Visitor:
         curr_scope = self.env.peek()
         # Register the function in the current frame
         curr_scope.new_variable(
-            node.name, Func_Object(node.name, node.args, node.body, curr_scope)
+            node.name, FuncObject(node.name, node.args, node.body, curr_scope)
         )
 
     def visit_class_def(self, node):
@@ -335,7 +335,7 @@ class Visitor:
         curr_scope = self.env.peek()
         # Register the class in the scope
         curr_scope.new_variable(
-            node.class_name, Class_Def_Object(node.class_name, node.class_methods)
+            node.class_name, ClassDefObject(node.class_name, node.class_methods)
         )
 
     def __run_native_function(self, func_object, call_args):
@@ -411,7 +411,7 @@ class Visitor:
             ret_val = self.__run_internal_function(call_object, node.call_args)
             self.env.exit_scope()
             if ret_val is None or ret_val.value is None:
-                return Nil_Object()
+                return NilObject()
             else:
                 return ret_val.value
 
@@ -419,7 +419,7 @@ class Visitor:
             return self.__run_native_function(call_object, node.call_args)
 
         elif call_object.obj_type == ObjectType.CLASS_DEF:
-            instance_ptr = Class_Instance_Object(
+            instance_ptr = ClassInstanceObject(
                 call_object.class_name, call_object.class_methods
             )
             # Enter new scope to register "this" namespace
@@ -476,7 +476,7 @@ class Visitor:
             err_msg = "variable {} is not accessible!".format(node.left.val)
             raise InternalRuntimeErr(err_msg)
 
-    def visit_this(self, node):
+    def visit_this(self):
         curr_scope = self.env.peek()
         while curr_scope.parent is not None:
             curr_scope = curr_scope.parent
@@ -484,16 +484,16 @@ class Visitor:
 
     def visit_return(self, node):
         if node.expr is None:
-            return Return_Object(Nil_Object())
+            return ReturnObject(NilObject())
 
         return_val = node.expr.accept(self)
-        return Return_Object(return_val)
+        return ReturnObject(return_val)
 
-    def visit_continue(self, node):
-        return Continue_Object()
+    def visit_continue(self):
+        return ContinueObject()
 
-    def visit_break(self, node):
-        return Break_Object()
+    def visit_break(self):
+        return BreakObject()
 
     def visit_do_while(self, node):
         # First execution of the body which always happens
@@ -534,7 +534,7 @@ class Visitor:
             elem_val = elem.accept(self)
             eval_elem.append(elem_val)
 
-        return Array_Object(eval_elem)
+        return ArrayObject(eval_elem)
 
     def visit_array_access(self, node):
         array_obj = node.array_name.accept(self)
@@ -565,8 +565,8 @@ class Visitor:
         node_val.value -= 1
         return node_val
 
-    def visit_nil(self, node):
-        return Nil_Object()
+    def visit_nil(self):
+        return NilObject()
 
     def visit_import(self, node):
         module_name = node.module_name + ".zai"
@@ -600,7 +600,7 @@ class Visitor:
 
         self.env.peek().new_variable(
             module_env_name,
-            Module_Object(node.module_name, module_path, import_scope, module_env_name),
+            ModuleObject(node.module_name, module_path, import_scope, module_env_name),
         )
 
     def visit_add_assign(self, node):

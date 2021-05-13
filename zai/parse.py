@@ -21,44 +21,44 @@ by the interpreter.
 """
 
 from zai.ast_nodes import (
-    This_Node,
-    String_Node,
-    Num_Node,
-    Array_Node,
-    Array_Access_Node,
-    Nil_Node,
-    Bool_Node,
-    Arith_Bin_Node,
-    ID_Node,
-    Dot_Bin_Node,
-    Bracket_Node,
-    Unary_Node,
-    Incr_Node,
-    Decr_Node,
-    Call_Node,
-    AddAssign_Node,
-    SubAssign_Node,
-    New_Assign_Bin_Node,
-    If_Node,
-    Print_Node,
-    Func_Node,
-    Scope_Block_Node,
-    While_Node,
-    Break_Node,
-    Continue_Node,
-    Do_While_Node,
-    Import_Node,
-    Program_Node,
-    Switch_Node,
-    Class_Def_Node,
-    Class_Method_Node,
-    Return_Node,
-    Replace_Assign_Bin_Node,
-    Relop_Bin_Node,
-    Eq_Bin_Node,
-    Logic_Bin_Node,
+    ThisNode,
+    StringNode,
+    NumNode,
+    ArrayNode,
+    ArrayAccessNode,
+    NilNode,
+    BoolNode,
+    ArithBinNode,
+    IdNode,
+    DotBinNode,
+    BracketNode,
+    UnaryNode,
+    IncrNode,
+    DecrNode,
+    CallNode,
+    AddassignNode,
+    SubassignNode,
+    NewAssignBinNode,
+    IfNode,
+    PrintNode,
+    FuncNode,
+    ScopeBlockNode,
+    WhileNode,
+    BreakNode,
+    ContinueNode,
+    DoWhileNode,
+    ImportNode,
+    ProgramNode,
+    SwitchNode,
+    ClassDefNode,
+    ClassMethodNode,
+    ReturnNode,
+    ReplaceAssignBinNode,
+    RelopBinNode,
+    EqBinNode,
+    LogicBinNode,
 )
-from zai.tokens import Tok_Type
+from zai.tokens import TokType
 from zai.internal_error import InternalParseErr
 
 
@@ -132,34 +132,34 @@ class Parser:
         STR := "\"" (LETTER | NUM )* "\""
         ARRAY := "[" ( or_expr ( "," or_expr )* )? "]"
         """
-        if self.curr_tok.tok_type == Tok_Type.THIS:
-            node = self.match(Tok_Type.THIS)
-            return This_Node()
-        elif self.curr_tok.tok_type == Tok_Type.DQUOTE:
-            self.match(Tok_Type.DQUOTE)
-            str_token = self.match(Tok_Type.STRING)
-            node = String_Node(str_token.lexeme)
-            self.match(Tok_Type.DQUOTE)
+        if self.curr_tok.tok_type == TokType.THIS:
+            self.match(TokType.THIS)
+            return ThisNode()
+        elif self.curr_tok.tok_type == TokType.DQUOTE:
+            self.match(TokType.DQUOTE)
+            str_token = self.match(TokType.STRING)
+            node = StringNode(str_token.lexeme)
+            self.match(TokType.DQUOTE)
             return node
-        elif self.curr_tok.tok_type == Tok_Type.NUM:
-            node = self.match(Tok_Type.NUM)
-            return Num_Node(node.lexeme)
-        elif self.curr_tok.tok_type == Tok_Type.LSQUARE:
-            self.match(Tok_Type.LSQUARE)
+        elif self.curr_tok.tok_type == TokType.NUM:
+            node = self.match(TokType.NUM)
+            return NumNode(node.lexeme)
+        elif self.curr_tok.tok_type == TokType.LSQUARE:
+            self.match(TokType.LSQUARE)
             array_elem = list()
-            while self.curr_tok.tok_type != Tok_Type.RSQUARE:
+            while self.curr_tok.tok_type != TokType.RSQUARE:
                 arg_value = self.or_expr()
                 array_elem.append(arg_value)
-                if self.curr_tok.tok_type != Tok_Type.RSQUARE:
-                    self.match(Tok_Type.COMMA)
-            self.match(Tok_Type.RSQUARE)
-            return Array_Node(array_elem)
-        elif self.curr_tok.tok_type == Tok_Type.NIL:
-            self.match(Tok_Type.NIL)
-            return Nil_Node()
+                if self.curr_tok.tok_type != TokType.RSQUARE:
+                    self.match(TokType.COMMA)
+            self.match(TokType.RSQUARE)
+            return ArrayNode(array_elem)
+        elif self.curr_tok.tok_type == TokType.NIL:
+            self.match(TokType.NIL)
+            return NilNode()
         else:
-            node = self.match(Tok_Type.TRUE, Tok_Type.FALSE)
-            return Bool_Node(node.tok_type)
+            node = self.match(TokType.TRUE, TokType.FALSE)
+            return BoolNode(node.tok_type)
 
     def arglist(self):
         """
@@ -168,58 +168,58 @@ class Parser:
         arglist := (or_expr ("," or_expr)*)?
         """
         func_args = list()
-        while self.curr_tok.tok_type != Tok_Type.RROUND:
+        while self.curr_tok.tok_type != TokType.RROUND:
             arg_value = self.or_expr()
             func_args.append(arg_value)
-            if self.curr_tok.tok_type != Tok_Type.RROUND:
-                self.match(Tok_Type.COMMA)
+            if self.curr_tok.tok_type != TokType.RROUND:
+                self.match(TokType.COMMA)
         return func_args
 
     def access_ident(self):
         # Create ID node
-        node = self.match(Tok_Type.ID)
-        left = ID_Node(node.lexeme)
+        node = self.match(TokType.ID)
+        left = IdNode(node.lexeme)
 
         while self.curr_tok.tok_type in [
-            Tok_Type.DOT,
-            Tok_Type.LSQUARE,
+            TokType.DOT,
+            TokType.LSQUARE,
         ]:
-            if self.curr_tok.tok_type == Tok_Type.DOT:
-                self.match(Tok_Type.DOT)
-                property_name = ID_Node(self.match(Tok_Type.ID).lexeme)
-                left = Dot_Bin_Node(left, property_name)
-            elif self.curr_tok.tok_type == Tok_Type.LSQUARE:
-                self.match(Tok_Type.LSQUARE)
+            if self.curr_tok.tok_type == TokType.DOT:
+                self.match(TokType.DOT)
+                property_name = IdNode(self.match(TokType.ID).lexeme)
+                left = DotBinNode(left, property_name)
+            elif self.curr_tok.tok_type == TokType.LSQUARE:
+                self.match(TokType.LSQUARE)
                 arr_idx = self.atom()
-                self.match(Tok_Type.RSQUARE)
-                left = Array_Access_Node(left, arr_idx)
+                self.match(TokType.RSQUARE)
+                left = ArrayAccessNode(left, arr_idx)
 
         return left
 
     def access_this(self):
-        self.match(Tok_Type.THIS)
-        left = ID_Node("this")
+        self.match(TokType.THIS)
+        left = IdNode("this")
 
         while self.curr_tok.tok_type in [
-            Tok_Type.DOT,
-            Tok_Type.LSQUARE,
+            TokType.DOT,
+            TokType.LSQUARE,
         ]:
-            if self.curr_tok.tok_type == Tok_Type.DOT:
-                self.match(Tok_Type.DOT)
-                property_name = ID_Node(self.match(Tok_Type.ID).lexeme)
-                left = Dot_Bin_Node(left, property_name)
-            elif self.curr_tok.tok_type == Tok_Type.LSQUARE:
-                self.match(Tok_Type.LSQUARE)
+            if self.curr_tok.tok_type == TokType.DOT:
+                self.match(TokType.DOT)
+                property_name = IdNode(self.match(TokType.ID).lexeme)
+                left = DotBinNode(left, property_name)
+            elif self.curr_tok.tok_type == TokType.LSQUARE:
+                self.match(TokType.LSQUARE)
                 arr_idx = self.atom()
-                self.match(Tok_Type.RSQUARE)
-                left = Array_Access_Node(left, arr_idx)
+                self.match(TokType.RSQUARE)
+                left = ArrayAccessNode(left, arr_idx)
 
         return left
 
     def access(self):
-        if self.curr_tok.tok_type == Tok_Type.ID:
+        if self.curr_tok.tok_type == TokType.ID:
             return self.access_ident()
-        elif self.curr_tok.tok_type == Tok_Type.THIS:
+        elif self.curr_tok.tok_type == TokType.THIS:
             return self.access_this()
 
     def call_or_access(self):
@@ -230,11 +230,11 @@ class Parser:
         """
 
         access_node = self.access()
-        if self.curr_tok.tok_type == Tok_Type.LROUND:
-            self.match(Tok_Type.LROUND)
+        if self.curr_tok.tok_type == TokType.LROUND:
+            self.match(TokType.LROUND)
             func_args = self.arglist()
-            self.match(Tok_Type.RROUND)
-            return Call_Node(access_node, func_args)
+            self.match(TokType.RROUND)
+            return CallNode(access_node, func_args)
         else:
             return access_node
 
@@ -249,34 +249,34 @@ class Parser:
         # TODO: There will be a problem with the first if statement. Nonetype does not
         # does not have a "tok_type" so it will fail if there is no next token.
         if self.curr_tok.tok_type in [
-            Tok_Type.ID,
-            Tok_Type.THIS,
+            TokType.ID,
+            TokType.THIS,
         ]:
             return self.call_or_access()
-        elif self.curr_tok.tok_type == Tok_Type.LROUND:
-            self.match(Tok_Type.LROUND)
+        elif self.curr_tok.tok_type == TokType.LROUND:
+            self.match(TokType.LROUND)
             expr = self.or_expr()
-            self.match(Tok_Type.RROUND)
-            return Bracket_Node(expr)
-        elif self.curr_tok.tok_type in [Tok_Type.BANG, Tok_Type.MINUS]:
-            op = self.match(Tok_Type.BANG, Tok_Type.MINUS)
+            self.match(TokType.RROUND)
+            return BracketNode(expr)
+        elif self.curr_tok.tok_type in [TokType.BANG, TokType.MINUS]:
+            op = self.match(TokType.BANG, TokType.MINUS)
             fact = self.factor()
-            return Unary_Node(op.tok_type, fact)
+            return UnaryNode(op.tok_type, fact)
         # TODO: Handle case of it being an "ID" token instead of just num.
-        elif self.curr_tok.tok_type in [Tok_Type.NUM, Tok_Type.ID] and self.peek() in [
-            Tok_Type.INCR,
-            Tok_Type.DECR,
+        elif self.curr_tok.tok_type in [TokType.NUM, TokType.ID] and self.peek() in [
+            TokType.INCR,
+            TokType.DECR,
         ]:
             # Evaluate the initial number token
             node = self.atom()
 
             # "++" or "--" operators can be nested
-            while self.curr_tok.tok_type in [Tok_Type.INCR, Tok_Type.DECR]:
-                op = self.match(Tok_Type.INCR, Tok_Type.DECR)
-                if op.tok_type == Tok_Type.INCR:
-                    node = Incr_Node(node)
-                elif op.tok_type == Tok_Type.DECR:
-                    node = Decr_Node(node)
+            while self.curr_tok.tok_type in [TokType.INCR, TokType.DECR]:
+                op = self.match(TokType.INCR, TokType.DECR)
+                if op.tok_type == TokType.INCR:
+                    node = IncrNode(node)
+                elif op.tok_type == TokType.DECR:
+                    node = DecrNode(node)
             return node
         else:
             return self.atom()
@@ -288,10 +288,10 @@ class Parser:
         term := factor (("*" | "/") factor)*
         """
         left = self.factor()
-        while self.curr_tok.tok_type in [Tok_Type.MUL, Tok_Type.DIV]:
-            op = self.match(Tok_Type.MUL, Tok_Type.DIV)
+        while self.curr_tok.tok_type in [TokType.MUL, TokType.DIV]:
+            op = self.match(TokType.MUL, TokType.DIV)
             right = self.term()
-            left = Arith_Bin_Node(left, op.tok_type, right)
+            left = ArithBinNode(left, op.tok_type, right)
 
         return left
 
@@ -302,10 +302,10 @@ class Parser:
         add_expr := term (("+" | "-") term)*
         """
         left = self.term()
-        while self.curr_tok.tok_type in [Tok_Type.PLUS, Tok_Type.MINUS]:
-            op = self.match(Tok_Type.PLUS, Tok_Type.MINUS)
+        while self.curr_tok.tok_type in [TokType.PLUS, TokType.MINUS]:
+            op = self.match(TokType.PLUS, TokType.MINUS)
             right = self.term()
-            left = Arith_Bin_Node(left, op.tok_type, right)
+            left = ArithBinNode(left, op.tok_type, right)
 
         return left
 
@@ -318,14 +318,14 @@ class Parser:
 
         left = self.add_expr()
         while self.curr_tok.tok_type in [
-            Tok_Type.GT,
-            Tok_Type.GTE,
-            Tok_Type.LT,
-            Tok_Type.LTE,
+            TokType.GT,
+            TokType.GTE,
+            TokType.LT,
+            TokType.LTE,
         ]:
-            op = self.match(Tok_Type.GT, Tok_Type.GTE, Tok_Type.LT, Tok_Type.LTE)
+            op = self.match(TokType.GT, TokType.GTE, TokType.LT, TokType.LTE)
             right = self.add_expr()
-            left = Relop_Bin_Node(left, op.tok_type, right)
+            left = RelopBinNode(left, op.tok_type, right)
 
         return left
 
@@ -336,10 +336,10 @@ class Parser:
         eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
         """
         left = self.rel_expr()
-        while self.curr_tok.tok_type in [Tok_Type.EQ, Tok_Type.NEQ]:
-            op = self.match(Tok_Type.EQ, Tok_Type.NEQ)
+        while self.curr_tok.tok_type in [TokType.EQ, TokType.NEQ]:
+            op = self.match(TokType.EQ, TokType.NEQ)
             right = self.rel_expr()
-            left = Eq_Bin_Node(left, op.tok_type, right)
+            left = EqBinNode(left, op.tok_type, right)
 
         return left
 
@@ -350,10 +350,10 @@ class Parser:
         and_expr := eq_expr ("&&" eq_expr)*
         """
         left = self.eq_expr()
-        while self.curr_tok.tok_type == Tok_Type.AND:
-            op = self.match((Tok_Type.AND))
+        while self.curr_tok.tok_type == TokType.AND:
+            op = self.match(TokType.AND)
             right = self.eq_expr()
-            left = Logic_Bin_Node(left, op.tok_type, right)
+            left = LogicBinNode(left, op.tok_type, right)
 
         return left
 
@@ -364,16 +364,16 @@ class Parser:
         or_expr := and_expr ("||" and_expr)*
         """
         left = self.and_expr()
-        while self.curr_tok.tok_type == Tok_Type.OR:
-            op = self.match(Tok_Type.OR)
+        while self.curr_tok.tok_type == TokType.OR:
+            op = self.match(TokType.OR)
             right = self.and_expr()
-            left = Logic_Bin_Node(left, op.tok_type, right)
+            left = LogicBinNode(left, op.tok_type, right)
 
         return left
 
     def expr_statement(self):
         node = self.or_expr()
-        self.match(Tok_Type.SEMIC)
+        self.match(TokType.SEMIC)
         return node
 
     def reassign_or_eval_statement(self):
@@ -382,55 +382,55 @@ class Parser:
         # 2. This is a simple variable access like "a.b;" or "a[3];"
         # 3. This is a reassign operation like "a.b = 4;"
         var_name = self.or_expr()
-        if isinstance(var_name, (Dot_Bin_Node, ID_Node, This_Node, Array_Access_Node)):
+        if isinstance(var_name, (DotBinNode, IdNode, ThisNode, ArrayAccessNode)):
             # TODO: Throw error if we get a "This" node without anything else attached
             # to it.
-            if self.curr_tok.tok_type == Tok_Type.ASSIGN:
-                self.match(Tok_Type.ASSIGN)
+            if self.curr_tok.tok_type == TokType.ASSIGN:
+                self.match(TokType.ASSIGN)
                 value = self.expr_statement()
-                if isinstance(var_name, (ID_Node, Array_Access_Node)):
-                    a = Replace_Assign_Bin_Node(None, var_name, value)
+                if isinstance(var_name, (IdNode, ArrayAccessNode)):
+                    a = ReplaceAssignBinNode(None, var_name, value)
                     return a
                 else:
-                    a = Replace_Assign_Bin_Node(var_name.left, var_name.right, value)
+                    a = ReplaceAssignBinNode(var_name.left, var_name.right, value)
                     return a
             # TODO: Add augmented assign cases here.
-            elif self.curr_tok.tok_type == Tok_Type.ADDASSIGN:
-                self.match(Tok_Type.ADDASSIGN)
+            elif self.curr_tok.tok_type == TokType.ADDASSIGN:
+                self.match(TokType.ADDASSIGN)
                 value = self.expr_statement()
-                if isinstance(var_name, ID_Node):
-                    return AddAssign_Node(None, var_name, value)
+                if isinstance(var_name, IdNode):
+                    return AddassignNode(None, var_name, value)
                 else:
                     # Decompose the nodes
-                    return AddAssign_Node(var_name.left, var_name.right, value)
-            elif self.curr_tok.tok_type == Tok_Type.SUBASSIGN:
-                self.match(Tok_Type.SUBASSIGN)
+                    return AddassignNode(var_name.left, var_name.right, value)
+            elif self.curr_tok.tok_type == TokType.SUBASSIGN:
+                self.match(TokType.SUBASSIGN)
                 value = self.expr_statement()
-                if isinstance(var_name, ID_Node):
-                    return SubAssign_Node(None, var_name, value)
+                if isinstance(var_name, IdNode):
+                    return SubassignNode(None, var_name, value)
                 else:
                     # Decompose the nodes
-                    return SubAssign_Node(var_name.left, var_name.right, value)
+                    return SubassignNode(var_name.left, var_name.right, value)
             else:
                 # Case of the node not being an assignment node but a variable access
-                self.match(Tok_Type.SEMIC)
+                self.match(TokType.SEMIC)
                 return var_name
         else:
             # Case of a regular expression like "a + 4;"
-            self.match(Tok_Type.SEMIC)
+            self.match(TokType.SEMIC)
             return var_name
 
     def new_asssign_statement(self):
-        self.match(Tok_Type.LET)
+        self.match(TokType.LET)
         symbol_path = self.call_or_access()
-        self.match(Tok_Type.ASSIGN)
+        self.match(TokType.ASSIGN)
         value = self.expr_statement()
         # Check if it is a single node
-        if isinstance(symbol_path, ID_Node):
-            return New_Assign_Bin_Node(None, symbol_path, value)
+        if isinstance(symbol_path, IdNode):
+            return NewAssignBinNode(None, symbol_path, value)
         else:
             # Decompose the nodes
-            return New_Assign_Bin_Node(symbol_path.left, symbol_path.right, value)
+            return NewAssignBinNode(symbol_path.left, symbol_path.right, value)
 
     def if_statement(self):
         """
@@ -443,28 +443,28 @@ class Parser:
         conditions = list()
 
         # Parse "If ... then ..."
-        self.match(Tok_Type.IF)
-        self.match(Tok_Type.LROUND)
+        self.match(TokType.IF)
+        self.match(TokType.LROUND)
         if_cond = self.or_expr()
-        self.match(Tok_Type.RROUND)
+        self.match(TokType.RROUND)
         then_block = self.block()
         conditions.append({"cond": if_cond, "block": then_block})
 
         # Parse "elif ... then ..."
-        while self.curr_tok.tok_type == Tok_Type.ELIF:
-            self.match(Tok_Type.ELIF)
-            self.match(Tok_Type.LROUND)
+        while self.curr_tok.tok_type == TokType.ELIF:
+            self.match(TokType.ELIF)
+            self.match(TokType.LROUND)
             cond = self.or_expr()
-            self.match(Tok_Type.RROUND)
+            self.match(TokType.RROUND)
             then_block = self.block()
             conditions.append({"cond": cond, "block": then_block})
 
         else_block = None
-        if self.curr_tok.tok_type == Tok_Type.ELSE:
-            self.match(Tok_Type.ELSE)
+        if self.curr_tok.tok_type == TokType.ELSE:
+            self.match(TokType.ELSE)
             else_block = self.block()
 
-        node = If_Node(conditions, else_block)
+        node = IfNode(conditions, else_block)
         return node
 
     def print_statement(self):
@@ -473,9 +473,9 @@ class Parser:
         Grammar:
         """
 
-        self.match(Tok_Type.PRINT)
+        self.match(TokType.PRINT)
         expr = self.expr_statement()
-        return Print_Node(expr)
+        return PrintNode(expr)
 
     # TODO: Refactor match function and finish parsing functions
     def func_def(self):
@@ -486,31 +486,31 @@ class Parser:
         func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
         """
 
-        self.match(Tok_Type.FUNC)
-        func_name = self.match(Tok_Type.ID).lexeme
-        self.match(Tok_Type.LROUND)
+        self.match(TokType.FUNC)
+        func_name = self.match(TokType.ID).lexeme
+        self.match(TokType.LROUND)
 
         # Collect argument symbols for the function
         arg_symbols = list()
-        if self.curr_tok.tok_type == Tok_Type.ID:
-            func_arg = self.match(Tok_Type.ID)
+        if self.curr_tok.tok_type == TokType.ID:
+            func_arg = self.match(TokType.ID)
             arg_symbols.append(func_arg)
-            if self.curr_tok.tok_type == Tok_Type.COMMA:
-                while self.curr_tok.tok_type != Tok_Type.RROUND:
-                    self.match(Tok_Type.COMMA)
-                    func_arg = self.match(Tok_Type.ID)
+            if self.curr_tok.tok_type == TokType.COMMA:
+                while self.curr_tok.tok_type != TokType.RROUND:
+                    self.match(TokType.COMMA)
+                    func_arg = self.match(TokType.ID)
                     arg_symbols.append(func_arg)
 
-        self.match(Tok_Type.RROUND)
-        self.match(Tok_Type.LCURLY)
+        self.match(TokType.RROUND)
+        self.match(TokType.LCURLY)
 
         func_body = list()
-        while self.curr_tok.tok_type != Tok_Type.RCURLY:
+        while self.curr_tok.tok_type != TokType.RCURLY:
             func_stmnt = self.statement()
             func_body.append(func_stmnt)
-        self.match(Tok_Type.RCURLY)
+        self.match(TokType.RCURLY)
 
-        return Func_Node(func_name, arg_symbols, func_body)
+        return FuncNode(func_name, arg_symbols, func_body)
 
     def block(self):
         """
@@ -520,13 +520,13 @@ class Parser:
         block := "{" statement* "}"
         """
 
-        self.match(Tok_Type.LCURLY)
+        self.match(TokType.LCURLY)
         block_stmnts = list()
-        while self.curr_tok.tok_type != Tok_Type.RCURLY:
+        while self.curr_tok.tok_type != TokType.RCURLY:
             stmnt = self.statement()
             block_stmnts.append(stmnt)
-        self.match(Tok_Type.RCURLY)
-        return Scope_Block_Node(block_stmnts)
+        self.match(TokType.RCURLY)
+        return ScopeBlockNode(block_stmnts)
 
     def while_statement(self):
         """
@@ -534,13 +534,13 @@ class Parser:
         Grammar:
         while_stmnt := "while" "(" or_expr ")" block_stmnt
         """
-        self.match(Tok_Type.WHILE)
-        self.match(Tok_Type.LROUND)
+        self.match(TokType.WHILE)
+        self.match(TokType.LROUND)
         condition = self.or_expr()
-        self.match(Tok_Type.RROUND)
+        self.match(TokType.RROUND)
 
         body = self.block()
-        return While_Node(condition, body)
+        return WhileNode(condition, body)
 
     def switch_stmnt_case(self):
         """
@@ -548,9 +548,9 @@ class Parser:
         """
         stmnt_block = list()
         while self.curr_tok.tok_type not in [
-            Tok_Type.CASE,
-            Tok_Type.DEFAULT,
-            Tok_Type.RCURLY,
+            TokType.CASE,
+            TokType.DEFAULT,
+            TokType.RCURLY,
         ]:
             stmnt = self.statement()
             stmnt_block.append(stmnt)
@@ -559,7 +559,7 @@ class Parser:
         # case. The only difference between the two is how parsing is done. Block nodes
         # require curly brackets while switch case statements do not necessarily
         # require them.
-        return Scope_Block_Node(stmnt_block)
+        return ScopeBlockNode(stmnt_block)
 
     def switch_statement(self):
         """
@@ -569,26 +569,26 @@ class Parser:
                         ("case"  or_expr ":" block_stmnt)*
                         "default" ":" block_stmnt
         """
-        self.match(Tok_Type.SWITCH)
-        self.match(Tok_Type.LROUND)
+        self.match(TokType.SWITCH)
+        self.match(TokType.LROUND)
         switch_cond = self.or_expr()
-        self.match(Tok_Type.RROUND)
-        self.match(Tok_Type.LCURLY)
+        self.match(TokType.RROUND)
+        self.match(TokType.LCURLY)
 
         cases = list()
-        while self.curr_tok.tok_type == Tok_Type.CASE:
-            self.match(Tok_Type.CASE)
+        while self.curr_tok.tok_type == TokType.CASE:
+            self.match(TokType.CASE)
             test_cond = self.or_expr()
-            self.match(Tok_Type.COLON)
+            self.match(TokType.COLON)
             block = self.switch_stmnt_case()
             cases.append(tuple((test_cond, block)))
 
-        self.match(Tok_Type.DEFAULT)
-        self.match(Tok_Type.COLON)
+        self.match(TokType.DEFAULT)
+        self.match(TokType.COLON)
         default_block = self.switch_stmnt_case()
-        self.match(Tok_Type.RCURLY)
+        self.match(TokType.RCURLY)
 
-        return Switch_Node(switch_cond, cases, default_block)
+        return SwitchNode(switch_cond, cases, default_block)
 
     def class_def(self):
         """
@@ -596,24 +596,24 @@ class Parser:
         Grammar:
         class_def := "class" ID "{" func_def* "}"
         """
-        self.match(Tok_Type.CLASS)
-        class_name = self.match(Tok_Type.ID).lexeme
-        self.match(Tok_Type.LCURLY)
+        self.match(TokType.CLASS)
+        class_name = self.match(TokType.ID).lexeme
+        self.match(TokType.LCURLY)
 
         class_methods = list()
-        while self.curr_tok.tok_type != Tok_Type.RCURLY:
+        while self.curr_tok.tok_type != TokType.RCURLY:
             func_node = self.func_def()
             # Cast regular function node to method node.
             # The parsing procedure is the same for both so there is no point
             # in rewriting the code in a separate parsing procedure.
-            method_node = Class_Method_Node(
+            method_node = ClassMethodNode(
                 func_node.name, func_node.args, func_node.body
             )
             class_methods.append(method_node)
 
-        self.match(Tok_Type.RCURLY)
+        self.match(TokType.RCURLY)
 
-        return Class_Def_Node(class_name, class_methods)
+        return ClassDefNode(class_name, class_methods)
 
     def flow_statement(self):
         """
@@ -622,22 +622,22 @@ class Parser:
         flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";"
         """
         node = None
-        if self.curr_tok.tok_type == Tok_Type.RETURN:
+        if self.curr_tok.tok_type == TokType.RETURN:
             return_val = None
-            self.match(Tok_Type.RETURN)
+            self.match(TokType.RETURN)
             # Check if the return statement contains an expression or not.
-            if self.curr_tok.tok_type != Tok_Type.SEMIC:
+            if self.curr_tok.tok_type != TokType.SEMIC:
                 return_val = self.or_expr()
 
-            node = Return_Node(return_val)
-        elif self.curr_tok.tok_type == Tok_Type.BREAK:
-            self.match(Tok_Type.BREAK)
-            node = Break_Node()
-        elif self.curr_tok.tok_type == Tok_Type.CONTINUE:
-            self.match(Tok_Type.CONTINUE)
-            node = Continue_Node()
+            node = ReturnNode(return_val)
+        elif self.curr_tok.tok_type == TokType.BREAK:
+            self.match(TokType.BREAK)
+            node = BreakNode()
+        elif self.curr_tok.tok_type == TokType.CONTINUE:
+            self.match(TokType.CONTINUE)
+            node = ContinueNode()
 
-        self.match(Tok_Type.SEMIC)
+        self.match(TokType.SEMIC)
         return node
 
     def do_while_statement(self):
@@ -646,14 +646,14 @@ class Parser:
         Grammar:
         do_while_stmnt := "do" block_stmnt "while" "(" or_expr ")"
         """
-        self.match(Tok_Type.DO)
+        self.match(TokType.DO)
         body = self.block()
-        self.match(Tok_Type.WHILE)
-        self.match(Tok_Type.LROUND)
+        self.match(TokType.WHILE)
+        self.match(TokType.LROUND)
         test_cond = self.or_expr()
-        self.match(Tok_Type.RROUND)
-        self.match(Tok_Type.SEMIC)
-        return Do_While_Node(test_cond, body)
+        self.match(TokType.RROUND)
+        self.match(TokType.SEMIC)
+        return DoWhileNode(test_cond, body)
 
     def import_statement(self):
         """
@@ -661,14 +661,14 @@ class Parser:
         Grammar:
         import_stmnt := "import" ID ("as" ID)?
         """
-        self.match(Tok_Type.IMPORT)
-        module_name = self.match(Tok_Type.ID).lexeme
+        self.match(TokType.IMPORT)
+        module_name = self.match(TokType.ID).lexeme
         import_name = None
-        if self.curr_tok.tok_type == Tok_Type.AS:
-            self.match(Tok_Type.AS)
-            import_name = self.match(Tok_Type.ID).lexeme
+        if self.curr_tok.tok_type == TokType.AS:
+            self.match(TokType.AS)
+            import_name = self.match(TokType.ID).lexeme
 
-        return Import_Node(module_name, import_name)
+        return ImportNode(module_name, import_name)
 
     def statement(self):
         """
@@ -687,35 +687,35 @@ class Parser:
                      import_stmnt    |
                      simple_expr
         """
-        if self.curr_tok.tok_type == Tok_Type.IF:
+        if self.curr_tok.tok_type == TokType.IF:
             return self.if_statement()
-        elif self.curr_tok.tok_type == Tok_Type.FUNC:
+        elif self.curr_tok.tok_type == TokType.FUNC:
             return self.func_def()
-        elif self.curr_tok.tok_type == Tok_Type.CLASS:
+        elif self.curr_tok.tok_type == TokType.CLASS:
             return self.class_def()
-        elif self.curr_tok.tok_type == Tok_Type.WHILE:
+        elif self.curr_tok.tok_type == TokType.WHILE:
             return self.while_statement()
-        elif self.curr_tok.tok_type == Tok_Type.SWITCH:
+        elif self.curr_tok.tok_type == TokType.SWITCH:
             return self.switch_statement()
-        elif self.curr_tok.tok_type == Tok_Type.LCURLY:
+        elif self.curr_tok.tok_type == TokType.LCURLY:
             return self.block()
-        elif self.curr_tok.tok_type == Tok_Type.PRINT:
+        elif self.curr_tok.tok_type == TokType.PRINT:
             return self.print_statement()
-        elif self.curr_tok.tok_type == Tok_Type.SWITCH:
+        elif self.curr_tok.tok_type == TokType.SWITCH:
             return self.switch_statement()
-        elif self.curr_tok.tok_type == Tok_Type.DO:
+        elif self.curr_tok.tok_type == TokType.DO:
             return self.do_while_statement()
-        elif self.curr_tok.tok_type == Tok_Type.IMPORT:
+        elif self.curr_tok.tok_type == TokType.IMPORT:
             return self.import_statement()
         elif self.curr_tok.tok_type in [
-            Tok_Type.RETURN,
-            Tok_Type.CONTINUE,
-            Tok_Type.BREAK,
+            TokType.RETURN,
+            TokType.CONTINUE,
+            TokType.BREAK,
         ]:
             return self.flow_statement()
-        elif self.curr_tok.tok_type == Tok_Type.LET:
+        elif self.curr_tok.tok_type == TokType.LET:
             return self.new_asssign_statement()
-        elif self.curr_tok.tok_type in [Tok_Type.ID, Tok_Type.THIS]:
+        elif self.curr_tok.tok_type in [TokType.ID, TokType.THIS]:
             return self.reassign_or_eval_statement()
         else:
             return self.expr_statement()
@@ -726,8 +726,8 @@ class Parser:
         Grammar:
         program := statement*
         """
-        prog_node = Program_Node()
-        while self.curr_tok.tok_type != Tok_Type.EOF:
+        prog_node = ProgramNode()
+        while self.curr_tok.tok_type != TokType.EOF:
             stmnt = self.statement()
             prog_node.add_stmnt(stmnt)
         return prog_node

@@ -66,7 +66,7 @@ class InternalRuntimeErr(InternalErr):
     """
 
     def __init__(self, message):
-        "Class representing internal errors encountered during runtime."
+        """Class representing internal errors encountered during runtime."""
         self.message = message
 
     def __str__(self):
@@ -89,7 +89,7 @@ class InternalParseErr(InternalErr):
         expected_tokens,
         got_token,
     ):
-        "Class representing internal errors encountered during parsing/lexing stage."
+        """Internal errors encountered during parsing/lexing stage."""
         self.line_num = line_num
         self.col_num = col_num
         self.source_text_lines = original_text.split("\n")
@@ -132,7 +132,7 @@ class InternalTokenErr(InternalErr):
     """
 
     def __init__(self, line_num, col_num, original_text, err_details):
-        "Class representing internal errors encountered during lexing stage."
+        """Class representing internal errors encountered during lexing stage."""
         self.line_num = line_num
         self.col_num = col_num
         self.text = original_text.split("\n")
