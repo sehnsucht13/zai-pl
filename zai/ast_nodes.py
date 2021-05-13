@@ -83,9 +83,7 @@ class ReplaceAssignBinNode(ASTNode):
         self.value = value
 
     def __str__(self):
-        return "REPLACE_ASSIGN_NODE {} {} {}".format(
-            self.symbol_name, self.symbol_path, self.value
-        )
+        return "REPLACE_ASSIGN_NODE {} {} {}".format(self.symbol_name, self.symbol_path, self.value)
 
     def accept(self, visitor):
         return visitor.visit_replace_assign(self)
@@ -98,9 +96,7 @@ class NewAssignBinNode(ASTNode):
         self.value = value
 
     def __str__(self):
-        return "NEW_ASSIGN_NODE {} {} {}".format(
-            self.symbol_name, self.symbol_path, self.value
-        )
+        return "NEW_ASSIGN_NODE {} {} {}".format(self.symbol_name, self.symbol_path, self.value)
 
     def accept(self, visitor):
         return visitor.visit_new_assign(self)
@@ -108,10 +104,12 @@ class NewAssignBinNode(ASTNode):
 
 class BinOpNode(ASTNode):
     """Base class for all binary nodes with an associated operation."""
+
     def __init__(self, left, op, right):
         self.left = left
         self.right = right
         self.op = op
+
 
 class EqBinNode(BinOpNode):
     def accept(self, visitor):
@@ -150,11 +148,6 @@ class LogicBinNode(BinOpNode):
 
 
 class RelopBinNode(BinOpNode):
-    def __init__(self, left, op, right):
-        self.left = left
-        self.right = right
-        self.op = op
-
     def accept(self, visitor):
         """
         Keyword Arguments:
@@ -203,9 +196,7 @@ class IfNode(ASTNode):
         self.else_block = else_block
 
     def __str__(self):
-        return "IF_NODE: conditions: {} else:{}".format(
-            self.cond_blocks, self.else_block
-        )
+        return "IF_NODE: conditions: {} else:{}".format(self.cond_blocks, self.else_block)
 
     def accept(self, visitor):
         return visitor.visit_if(self)
@@ -237,10 +228,13 @@ class SwitchNode(ASTNode):
     def accept(self, visitor):
         return visitor.visit_switch(self)
 
+
 class PrimitiveValueNode(ASTNode):
     """Base class for all primitive values."""
+
     def __init__(self, val=None):
         self.val = val
+
 
 class SymbolNode(PrimitiveValueNode):
     def __str__(self):
@@ -288,6 +282,7 @@ class NumNode(PrimitiveValueNode):
         visitor -- The visitor instance used to evaluate the node.
         """
         return visitor.visit_num(self)
+
 
 class NilNode(PrimitiveValueNode):
     def __str__(self):
@@ -435,9 +430,7 @@ class ArrayAccessNode(ASTNode):
         self.array_pos = array_position
 
     def __str__(self):
-        return "ARRAY_ACCESS_NODE name: {}, position: {}".format(
-            self.array_name, self.array_pos
-        )
+        return "ARRAY_ACCESS_NODE name: {}, position: {}".format(self.array_name, self.array_pos)
 
     def accept(self, visitor):
         return visitor.visit_array_access(self)
@@ -465,16 +458,13 @@ class DecrNode(ASTNode):
         return visitor.visit_decr(self)
 
 
-
 class ImportNode(ASTNode):
     def __init__(self, module_name, import_name=None):
         self.module_name = module_name
         self.import_name = import_name
 
     def __str__(self):
-        return "IMPORT_NODE {} with import name: {}".format(
-            self.module_name, self.import_name
-        )
+        return "IMPORT_NODE {} with import name: {}".format(self.module_name, self.import_name)
 
     def accept(self, visitor):
         return visitor.visit_import(self)
@@ -487,9 +477,7 @@ class AddassignNode(ASTNode):
         self.increment = increment
 
     def __str__(self):
-        return "ADD_ASSIGN_NODE {} {} {}".format(
-            self.symbol_name, self.symbol_path, self.increment
-        )
+        return "ADD_ASSIGN_NODE {} {} {}".format(self.symbol_name, self.symbol_path, self.increment)
 
     def accept(self, visitor):
         return visitor.visit_add_assign(self)
@@ -502,9 +490,7 @@ class SubassignNode(ASTNode):
         self.decrement = decrement
 
     def __str__(self):
-        return "SUB_ASSIGN_NODE {} {} {}".format(
-            self.symbol_name, self.symbol_path, self.decrement
-        )
+        return "SUB_ASSIGN_NODE {} {} {}".format(self.symbol_name, self.symbol_path, self.decrement)
 
     def accept(self, visitor):
         return visitor.visit_sub_assign(self)

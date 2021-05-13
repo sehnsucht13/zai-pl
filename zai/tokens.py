@@ -176,17 +176,13 @@ class Token:
 
     def __str__(self):
         if self.lexeme is not None:
-            return "(T:{} Le:{} C:{} L:{})".format(
-                self.tok_type, self.lexeme, self.col_num, self.line_num
-            )
+            return "(T:{} Le:{} C:{} L:{})".format(self.tok_type, self.lexeme, self.col_num, self.line_num)
         else:
             return "(T:{} C:{} L:{})".format(self.tok_type, self.col_num, self.line_num)
 
     def __repr__(self):
         if self.lexeme is not None:
-            return "(T:{} Le:{} C:{} L:{})".format(
-                self.tok_type, self.lexeme, self.col_num, self.line_num
-            )
+            return "(T:{} Le:{} C:{} L:{})".format(self.tok_type, self.lexeme, self.col_num, self.line_num)
         else:
             return "(T:{} C:{} L:{})".format(self.tok_type, self.col_num, self.line_num)
 

@@ -31,9 +31,7 @@ class Scope:
         Instantiate a new variable within the current scope of the environment.
         Return True to indicate success.
         """
-        assert (
-            var_name is not None
-        ), "Variable name of new environment variable is None."
+        assert var_name is not None, "Variable name of new environment variable is None."
         assert value is not None, "Variable value of new environment variable is None."
         self.scope[var_name] = value
         return True

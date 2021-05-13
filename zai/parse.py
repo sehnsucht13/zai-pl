@@ -606,9 +606,7 @@ class Parser:
             # Cast regular function node to method node.
             # The parsing procedure is the same for both so there is no point
             # in rewriting the code in a separate parsing procedure.
-            method_node = ClassMethodNode(
-                func_node.name, func_node.args, func_node.body
-            )
+            method_node = ClassMethodNode(func_node.name, func_node.args, func_node.body)
             class_methods.append(method_node)
 
         self.match(TokType.RCURLY)
