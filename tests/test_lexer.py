@@ -1,6 +1,6 @@
 from zai.lexer import Lexer
 from zai.tokens import TokType, Token
-from zai.internal_error import InternalTokenErr
+from zai.internal_error import InternalTokenError
 import pytest
 
 
@@ -516,14 +516,14 @@ def test_language_keywords():
 
 
 def test_lexer_errors():
-    with pytest.raises(InternalTokenErr):
+    with pytest.raises(InternalTokenError):
         lexer = Lexer()
         lexer.tokenize_string("|")
 
-    with pytest.raises(InternalTokenErr):
+    with pytest.raises(InternalTokenError):
         lexer = Lexer()
         lexer.tokenize_string("&")
 
-    with pytest.raises(InternalTokenErr):
+    with pytest.raises(InternalTokenError):
         lexer = Lexer()
         lexer.tokenize_string("4ab")

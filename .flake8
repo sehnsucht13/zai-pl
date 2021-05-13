@@ -1,3 +1,4 @@
 [flake8]
-max-line-length = 88
-exclude = venv/
+max-line-length = 120
+extend-ignore = E203
+exclude = .git,venv,__pycache__,build,docs,dist,zai_pl.egg-info

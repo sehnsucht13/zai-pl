@@ -153,9 +153,7 @@ class BoolObject(InternalObject):
 
     def __eq__(self, other):
         assert other is not None, "Other value in bool internal object __eq__ is none"
-        return BoolObject(
-            self.obj_type == other.obj_type and self.value == other.value
-        )
+        return BoolObject(self.obj_type == other.obj_type and self.value == other.value)
 
     def __ne__(self, other):
         # Using the invert operator(~) will return a new boolean object.
@@ -242,12 +240,8 @@ class StringObject(InternalObject):
         return self.value
 
     def __eq__(self, other):
-        assert (
-            other is not None
-        ), "Other variable is none in __eq__ function for string object."
-        return BoolObject(
-            self.obj_type == other.obj_type and self.value == other.value
-        )
+        assert other is not None, "Other variable is none in __eq__ function for string object."
+        return BoolObject(self.obj_type == other.obj_type and self.value == other.value)
 
     def __ne__(self, other):
         return ~self.__eq__(other)
@@ -329,12 +323,8 @@ class NumObject(InternalObject):
         return str(self.value)
 
     def __eq__(self, other):
-        assert (
-            other is not None
-        ), "Other variable is None in __eq__ method for numeric objects."
-        return BoolObject(
-            self.obj_type == other.obj_type and self.value == other.value
-        )
+        assert other is not None, "Other variable is None in __eq__ method for numeric objects."
+        return BoolObject(self.obj_type == other.obj_type and self.value == other.value)
 
     def __ne__(self, other):
         return ~(self.__eq__(other))
@@ -511,12 +501,8 @@ class ReturnObject(InternalObject):
         return "RETURN_OBJ {}".format(self.value)
 
     def __eq__(self, other):
-        assert (
-            other is not None
-        ), "Other variable in __eq__ method for a return object is None."
-        return BoolObject(
-            self.obj_type == other.obj_type and self.value == other.value
-        )
+        assert other is not None, "Other variable in __eq__ method for a return object is None."
+        return BoolObject(self.obj_type == other.obj_type and self.value == other.value)
 
 
 class BreakObject(InternalObject):
@@ -648,9 +634,7 @@ class ClassInstanceObject(InternalObject):
         for method in class_methods:
             self.namespace.new_variable(
                 method.name,
-                ClassMethodObject(
-                    method.name, method.args, method.body, self.namespace
-                ),
+                ClassMethodObject(method.name, method.args, method.body, self.namespace),
             )
 
     def __str__(self):

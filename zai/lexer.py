@@ -20,7 +20,7 @@ Module containing lexer class used to convert an input string into a sequence
 of language tokens.
 """
 from zai.tokens import TokType, Token, keywords
-from zai.internal_error import InternalTokenErr
+from zai.internal_error import InternalTokenError
 
 
 class Lexer:
@@ -67,9 +67,7 @@ class Lexer:
         """ Tokenize an identifier and return its lexeme."""
         ident_str = str(self.curr_char)
         # ident_str += self.curr_char
-        while (
-            self._peek() is not None and self._peek() not in self.restricted_ident_chars
-        ):
+        while self._peek() is not None and self._peek() not in self.restricted_ident_chars:
             self._advance()
             ident_str += self.curr_char
         return ident_str
@@ -107,9 +105,7 @@ class Lexer:
                     )
                 )
                 self._advance()
-                self.token_stream.append(
-                    Token(TokType.DQUOTE, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.DQUOTE, None, self.curr_lin_num, self.curr_col_num))
                 return
             else:
                 str_content += self.curr_char
@@ -124,46 +120,26 @@ class Lexer:
                 # Reset current column number
                 self.curr_col_num = 0
             elif self.curr_char == "(":
-                self.token_stream.append(
-                    Token(TokType.LROUND, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.LROUND, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == ")":
-                self.token_stream.append(
-                    Token(TokType.RROUND, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.RROUND, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == ".":
-                self.token_stream.append(
-                    Token(TokType.DOT, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.DOT, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == ",":
-                self.token_stream.append(
-                    Token(TokType.COMMA, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.COMMA, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == ";":
-                self.token_stream.append(
-                    Token(TokType.SEMIC, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.SEMIC, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "{":
-                self.token_stream.append(
-                    Token(TokType.LCURLY, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.LCURLY, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "}":
-                self.token_stream.append(
-                    Token(TokType.RCURLY, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.RCURLY, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "[":
-                self.token_stream.append(
-                    Token(TokType.LSQUARE, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.LSQUARE, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "]":
-                self.token_stream.append(
-                    Token(TokType.RSQUARE, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.RSQUARE, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "-":
                 if self._peek() == "-":
-                    self.token_stream.append(
-                        Token(TokType.DECR, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.DECR, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
                 elif self._peek() == "=":
                     self.token_stream.append(
@@ -176,48 +152,32 @@ class Lexer:
                     )
                     self._advance()
                 else:
-                    self.token_stream.append(
-                        Token(
-                            TokType.MINUS, None, self.curr_lin_num, self.curr_col_num
-                        )
-                    )
+                    self.token_stream.append(Token(TokType.MINUS, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "&":
                 if self._peek() == "&":
-                    self.token_stream.append(
-                        Token(TokType.AND, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.AND, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
                 else:
-                    raise InternalTokenErr(
+                    raise InternalTokenError(
                         self.curr_lin_num,
                         self.curr_col_num,
                         self.text,
-                        (
-                            "A single '&' is not a valid symbol or operator. Did you"
-                            "mean to use '&&'(AND) operator?"
-                        ),
+                        ("A single '&' is not a valid symbol or operator. Did you" "mean to use '&&'(AND) operator?"),
                     )
             elif self.curr_char == "|":
                 if self._peek() == "|":
-                    self.token_stream.append(
-                        Token(TokType.OR, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.OR, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
                 else:
-                    raise InternalTokenErr(
+                    raise InternalTokenError(
                         self.curr_lin_num,
                         self.curr_col_num,
                         self.text,
-                        (
-                            "A single '|' is not a valid symbol or operator. Did you "
-                            "mean to use '||'(OR) operator?"
-                        ),
+                        ("A single '|' is not a valid symbol or operator. Did you " "mean to use '||'(OR) operator?"),
                     )
             elif self.curr_char == "+":
                 if self._peek() == "+":
-                    self.token_stream.append(
-                        Token(TokType.INCR, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.INCR, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
                 elif self._peek() == "=":
                     self.token_stream.append(
@@ -230,9 +190,7 @@ class Lexer:
                     )
                     self._advance()
                 else:
-                    self.token_stream.append(
-                        Token(TokType.PLUS, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.PLUS, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "/":
                 if self._peek() == "/":
                     # Case of a comment. Consume characters until the end of line.
@@ -242,69 +200,41 @@ class Lexer:
                     while self._peek() not in ["\n", "\r\n", None]:
                         self._advance()
                 else:
-                    self.token_stream.append(
-                        Token(TokType.DIV, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.DIV, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "*":
-                self.token_stream.append(
-                    Token(TokType.MUL, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.MUL, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == '"':
-                self.token_stream.append(
-                    Token(TokType.DQUOTE, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.DQUOTE, None, self.curr_lin_num, self.curr_col_num))
                 # Skip over the current character which is a double quote
                 self._advance()
                 self._tokenize_str()
             elif self.curr_char == "'":
-                self.token_stream.append(
-                    Token(TokType.QUOTE, None, self.curr_lin_num, self.curr_col_num)
-                )
+                self.token_stream.append(Token(TokType.QUOTE, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "!":
                 if self._peek() == "=":
-                    self.token_stream.append(
-                        Token(TokType.NEQ, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.NEQ, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
                 else:
-                    self.token_stream.append(
-                        Token(TokType.BANG, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.BANG, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "=":
                 if self._peek() == "=":
-                    self.token_stream.append(
-                        Token(TokType.EQ, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.EQ, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
                 else:
-                    self.token_stream.append(
-                        Token(
-                            TokType.ASSIGN, None, self.curr_lin_num, self.curr_col_num
-                        )
-                    )
+                    self.token_stream.append(Token(TokType.ASSIGN, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == "<":
                 if self._peek() == "=":
-                    self.token_stream.append(
-                        Token(TokType.LTE, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.LTE, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
                 else:
-                    self.token_stream.append(
-                        Token(TokType.LT, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.LT, None, self.curr_lin_num, self.curr_col_num))
             elif self.curr_char == ">":
                 if self._peek() == "=":
-                    self.token_stream.append(
-                        Token(TokType.GTE, None, self.curr_lin_num, self.curr_col_num)
-                    )
+                    self.token_stream.append(Token(TokType.GTE, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
                 else:
-                    self.token_stream.append(
-                        Token(TokType.GT, None, self.curr_lin_num, self.curr_col_num)
-                    )
-            elif (
-                self.curr_char in self.permitted_ident_chars or self.curr_char.isalpha()
-            ):
+                    self.token_stream.append(Token(TokType.GT, None, self.curr_lin_num, self.curr_col_num))
+            elif self.curr_char in self.permitted_ident_chars or self.curr_char.isalpha():
                 # Store the column at the start of the identifier
                 ident_start_col = self.curr_col_num
                 ident = self._tokenize_ident()
@@ -312,9 +242,7 @@ class Lexer:
                 # Check if the current identifier is a keyword.
                 token = keywords.get(ident, None)
                 if token is None:
-                    token = Token(
-                        TokType.ID, ident, self.curr_lin_num, ident_start_col
-                    )
+                    token = Token(TokType.ID, ident, self.curr_lin_num, ident_start_col)
                 else:
                     token = Token(token, None, self.curr_lin_num, ident_start_col)
 
@@ -327,23 +255,17 @@ class Lexer:
                 # Check if the number being tokenized might actually be a bad identifier
                 # which starts with a number.
                 # Example: 13abc or 1Alph@
-                if self._peek() is not None and (
-                    self._peek() == self.permitted_ident_chars or self._peek().isalpha()
-                ):
-                    raise InternalTokenErr(
+                if self._peek() is not None and (self._peek() == self.permitted_ident_chars or self._peek().isalpha()):
+                    raise InternalTokenError(
                         self.curr_lin_num,
                         num_start_col,
                         self.text,
                         "Identifiers cannot start with integers!",
                     )
-                self.token_stream.append(
-                    Token(TokType.NUM, int(num_str), self.curr_lin_num, num_start_col)
-                )
+                self.token_stream.append(Token(TokType.NUM, int(num_str), self.curr_lin_num, num_start_col))
 
         # Add final EOF token to indicate end of token stream
-        self.token_stream.append(
-            Token(TokType.EOF, None, self.curr_lin_num, self.curr_col_num)
-        )
+        self.token_stream.append(Token(TokType.EOF, None, self.curr_lin_num, self.curr_col_num))
 
     def _reset_internal_state(self):
         """Reset the internal state of the lexer for a new input string."""

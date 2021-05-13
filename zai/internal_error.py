@@ -19,7 +19,7 @@
 encountered during execution."""
 
 
-class InternalErr(Exception):
+class InternalError(Exception):
     """
     Base class for all internal errors used by the interpreter.
     """
@@ -29,8 +29,14 @@ class InternalErr(Exception):
     ):
         raise NotImplementedError()
 
+    def __str__(self):
+        raise NotImplementedError()
 
-class InternalTypeError(InternalErr):
+    def __repr__(self):
+        raise NotImplementedError()
+
+
+class InternalTypeError(InternalError):
     def __init__(self, operation, left_type, right_type=None):
         """Class representing an internal error encountered during and basic operations
         between one or more types.
@@ -41,14 +47,10 @@ class InternalTypeError(InternalErr):
         self.err_msg = str()
 
         if self.right is None:
-            self.err_msg = "The operation {} is not allowed on a {}!".format(
-                self.operation, str(self.left)
-            )
+            self.err_msg = "The operation {} is not allowed on a {}!".format(self.operation, str(self.left))
         else:
-            self.err_msg = (
-                "The operation {} is not allowed between a {} and a {}!".format(
-                    self.operation, str(self.left), str(self.right)
-                )
+            self.err_msg = "The operation {} is not allowed between a {} and a {}!".format(
+                self.operation, str(self.left), str(self.right)
             )
 
     def __str__(self):
@@ -60,7 +62,7 @@ class InternalTypeError(InternalErr):
         )
 
 
-class InternalRuntimeErr(InternalErr):
+class InternalRuntimeError(InternalError):
     """
     Class representing an internal error encountered during runtime.
     """
@@ -76,7 +78,7 @@ class InternalRuntimeErr(InternalErr):
         "Internal Runtime Error: {}".format(self.message)
 
 
-class InternalParseErr(InternalErr):
+class InternalParseError(InternalError):
     """
     Class representing an internal error encountered during parsing/lexing stages.
     """
@@ -103,9 +105,7 @@ class InternalParseErr(InternalErr):
         else:
             wanted_tokens = str(self.expected_tokens)
 
-        self.err_msg = "Expected a '{}' token but received '{}'".format(
-            wanted_tokens, self.got_token
-        )
+        self.err_msg = "Expected a '{}' token but received '{}'".format(wanted_tokens, self.got_token)
 
     def __str__(self):
         return "Parse Error: Line: {}, Column: {}\n\n  {}\n\nExplanation: {}".format(
@@ -116,9 +116,7 @@ class InternalParseErr(InternalErr):
         )
 
     def __repr__(self):
-        return (
-            "Internal Parse Error: Line: {}, Column: {}\n\n  {}\n\n" "Explanation: {}"
-        ).format(
+        return ("Internal Parse Error: Line: {}, Column: {}\n\n  {}\n\n" "Explanation: {}").format(
             self.line_num,
             self.col_num,
             self.source_text_lines[self.line_num],
@@ -126,7 +124,7 @@ class InternalParseErr(InternalErr):
         )
 
 
-class InternalTokenErr(InternalErr):
+class InternalTokenError(InternalError):
     """
     Class representing an internal error encountered during lexing stages.
     """

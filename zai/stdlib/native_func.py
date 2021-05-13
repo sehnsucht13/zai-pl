@@ -63,10 +63,7 @@ def mod(operand1, operand2):
     Find the modulus of operand1 and operand2. Return nil if arguments
     are not numbers.
     """
-    if (
-        operand1.obj_type == zai.objects.ObjectType.NUM
-        and operand2.obj_type == zai.objects.ObjectType.NUM
-    ):
+    if operand1.obj_type == zai.objects.ObjectType.NUM and operand2.obj_type == zai.objects.ObjectType.NUM:
         if operand1.value == 0 or operand2.value == 0:
             return zai.objects.NilObject()
         else:
@@ -79,10 +76,7 @@ def power(base, exponent):
     """
     Return the argument base raised to the power represented by exponent.
     """
-    if (
-        base.obj_type == zai.objects.ObjectType.NUM
-        and exponent.obj_type == zai.objects.ObjectType.NUM
-    ):
+    if base.obj_type == zai.objects.ObjectType.NUM and exponent.obj_type == zai.objects.ObjectType.NUM:
         return zai.objects.NumObject(pow(base.value, exponent.value))
     else:
         return zai.objects.NilObject()

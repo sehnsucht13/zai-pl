@@ -4,6 +4,12 @@ test:
 test-cov:
 	python3 -m pytest -v --cov-report term-missing --cov-config=.coveragerc --cov=zai tests/
 
+lint:
+	python3 -m flake8 ./zai
+
+format:
+	python3 -m black ./zai ./tests
+
 run:
 	python3 -m zai
 
@@ -12,3 +18,4 @@ run_file:
 
 freeze:
 	pip freeze > requirements.txt
+
