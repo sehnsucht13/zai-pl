@@ -1,4 +1,11 @@
 * Zai-pl To Do
+** Language Features
+- [ ] Add more standard library functions [0/4]
+  + [ ] String join
+  + [ ] Array join
+  + [ ] String formatting
+  + [ ] Casting (to_string, to_int...)
+- [ ] Add floating point numbers
 - [ ] Pre-Increment operators [0/3]
   + [ ] Update Grammar
   + [ ] Implement node
@@ -11,17 +18,21 @@
   + [ ] Update Grammar
   + [ ] Implement node
   + [ ] Add tests
-- [ ] Fix inheritance for internal nodes
-- [ ] Add floating point numbers
+- [ ] try/catch statements(Maybe)
+- [ ] Speed up switch statements by using a dictionary
+** Documentation
 - [ ] Update Docs [0/1]
   + [ ] Add docs for arbitrary scopes
-- [ ] try/catch statements(Maybe)
+** Best Practices/Refactoring
+- [X] Fix inheritance for AST Nodes
+- [X] Fix naming convention for Internal Errors from "Err" suffix to "Error" suffix.
 - [ ] Add thorough tests
 - [ ] Implement printing of result while user is in REPL mode.
-- [ ] Refactor function names to obey PEP8 standards
-- [ ] Add more standard library functions [0/4]
-  + [ ] String join
-  + [ ] Array join
-  + [ ] String formatting
-  + [ ] Casting (to_string, to_int...)
+- [X] Make PEP8 compliant
 * Implementation Notes
+** Fixing up the node hierarchy
+- All nodes need to have an ~init~ and ~accept~ at minimum.
+- There are three main types of nodes:
+  1. Unary Expression Nodes
+  2. Binary Expression Nodes
+  3. Statement Nodes
