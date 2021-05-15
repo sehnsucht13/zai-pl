@@ -42,7 +42,7 @@ from zai.ast_nodes import (
     IfNode,
     PrintNode,
     FuncNode,
-    ScopeBlockNode,
+    BlockNode,
     WhileNode,
     BreakNode,
     ContinueNode,
@@ -535,7 +535,7 @@ class Parser:
             stmnt = self.statement()
             block_stmnts.append(stmnt)
         self.match(TokType.RCURLY)
-        return ScopeBlockNode(block_stmnts)
+        return BlockNode(block_stmnts)
 
     def while_statement(self):
         """
@@ -568,7 +568,7 @@ class Parser:
         # case. The only difference between the two is how parsing is done. Block nodes
         # require curly brackets while switch case statements do not necessarily
         # require them.
-        return ScopeBlockNode(stmnt_block)
+        return BlockNode(stmnt_block)
 
     def switch_statement(self):
         """

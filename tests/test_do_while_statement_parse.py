@@ -24,7 +24,7 @@ def test_properly_formed_do_while():
     do_while_node = p.do_while_statement()
     assert isinstance(do_while_node, nodes.DoWhileNode)
     assert isinstance(do_while_node.cond, nodes.BoolNode) and do_while_node.cond.val == TokType.TRUE
-    assert isinstance(do_while_node.body, nodes.ScopeBlockNode)
+    assert isinstance(do_while_node.body, nodes.BlockNode)
     assert isinstance(do_while_node.body.stmnts[0], nodes.PrintNode)
 
 
@@ -45,7 +45,7 @@ def test_do_while_empty_body():
     do_while_node = p.do_while_statement()
     assert isinstance(do_while_node, nodes.DoWhileNode)
     assert isinstance(do_while_node.cond, nodes.BoolNode) and do_while_node.cond.val == TokType.TRUE
-    assert isinstance(do_while_node.body, nodes.ScopeBlockNode)
+    assert isinstance(do_while_node.body, nodes.BlockNode)
 
 
 def test_do_while_missing_body():

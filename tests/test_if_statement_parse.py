@@ -27,10 +27,10 @@ def test_wellformed_if_statement_with_else():
     p = Parser(tok_stream, "")
     if_node = p.if_statement()
     assert isinstance(if_node, nodes.IfNode)
-    assert isinstance(if_node.else_block, nodes.ScopeBlockNode)
+    assert isinstance(if_node.else_block, nodes.BlockNode)
     for condition in if_node.condition_blocks:
         assert isinstance(condition.test_condition, nodes.BoolNode)
-        assert isinstance(condition.body, nodes.ScopeBlockNode)
+        assert isinstance(condition.body, nodes.BlockNode)
 
 
 def test_wellformed_if_statement_no_else():
@@ -52,7 +52,7 @@ def test_wellformed_if_statement_no_else():
     assert if_node.else_block is None
     for condition in if_node.condition_blocks:
         assert isinstance(condition.test_condition, nodes.BoolNode)
-        assert isinstance(condition.body, nodes.ScopeBlockNode)
+        assert isinstance(condition.body, nodes.BlockNode)
 
 
 def test_if_statement_missing_condition():

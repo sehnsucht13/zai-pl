@@ -305,7 +305,7 @@ class FuncNode(ASTNode):
         return visitor.visit_func_def(self)
 
 
-class ScopeBlockNode(ASTNode):
+class BlockNode(ASTNode):
     def __init__(self, block_stmnts):
         self.stmnts = block_stmnts
 

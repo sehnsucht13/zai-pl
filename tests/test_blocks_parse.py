@@ -14,7 +14,7 @@ def test_well_formed_block():
     p = Parser(tok_stream, "")
     block_node = p.block()
 
-    assert isinstance(block_node, nodes.ScopeBlockNode)
+    assert isinstance(block_node, nodes.BlockNode)
 
     # Block with contents
     tok_stream = [
@@ -29,7 +29,7 @@ def test_well_formed_block():
     p = Parser(tok_stream, "")
     block_node = p.block()
 
-    assert isinstance(block_node, nodes.ScopeBlockNode)
+    assert isinstance(block_node, nodes.BlockNode)
     assert isinstance(block_node.stmnts[0], nodes.ArithBinNode) and block_node.stmnts[0].op == TokType.PLUS
     assert isinstance(block_node.stmnts[0].left, nodes.NumNode) and block_node.stmnts[0].left.val == 1
     assert isinstance(block_node.stmnts[0].right, nodes.NumNode) and block_node.stmnts[0].right.val == 2

@@ -22,6 +22,7 @@ interpreter.
 from enum import Enum, auto
 from zai.env import Scope
 from zai.internal_error import InternalTypeError
+from abc import ABC, abstractmethod
 
 
 class ObjectType(Enum):
@@ -63,15 +64,17 @@ class ObjectType(Enum):
         return type_to_str[self.name]
 
 
-class InternalObject:
+class InternalObject(ABC):
     """
     Base class for all internal objects used in the interpreter.
     """
 
-    def __init__(
-        self,
-    ):
-        raise NotImplementedError()
+    @abstractmethod
+    def __str__(self):
+        pass
+    @abstractmethod
+    def __repr__(self):
+        pass
 
 
 # All atomic objects
@@ -120,6 +123,9 @@ class NilObject(InternalObject):
     def __truediv__(self, other):
         raise InternalTypeError("/", self.obj_type, other.obj_type)
 
+    def __bool__(self):
+        return False
+
     def __and__(self, other):
         return BoolObject(bool(self) and bool(other))
 
@@ -132,8 +138,6 @@ class NilObject(InternalObject):
     def __invert__(self):
         return BoolObject(True)
 
-    def __bool__(self):
-        return False
 
 
 class BoolObject(InternalObject):
@@ -430,10 +434,6 @@ class ArrayObject(InternalObject):
         else:
             return BoolObject(False)
 
-    # def __ne__(self, other):
-    #     assert other is not None, "Other variable in __eq__ function is None."
-    #     return ~(self.__eq__(other))
-
     def __lt__(self, other):
         raise InternalTypeError("<", self.obj_type, other.obj_type)
 
@@ -586,7 +586,6 @@ class ClassDefObject(InternalObject):
 
     def __str__(self):
         return "<class definition object {}>".format(self.class_name)
-        # return "CLASS_OBJ: Name: {}".format(self.class_name)
 
 
 class ModuleObject(InternalObject):
@@ -600,9 +599,9 @@ class ModuleObject(InternalObject):
 
     def __str__(self):
         if self.import_as != self.name:
-            return "<module object {} imported as {}>".format(self.name, self.import_as)
+            return "<module {} imported as {}>".format(self.name, self.import_as)
         else:
-            return "<module object {}>".format(self.name)
+            return "<module {}>".format(self.name)
 
 
 class ClassMethodObject(InternalObject):

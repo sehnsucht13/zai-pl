@@ -24,7 +24,7 @@ def test_properly_formed_while():
 
     assert isinstance(while_statement_node, nodes.WhileNode) is True
     assert isinstance(while_statement_node.condition, nodes.NumNode) and while_statement_node.condition.val == 1
-    assert isinstance(while_statement_node.body, nodes.ScopeBlockNode)
+    assert isinstance(while_statement_node.body, nodes.BlockNode)
     assert (
         isinstance(while_statement_node.body.stmnts[0], nodes.StringNode)
         and while_statement_node.body.stmnts[0].val == "Hello world"
