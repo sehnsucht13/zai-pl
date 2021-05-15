@@ -246,8 +246,7 @@ class Parser:
         factor := "(" expr ")" | unary_op factor | atom
         unary_op := "!" "-"
         """
-        # TODO: There will be a problem with the first if statement. Nonetype does not
-        # does not have a "tok_type" so it will fail if there is no next token.
+        assert self.curr_tok is not None
         if self.curr_tok.tok_type in [
             TokType.ID,
             TokType.THIS,
@@ -500,15 +499,15 @@ class Parser:
         self.match(TokType.LROUND)
 
         # Collect argument symbols for the function
-        arg_symbols = list()
+        func_args = list()
         if self.curr_tok.tok_type == TokType.ID:
-            func_arg = self.match(TokType.ID)
-            arg_symbols.append(func_arg)
+            arg = self.match(TokType.ID)
+            func_args.append(arg)
             if self.curr_tok.tok_type == TokType.COMMA:
                 while self.curr_tok.tok_type != TokType.RROUND:
                     self.match(TokType.COMMA)
-                    func_arg = self.match(TokType.ID)
-                    arg_symbols.append(func_arg)
+                    arg = self.match(TokType.ID)
+                    func_args.append(arg)
 
         self.match(TokType.RROUND)
         self.match(TokType.LCURLY)
@@ -519,7 +518,7 @@ class Parser:
             func_body.append(func_stmnt)
         self.match(TokType.RCURLY)
 
-        return FuncNode(func_name, arg_symbols, func_body)
+        return FuncNode(func_name, func_args, func_body)
 
     def block(self):
         """
