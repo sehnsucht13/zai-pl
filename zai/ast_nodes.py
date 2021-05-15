@@ -132,7 +132,7 @@ class ArithBinNode(BinOpNode):
         return visitor.visit_arith(self)
 
     def __str__(self):
-        return "ARITH_NODE: {} {} {}".format(self.left, self.op, self.right)
+        return "(ARITH_NODE: {} {} {})".format(self.left, self.op, self.right)
 
 
 class LogicBinNode(BinOpNode):

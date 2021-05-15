@@ -290,7 +290,7 @@ class Parser:
         left = self.factor()
         while self.curr_tok.tok_type in [TokType.MUL, TokType.DIV]:
             op = self.match(TokType.MUL, TokType.DIV)
-            right = self.term()
+            right = self.factor()
             left = ArithBinNode(left, op.tok_type, right)
 
         return left
@@ -426,7 +426,15 @@ class Parser:
         self.match(TokType.ASSIGN)
         value = self.expr_statement()
         # Check if it is a single node
-        if isinstance(symbol_path, SymbolNode):
+        if symbol_path is None:
+            raise InternalParseError(
+                self.curr_tok.line_num,
+                self.curr_tok.col_num,
+                self.original_text,
+                TokType.ID,
+                self.curr_tok.tok_type,
+            )
+        elif isinstance(symbol_path, SymbolNode):
             return NewAssignBinNode(None, symbol_path, value)
         else:
             # Decompose the nodes
