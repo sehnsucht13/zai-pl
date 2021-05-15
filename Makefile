@@ -2,7 +2,7 @@ test:
 	python3 -m pytest -v tests/
 
 test-cov:
-	python3 -m pytest -v --cov-report term-missing --cov-config=.coveragerc --cov=zai tests/
+	python3 -m pytest --cov=zai --cov-config=.coveragerc tests/
 
 lint:
 	python3 -m flake8 ./zai

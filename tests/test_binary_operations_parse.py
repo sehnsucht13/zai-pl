@@ -4,7 +4,7 @@ import zai.ast_nodes as nodes
 import pytest
 
 
-def test_binary_nodes_repeat_operator(operations, node_type):
+def binary_nodes_repeat_operator_helper(operations, node_type):
     """Test arbitrary binary nodes up to depth of 2. The main purpose of this is to see if the order or
     operations is respected."""
     for curr_op in operations:
@@ -52,25 +52,25 @@ def test_binary_nodes_repeat_operator(operations, node_type):
 def test_logic_binary_nodes():
     operations = [TokType.AND, TokType.OR]
     node_type = nodes.LogicBinNode
-    test_binary_nodes_repeat_operator(operations, node_type)
+    binary_nodes_repeat_operator_helper(operations, node_type)
 
 
 def test_comparison_binary_nodes():
     operations = [TokType.LTE, TokType.LT, TokType.GTE, TokType.GT]
     node_type = nodes.RelopBinNode
-    test_binary_nodes_repeat_operator(operations, node_type)
+    binary_nodes_repeat_operator_helper(operations, node_type)
 
 
 def test_eq_binary_nodes():
     operations = [TokType.EQ, TokType.NEQ]
     node_type = nodes.EqBinNode
-    test_binary_nodes_repeat_operator(operations, node_type)
+    binary_nodes_repeat_operator_helper(operations, node_type)
 
 
 def test_arith_binary_nodes():
     operations = [TokType.PLUS, TokType.DIV, TokType.MUL, TokType.MINUS]
     node_type = nodes.ArithBinNode
-    test_binary_nodes_repeat_operator(operations, node_type)
+    binary_nodes_repeat_operator_helper(operations, node_type)
 
     # 4 * 2 - 3 == (4 * 2) - 3
     tok_stream2 = (

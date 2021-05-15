@@ -1,0 +1,2 @@
+[run]
+omit = zai/__init__.py, zai/__main__.py, zai/internal_error.py, zai/vm.py
