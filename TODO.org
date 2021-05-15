@@ -18,8 +18,11 @@
   + [ ] Update Grammar
   + [ ] Implement node
   + [ ] Add tests
-- [ ] try/catch statements(Maybe)
+- [ ] try/catch statements (MAYBE)
+- [ ] Interfaces (MAYBE)
 - [ ] Speed up switch statements by using a dictionary
+- [ ] Implement more precise error reporting
+- [ ] Fix recursion issue on calling functions without left or right round bracket
 ** Documentation
 - [ ] Update Docs [0/1]
   + [ ] Add docs for arbitrary scopes
@@ -28,11 +31,65 @@
 - [X] Fix naming convention for Internal Errors from "Err" suffix to "Error" suffix.
 - [ ] Add thorough tests
 - [ ] Implement printing of result while user is in REPL mode.
+- [X] Make ~import~ statements end with ~;~.
 - [X] Make PEP8 compliant
 * Implementation Notes
-** Fixing up the node hierarchy
-- All nodes need to have an ~init~ and ~accept~ at minimum.
-- There are three main types of nodes:
-  1. Unary Expression Nodes
-  2. Binary Expression Nodes
-  3. Statement Nodes
+** Test Cases
+*** Primitives
+*** Binary Arithmatic
+*** Binary comparison
+*** Binary Equality
+*** Print Statement
+- [X] Proper Print
+- [X] Print without arg
+*** If Statements
+- [X] Proper if statement
+- [X] If statement without a condition
+- [X] If statement without a body
+- [X] Proper if with an else
+- [ ] Proper if with an else missing a body
+- [ ] Proper if with a proper elif and else
+- [ ] Proper if with an elif missing a condition and a proper else
+*** While Loops
+- [X] Properly formed while statement
+- [X] While statement missing a condition but has a body
+- [X] While statement with a condition but missing body
+- [X] While statement missing a condition and body
+- [X] Improperly formed condition
+- [X] Improperly formed body
+*** Do-While Loops
+- [X] Properly formed do-while statement
+- [X] Missing while clause
+- [X] Missing body
+- [X] Improperly formed while clause
+- [X] Improperly formed body
+*** Block/Scope Statement
+- [X] Properly formed block statement with content
+- [X] Properly formed block statement without content
+- [X] Missing beginning bracket
+- [X] Missing end bracket
+*** Switch Statement
+- [ ] Simple switch with just a default
+- [ ] Simple switch with 1 case and no default
+- [ ] Simple switch without 2 cases and no default
+- [ ] Simple switch with 1 case and default
+- [ ] Simple switch without 2 cases and default
+- [ ] Switch with bad case clause
+- [ ] Switch with good case clause but no body
+- [ ] default without a body
+*** Import Statemenet
+- [X] Simple import
+- [X] Import as statement
+- [X] Simple import without module name
+- [X] import as missing alternate name
+*** Access
+- [ ] THIS access
+- [ ] Dot access of nested path
+- [ ] Array access with one simple
+- [ ] Array access with nested path
+*** Function Call
+- [X] Properly formed without args
+- [X] Proper with args
+- [X] Improper missing end round
+- [X] Improper missing beginnign round
+- [X] Improper and not using commas
