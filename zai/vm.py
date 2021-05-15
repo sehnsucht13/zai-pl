@@ -17,7 +17,7 @@
 
 """Module contains a class used to manage the entire virtual machine."""
 from zai.lexer import Lexer
-from zai.env import Environment
+from zai.env import EnvironmentStack
 from zai.parse import Parser
 from zai.visitor import Visitor
 from zai.internal_error import (
@@ -39,7 +39,7 @@ class YaplVm:
     """
 
     def __init__(self):
-        self.env = Environment()
+        self.env = EnvironmentStack()
         self.repl_mode_flag = False
         self.visitor = Visitor(self.env)
         self.current_completions = None

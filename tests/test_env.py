@@ -1,4 +1,4 @@
-from zai.env import Scope, Environment
+from zai.env import Scope, EnvironmentStack
 
 
 # Test a symbol which does not exist
@@ -24,7 +24,7 @@ def test_scope_overwrite_sym():
 
 
 def test_scope_nesting():
-    e = Environment()
+    e = EnvironmentStack()
     e.peek().new_variable("sym_outer", 13)
     sym = e.peek().lookup_symbol("sym_outer")
     assert sym == 13
@@ -39,7 +39,7 @@ def test_scope_nesting():
 
 
 def test_scope_shadowing():
-    e = Environment()
+    e = EnvironmentStack()
 
     e.peek().new_variable("sym", 13)
 

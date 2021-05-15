@@ -20,7 +20,7 @@ produced by the parser."""
 from zai.ast_nodes import ArrayAccessNode
 from zai.tokens import TokType
 from zai.internal_error import InternalRuntimeError
-from zai.env import Environment, Scope
+from zai.env import EnvironmentStack, Scope
 from zai.lexer import Lexer
 from zai.parse import Parser
 from zai.utils import is_truthy, read_module_contents
@@ -547,7 +547,7 @@ class Visitor:
 
         # Initialize lexer and environment used to execute module contents
         lexer = Lexer()
-        import_env = Environment()
+        import_env = EnvironmentStack()
 
         # Lex and parse module contents
         tok_stream = lexer.tokenize_string(module_text)

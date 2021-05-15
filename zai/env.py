@@ -66,14 +66,13 @@ class Scope:
         """
         Merge two scope objects into one.
         """
-        for k, v in new_scope.scope.items():
-            self.scope[k] = v
+        self.scope.update(new_scope.scope)
 
     def __str__(self):
         return str(self.scope)
 
 
-class Environment:
+class EnvironmentStack:
     """
     Class responsible for managing a stack of environment scopes.
     """
