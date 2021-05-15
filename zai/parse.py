@@ -447,25 +447,26 @@ class Parser:
 
         if_stmnt := "if" "(" expression ")" statement ( "else" statement )?
         """
+        from collections import namedtuple
+        IfStatementMember = namedtuple('IfStatementMember', ['test_condition', 'body'])
+
         # List used to store all "if condition then" or "elif condition then" pairs.
         conditions = list()
 
-        # Parse "If ... then ..."
         self.match(TokType.IF)
         self.match(TokType.LROUND)
-        if_cond = self.or_expr()
+        condition = self.or_expr()
         self.match(TokType.RROUND)
-        then_block = self.block()
-        conditions.append({"cond": if_cond, "block": then_block})
+        body = self.block()
+        conditions.append(IfStatementMember(condition, body))
 
-        # Parse "elif ... then ..."
         while self.curr_tok.tok_type == TokType.ELIF:
             self.match(TokType.ELIF)
             self.match(TokType.LROUND)
-            cond = self.or_expr()
+            condition = self.or_expr()
             self.match(TokType.RROUND)
-            then_block = self.block()
-            conditions.append({"cond": cond, "block": then_block})
+            body = self.block()
+            conditions.append(IfStatementMember(condition, body))
 
         else_block = None
         if self.curr_tok.tok_type == TokType.ELSE:

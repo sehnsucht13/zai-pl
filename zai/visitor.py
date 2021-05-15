@@ -163,10 +163,10 @@ class Visitor:
 
     def visit_if(self, node):
         # Evaluate each condition and execute block if it is true
-        for cond_block in node.cond_blocks:
-            cond_value = cond_block["cond"].accept(self)
+        for condition in node.condition_blocks:
+            cond_value = condition.test_condition.accept(self)
             if is_truthy(cond_value):
-                return cond_block["block"].accept(self)
+                return condition.body.accept(self)
 
         if node.else_block is not None:
             return node.else_block.accept(self)
@@ -365,7 +365,6 @@ class Visitor:
 
         # Add arguments to the current environment
         for arg_pair in zip(func_object.args, arg_values):
-            # print("Adding pair to environment", arg_pair)
             self.env.peek().new_variable(arg_pair[0].lexeme, arg_pair[1])
 
         for stmnt in func_object.body:

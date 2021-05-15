@@ -28,9 +28,9 @@ def test_wellformed_if_statement_with_else():
     if_node = p.if_statement()
     assert isinstance(if_node, nodes.IfNode)
     assert isinstance(if_node.else_block, nodes.ScopeBlockNode)
-    for condition in if_node.cond_blocks:
-        assert isinstance(condition['cond'], nodes.BoolNode)
-        assert isinstance(condition['block'], nodes.ScopeBlockNode)
+    for condition in if_node.condition_blocks:
+        assert isinstance(condition.test_condition, nodes.BoolNode)
+        assert isinstance(condition.body, nodes.ScopeBlockNode)
 
 
 def test_wellformed_if_statement_no_else():
@@ -50,9 +50,9 @@ def test_wellformed_if_statement_no_else():
 
     assert isinstance(if_node, nodes.IfNode)
     assert if_node.else_block is None
-    for condition in if_node.cond_blocks:
-        assert isinstance(condition['cond'], nodes.BoolNode)
-        assert isinstance(condition['block'], nodes.ScopeBlockNode)
+    for condition in if_node.condition_blocks:
+        assert isinstance(condition.test_condition, nodes.BoolNode)
+        assert isinstance(condition.body, nodes.ScopeBlockNode)
 
 
 def test_if_statement_missing_condition():
