@@ -20,6 +20,7 @@ Module containing the parser class used to produce the AST to be evaluated
 by the interpreter.
 """
 
+
 from zai.ast_nodes import (
     ThisNode,
     StringNode,
@@ -122,15 +123,6 @@ class Parser:
     def atom(self):
         """
         Parse an atom(pritive) object.
-        Grammar:
-        atom := | NUM | STR | BOOL | ARRAY | "nil"
-        ;; Primitives
-        BOOL := "false" | "true"
-        ID := LETTER (LETTER | NUM | "-" | "$" | "@")*
-        NUM := DIGIT (DIGIT)*
-        DIGIT := 1 | 2 | 3| 4 | 5 | 6 | 7 | 8 | 9 | 0
-        STR := "\"" (LETTER | NUM )* "\""
-        ARRAY := "[" ( or_expr ( "," or_expr )* )? "]"
         """
         if self.curr_tok.tok_type == TokType.THIS:
             self.match(TokType.THIS)
@@ -164,8 +156,6 @@ class Parser:
     def arglist(self):
         """
         Parse an arglist rule.
-        Grammar:
-        arglist := (or_expr ("," or_expr)*)?
         """
         func_args = list()
         while self.curr_tok.tok_type != TokType.RROUND:
@@ -225,8 +215,6 @@ class Parser:
     def call_or_access(self):
         """
         Parse a call or access rule.
-        Grammar:
-        call_or_access := ( ID | "this" ) ( "(" arglist ")" | "." ID )*
         """
 
         access_node = self.access()
@@ -241,10 +229,6 @@ class Parser:
     def factor(self):
         """
         Parse a factor rule.
-        Grammar:
-
-        factor := "(" expr ")" | unary_op factor | atom
-        unary_op := "!" "-"
         """
         assert self.curr_tok is not None
         if self.curr_tok.tok_type in [
@@ -283,8 +267,6 @@ class Parser:
     def term(self):
         """
         Parse a term rule.
-        Grammar:
-        term := factor (("*" | "/") factor)*
         """
         left = self.factor()
         while self.curr_tok.tok_type in [TokType.MUL, TokType.DIV]:
@@ -296,9 +278,7 @@ class Parser:
 
     def add_expr(self):
         """
-        Parse an addition expression:
-        Grammar:
-        add_expr := term (("+" | "-") term)*
+        Parse an addition expression.
         """
         left = self.term()
         while self.curr_tok.tok_type in [TokType.PLUS, TokType.MINUS]:
@@ -311,8 +291,6 @@ class Parser:
     def rel_expr(self):
         """
         Parse a relative expression:
-        Grammar:
-        rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
         """
 
         left = self.add_expr()
@@ -331,8 +309,6 @@ class Parser:
     def eq_expr(self):
         """
         Parse an equality expression:
-        Grammar:
-        eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
         """
         left = self.rel_expr()
         while self.curr_tok.tok_type in [TokType.EQ, TokType.NEQ]:
@@ -345,8 +321,6 @@ class Parser:
     def and_expr(self):
         """
         Parse an equality expression:
-        Grammar:
-        and_expr := eq_expr ("&&" eq_expr)*
         """
         left = self.eq_expr()
         while self.curr_tok.tok_type == TokType.AND:
@@ -359,8 +333,6 @@ class Parser:
     def or_expr(self):
         """
         Parse an equality expression:
-        Grammar:
-        or_expr := and_expr ("||" and_expr)*
         """
         left = self.and_expr()
         while self.curr_tok.tok_type == TokType.OR:
@@ -442,12 +414,10 @@ class Parser:
     def if_statement(self):
         """
         Parse an if statement.
-        Grammar:
-
-        if_stmnt := "if" "(" expression ")" statement ( "else" statement )?
         """
         from collections import namedtuple
-        IfStatementMember = namedtuple('IfStatementMember', ['test_condition', 'body'])
+
+        IfStatementMember = namedtuple("IfStatementMember", ["test_condition", "body"])
 
         # List used to store all "if condition then" or "elif condition then" pairs.
         conditions = list()
@@ -478,7 +448,6 @@ class Parser:
     def print_statement(self):
         """
         Parse a print statement.
-        Grammar:
         """
 
         self.match(TokType.PRINT)
@@ -489,9 +458,6 @@ class Parser:
     def func_def(self):
         """
         Parse a function definition.
-        Grammar:
-
-        func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
         """
 
         self.match(TokType.FUNC)
@@ -523,9 +489,6 @@ class Parser:
     def block(self):
         """
         Parse a block which acts as a nested scope within the program.
-        Grammar:
-
-        block := "{" statement* "}"
         """
 
         self.match(TokType.LCURLY)
@@ -539,8 +502,6 @@ class Parser:
     def while_statement(self):
         """
         Parse a while statement.
-        Grammar:
-        while_stmnt := "while" "(" or_expr ")" block_stmnt
         """
         self.match(TokType.WHILE)
         self.match(TokType.LROUND)
@@ -572,10 +533,6 @@ class Parser:
     def switch_statement(self):
         """
         Parse a switch statement rule.
-        Grammar:
-        switch_stmnt := "switch" "(" or_expr ")"
-                        ("case"  or_expr ":" block_stmnt)*
-                        "default" ":" block_stmnt
         """
         self.match(TokType.SWITCH)
         self.match(TokType.LROUND)
@@ -601,8 +558,6 @@ class Parser:
     def class_def(self):
         """
         Parse a class definition rule.
-        Grammar:
-        class_def := "class" ID "{" func_def* "}"
         """
         self.match(TokType.CLASS)
         class_name = self.match(TokType.ID).lexeme
@@ -624,8 +579,6 @@ class Parser:
     def flow_statement(self):
         """
         Parse a flow statement rule.
-        Grammar:
-        flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";"
         """
         node = None
         if self.curr_tok.tok_type == TokType.RETURN:
@@ -649,8 +602,6 @@ class Parser:
     def do_while_statement(self):
         """
         Parse a do-while statement.
-        Grammar:
-        do_while_stmnt := "do" block_stmnt "while" "(" or_expr ")"
         """
         self.match(TokType.DO)
         body = self.block()
@@ -664,8 +615,6 @@ class Parser:
     def import_statement(self):
         """
         Parse an import statement.
-        Grammar:
-        import_stmnt := "import" ID ("as" ID)?
         """
         self.match(TokType.IMPORT)
         module_name = self.match(TokType.ID).lexeme
@@ -679,19 +628,6 @@ class Parser:
     def statement(self):
         """
          Parse a single statement.
-         Grammar:
-        statement := if_stmnt        |
-                     while_stmnt     |
-                     for_stmnt       |
-                     class_def       |
-                     func_def        |
-                     block_stmnt     |
-                     print_stmnt     |
-                     switch_stmnt    |
-                     flow_stmnt      |
-                     do_while_stmnt  |
-                     import_stmnt    |
-                     simple_expr
         """
         if self.curr_tok.tok_type == TokType.IF:
             return self.if_statement()
@@ -729,8 +665,6 @@ class Parser:
     def program(self):
         """
         Parse a program rule.
-        Grammar:
-        program := statement*
         """
         prog_node = ProgramNode()
         while self.curr_tok.tok_type != TokType.EOF:

@@ -3,7 +3,7 @@ program := statement*
 ;; Statements
 statement := if_stmnt        |
 			 while_stmnt     |
-			 for_stmnt       | 
+			 for_stmnt       |
 			 class_def       |
 			 func_def        |
 			 block_stmnt     |
@@ -12,6 +12,8 @@ statement := if_stmnt        |
              flow_stmnt      |
              do_while_stmnt  |
              import_stmnt    |
+			 new_assign_stmnt|
+			 reassign_stmnt  |
 			 expr_stmnt
 
 if_stmnt := "if" "(" or_expr ")"  block_stmnt ("elif" "(" or_expr ")" block_stmnt)* ( "else" block_stmnt)?
@@ -21,7 +23,7 @@ func_def := "func" ID "(" ID? ("," ID)* ")" "{" statement* "}"
 block_stmnt := "{" statement* "}"
 print_stmnt := "print" or_expr ";"
 switch_stmnt := "switch" "(" or_expr ")" ("case"  or_expr ":" block_stmnt)* "default" ":" block_stmnt
-flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";" 
+flow_stmnt := ("break" | "continue" | "return" ( or_expr )? ) ";"
 do_while_stmnt := "do" block_stmnt "while" "(" or_expr ")"
 import_stmnt := "import" ID ("as" ID)? ";"
 new_assign_stmnt := "let" access "=" expr_stmnt
@@ -35,13 +37,9 @@ eq_expr := rel_expr ( ("=="|"!=") rel_expr)*
 rel_expr := add_expr ( ("<" | ">" | "<=" | ">=") add_expr)*
 add_expr := term (("+" | "-") term)*
 term := factor (("*" | "/") factor)*
-factor := call_or_access | "(" arg_list ")" | unary_op factor | atom | incr_decr
-call_or_access := access ( "(" arglist ")" | EPSILON )
-access := access_this | access_ident
-access_this := "this" "." ID ([NUM] | "." ID)*
-access_ident := ID ("." ID | [ NUM ])*
+factor := access | "(" or_expr ")" | ("!" | "-") or_expr | atom
+access = (ID | "this" "." ID) (ID | "[" or_expr "]" | "(" arglist ")")*
 arglist := (or_expr ("," or_expr)*)?
-unary_op := "!" "-"
 atom := | NUM | STR | BOOL | ARRAY | "nil"
 
 ;; Primitives
