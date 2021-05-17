@@ -4,6 +4,7 @@ import zai.ast_nodes as nodes
 from zai.internal_error import InternalParseError
 import pytest
 
+
 def test_well_formed_block():
     # Empty block
     tok_stream = [
@@ -44,6 +45,7 @@ def test_missing_opening_block():
     p = Parser(tok_stream, "")
     with pytest.raises(InternalParseError):
         block_node = p.block()
+
 
 def test_missing_closing_block():
     pass

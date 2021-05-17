@@ -4,6 +4,7 @@ import zai.ast_nodes as nodes
 from zai.internal_error import InternalParseError
 import pytest
 
+
 def test_wellformed_if_statement_with_else():
     tok_stream = [
         Token(TokType.IF),
@@ -43,7 +44,7 @@ def test_wellformed_if_statement_no_else():
         Token(TokType.NUM, 4),
         Token(TokType.SEMIC),
         Token(TokType.RCURLY),
-        Token(TokType.EOF)
+        Token(TokType.EOF),
     ]
     p = Parser(tok_stream, "")
     if_node = p.if_statement()
@@ -62,11 +63,12 @@ def test_if_statement_missing_condition():
         Token(TokType.NUM, 4),
         Token(TokType.SEMIC),
         Token(TokType.RCURLY),
-        Token(TokType.EOF)
+        Token(TokType.EOF),
     ]
     p = Parser(tok_stream, "")
     with pytest.raises(InternalParseError):
         if_node = p.if_statement()
+
 
 def test_if_statement_missing_body():
     tok_stream = [
@@ -74,7 +76,7 @@ def test_if_statement_missing_body():
         Token(TokType.LROUND),
         Token(TokType.TRUE),
         Token(TokType.RROUND),
-        Token(TokType.EOF)
+        Token(TokType.EOF),
     ]
     p = Parser(tok_stream, "")
     with pytest.raises(InternalParseError):

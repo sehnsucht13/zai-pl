@@ -72,9 +72,6 @@ class InternalObject(ABC):
     @abstractmethod
     def __str__(self):
         pass
-    @abstractmethod
-    def __repr__(self):
-        pass
 
 
 # All atomic objects
@@ -137,7 +134,6 @@ class NilObject(InternalObject):
 
     def __invert__(self):
         return BoolObject(True)
-
 
 
 class BoolObject(InternalObject):

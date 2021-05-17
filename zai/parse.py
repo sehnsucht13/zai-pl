@@ -165,66 +165,34 @@ class Parser:
                 self.match(TokType.COMMA)
         return func_args
 
-    def access_ident(self):
-        # Create ID node
-        node = self.match(TokType.ID)
-        left = SymbolNode(node.lexeme)
-
-        while self.curr_tok.tok_type in [
-            TokType.DOT,
-            TokType.LSQUARE,
-        ]:
-            if self.curr_tok.tok_type == TokType.DOT:
-                self.match(TokType.DOT)
-                property_name = SymbolNode(self.match(TokType.ID).lexeme)
-                left = DotBinNode(left, property_name)
-            elif self.curr_tok.tok_type == TokType.LSQUARE:
-                self.match(TokType.LSQUARE)
-                arr_idx = self.atom()
-                self.match(TokType.RSQUARE)
-                left = ArrayAccessNode(left, arr_idx)
-
-        return left
-
-    def access_this(self):
-        self.match(TokType.THIS)
-        left = SymbolNode("this")
-
-        while self.curr_tok.tok_type in [
-            TokType.DOT,
-            TokType.LSQUARE,
-        ]:
-            if self.curr_tok.tok_type == TokType.DOT:
-                self.match(TokType.DOT)
-                property_name = SymbolNode(self.match(TokType.ID).lexeme)
-                left = DotBinNode(left, property_name)
-            elif self.curr_tok.tok_type == TokType.LSQUARE:
-                self.match(TokType.LSQUARE)
-                arr_idx = self.atom()
-                self.match(TokType.RSQUARE)
-                left = ArrayAccessNode(left, arr_idx)
-
-        return left
-
     def access(self):
+        left = None
         if self.curr_tok.tok_type == TokType.ID:
-            return self.access_ident()
+            node = self.match(TokType.ID)
+            left = SymbolNode(node.lexeme)
         elif self.curr_tok.tok_type == TokType.THIS:
-            return self.access_this()
+            self.match(TokType.THIS)
+            self.match(TokType.DOT)
+            node = self.match(TokType.ID)
+            left = SymbolNode(node.lexeme)
 
-    def call_or_access(self):
-        """
-        Parse a call or access rule.
-        """
+        while self.curr_tok in [TokType.LSQUARE, TokType.LROUND, TokType.DOT]:
+            if self.curr_tok.tok_type == TokType.DOT:
+                self.match(TokType.DOT)
+                property_name = SymbolNode(self.match(TokType.ID).lexeme)
+                left = DotBinNode(left, property_name)
+            elif self.curr_tok.tok_type == TokType.LSQUARE:
+                self.match(TokType.LSQUARE)
+                arr_idx = self.or_expr()
+                self.match(TokType.RSQUARE)
+                left = ArrayAccessNode(left, arr_idx)
+            elif self.curr_tok.tok_type == TokType.LROUND:
+                self.match(TokType.LROUND)
+                func_args = self.arglist()
+                self.match(TokType.RROUND)
+                left = CallNode(left, func_args)
 
-        access_node = self.access()
-        if self.curr_tok.tok_type == TokType.LROUND:
-            self.match(TokType.LROUND)
-            func_args = self.arglist()
-            self.match(TokType.RROUND)
-            return CallNode(access_node, func_args)
-        else:
-            return access_node
+        return left
 
     def factor(self):
         """
@@ -235,7 +203,7 @@ class Parser:
             TokType.ID,
             TokType.THIS,
         ]:
-            return self.call_or_access()
+            return self.access()
         elif self.curr_tok.tok_type == TokType.LROUND:
             self.match(TokType.LROUND)
             expr = self.or_expr()
@@ -393,7 +361,7 @@ class Parser:
 
     def new_asssign_statement(self):
         self.match(TokType.LET)
-        symbol_path = self.call_or_access()
+        symbol_path = self.access()
         self.match(TokType.ASSIGN)
         value = self.expr_statement()
         # Check if it is a single node
@@ -627,7 +595,7 @@ class Parser:
 
     def statement(self):
         """
-         Parse a single statement.
+        Parse a single statement.
         """
         if self.curr_tok.tok_type == TokType.IF:
             return self.if_statement()

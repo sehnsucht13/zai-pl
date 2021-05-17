@@ -4,6 +4,7 @@ import zai.ast_nodes as nodes
 from zai.internal_error import InternalParseError
 import pytest
 
+
 def test_well_formed_print():
     tok_stream = [
         Token(TokType.PRINT),
@@ -16,7 +17,12 @@ def test_well_formed_print():
     p = Parser(tok_stream, "")
     print_node = p.print_statement()
 
-    assert isinstance(print_node, nodes.PrintNode) and isinstance(print_node.expr, nodes.StringNode) and print_node.expr.val == "Hello World"
+    assert (
+        isinstance(print_node, nodes.PrintNode)
+        and isinstance(print_node.expr, nodes.StringNode)
+        and print_node.expr.val == "Hello World"
+    )
+
 
 def test_malformed_print():
     # Missing print content
