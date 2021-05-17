@@ -1,36 +1,40 @@
 * Zai-pl To Do
 ** Language Features
+*** Maybe Support
+- [ ] try/catch statements
+- [ ] Interfaces
+*** Definite Support
 - [ ] Add more standard library functions [0/4]
   + [ ] String join
   + [ ] Array join
   + [ ] String formatting
   + [ ] Casting (to_string, to_int...)
-- [ ] Add floating point numbers
-- [ ] Pre-Increment operators [0/3]
-  + [ ] Update Grammar
-  + [ ] Implement node
-  + [ ] Add tests
-- [ ] Post-Increment operators [0/3]
-  + [ ] Update Grammar
-  + [ ] Implement node
-  + [ ] Add tests
 - [ ] For Loops [0/3]
   + [ ] Update Grammar
   + [ ] Implement node
   + [ ] Add tests
-- [ ] try/catch statements (MAYBE)
-- [ ] Interfaces (MAYBE)
-- [ ] Speed up switch statements by using a dictionary
 - [ ] Implement more precise error reporting
-- [ ] Fix recursion issue on calling functions without left or right round bracket
+- [ ] Add augmented assignment (*= and /=)
+- [ ] Add support for float data type
+- [ ] Add support for character data type
+- [ ] Classes should be able to access variables outside of them within the same package so they can instantiate them
+** Bugs
+- [ ] using 'this' within a class function does not work
+- [ ] Using "let" to redefine a symbol does not work
+- [X] Fix recursion issue on calling functions without left or right round bracket
 ** Documentation
 - [ ] Update Docs [0/1]
-  + [ ] Add docs for arbitrary scopes
+  + [ ] Add docs for arbitrary blocks/scopes
+- [X] Clean up grammar
+- [X] Post question on programming languages subreddit
 ** Best Practices/Refactoring
-- [X] Fix inheritance for AST Nodes
-- [X] Fix naming convention for Internal Errors from "Err" suffix to "Error" suffix.
 - [ ] Add thorough tests
 - [ ] Implement printing of result while user is in REPL mode.
+- [ ] Implement pretty-printing of parse tree
+- [X] Fix inheritance for AST Nodes
+- [X] Fix naming convention for Internal Errors from "Err" suffix to "Error" suffix.
+- [X] Refactor grammar to simplify
+- [X] Refactor parser to match grammar
 - [X] Make ~import~ statements end with ~;~.
 - [X] Make PEP8 compliant
 * Implementation Notes
