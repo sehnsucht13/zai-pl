@@ -21,6 +21,7 @@ of language tokens.
 """
 from zai.tokens import TokType, Token, keywords
 from zai.internal_error import InternalTokenError
+import string
 
 
 class Lexer:
@@ -65,21 +66,31 @@ class Lexer:
 
     def _tokenize_ident(self):
         """ Tokenize an identifier and return its lexeme."""
-        ident_str = str(self.curr_char)
-        # ident_str += self.curr_char
-        while self._peek() is not None and self._peek() not in self.restricted_ident_chars:
+        ident_str = "" + self.curr_char
+
+        while self._peek() not in self.restricted_ident_chars:
             self._advance()
             ident_str += self.curr_char
+
         return ident_str
 
     def _tokenize_num(self):
         """ Tokenize a single integer number and return it in integer form."""
-        num_str = str()
+        num_str = ""
         num_str += self.curr_char
-        while self._peek() is not None and self._peek() in "1234567890":
-            self._advance()
-            num_str += self.curr_char
-        return num_str
+        token_type = TokType.INT
+
+        while self._peek() in string.digits:
+            num_str += self._advance()
+
+        if self._peek() == ".":
+            token_type = TokType.FLOAT
+            num_str += self._advance()
+
+            while self._peek() in string.digits:
+                num_str += self._advance()
+
+        return (num_str, token_type)
 
     def _tokenize_str(self):
         str_content = str()
@@ -250,19 +261,12 @@ class Lexer:
             elif self.curr_char.isdigit():
                 # Store the column at the start of the number
                 num_start_col = self.curr_col_num
-                num_str = self._tokenize_num()
+                num_str, token_type = self._tokenize_num()
 
-                # Check if the number being tokenized might actually be a bad identifier
-                # which starts with a number.
-                # Example: 13abc or 1Alph@
-                if self._peek() is not None and (self._peek() == self.permitted_ident_chars or self._peek().isalpha()):
-                    raise InternalTokenError(
-                        self.curr_lin_num,
-                        num_start_col,
-                        self.text,
-                        "Identifiers cannot start with integers!",
-                    )
-                self.token_stream.append(Token(TokType.NUM, int(num_str), self.curr_lin_num, num_start_col))
+                if token_type == TokType.FLOAT:
+                    self.token_stream.append(Token(token_type, float(num_str), self.curr_lin_num, num_start_col))
+                else:
+                    self.token_stream.append(Token(token_type, int(num_str), self.curr_lin_num, num_start_col))
 
         # Add final EOF token to indicate end of token stream
         self.token_stream.append(Token(TokType.EOF, None, self.curr_lin_num, self.curr_col_num))

@@ -24,7 +24,8 @@ by the interpreter.
 from zai.ast_nodes import (
     ThisNode,
     StringNode,
-    NumNode,
+    IntNode,
+    FloatNode,
     ArrayNode,
     ArrayAccessNode,
     NilNode,
@@ -133,9 +134,12 @@ class Parser:
             node = StringNode(str_token.lexeme)
             self.match(TokType.DQUOTE)
             return node
-        elif self.curr_tok.tok_type == TokType.NUM:
-            node = self.match(TokType.NUM)
-            return NumNode(node.lexeme)
+        elif self.curr_tok.tok_type == TokType.INT:
+            node = self.match(TokType.INT)
+            return IntNode(node.lexeme)
+        elif self.curr_tok.tok_type == TokType.FLOAT:
+            node = self.match(TokType.FLOAT)
+            return FloatNode(node.lexeme)
         elif self.curr_tok.tok_type == TokType.LSQUARE:
             self.match(TokType.LSQUARE)
             array_elem = list()
@@ -214,7 +218,7 @@ class Parser:
             fact = self.factor()
             return UnaryNode(op.tok_type, fact)
         # TODO: Handle case of it being an "ID" token instead of just num.
-        elif self.curr_tok.tok_type in [TokType.NUM, TokType.ID] and self.peek() in [
+        elif self.curr_tok.tok_type in [TokType.INT, TokType.ID] and self.peek() in [
             TokType.INCR,
             TokType.DECR,
         ]:

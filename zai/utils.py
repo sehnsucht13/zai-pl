@@ -55,7 +55,7 @@ def is_truthy(internal_object):
     if internal_object.obj_type in [
         ObjectType.BOOL,
         ObjectType.STR,
-        ObjectType.NUM,
+        ObjectType.INT,
         ObjectType.NIL,
         ObjectType.ARRAY,
     ]:
@@ -73,7 +73,7 @@ def is_atom(obj):
         return False
     return obj.obj_type in [
         ObjectType.BOOL,
-        ObjectType.NUM,
+        ObjectType.INT,
         ObjectType.STR,
         ObjectType.NIL,
     ]

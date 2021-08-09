@@ -272,16 +272,28 @@ class StringNode(PrimitiveValueNode):
         return visitor.visit_string(self)
 
 
-class NumNode(PrimitiveValueNode):
+class FloatNode(PrimitiveValueNode):
     def __str__(self):
-        return "NUM_NODE: {}".format(self.val)
+        return "FLOAT_NODE {}".format(self.val)
 
     def accept(self, visitor):
         """
         Keyword Arguments:
         visitor -- The visitor instance used to evaluate the node.
         """
-        return visitor.visit_num(self)
+        return visitor.visit_float(self)
+
+
+class IntNode(PrimitiveValueNode):
+    def __str__(self):
+        return "INT_NODE: {}".format(self.val)
+
+    def accept(self, visitor):
+        """
+        Keyword Arguments:
+        visitor -- The visitor instance used to evaluate the node.
+        """
+        return visitor.visit_int(self)
 
 
 class NilNode(PrimitiveValueNode):

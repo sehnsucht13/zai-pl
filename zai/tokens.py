@@ -25,7 +25,8 @@ class TokType(Enum):
     STRING = auto()
     ID = auto()
     BOOL = auto()
-    NUM = auto()
+    INT = auto()
+    FLOAT = auto()
 
     COMMA = auto()
     # A semicolon ";"
@@ -99,7 +100,8 @@ class TokType(Enum):
             "STRING": "string",
             "ID": "identifier",
             "BOOL": "boolean",
-            "NUM": "number",
+            "INT": "integer",
+            "FLOAT": "float",
             "COMMA": ",",
             "SEMIC": ";",
             "COLON": ":",

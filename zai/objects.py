@@ -30,7 +30,8 @@ class ObjectType(Enum):
     Enum used to represent the different types of internal objects.
     """
 
-    NUM = auto()
+    INT = auto()
+    FLOAT = auto()
     STR = auto()
     ID = auto()
     BOOL = auto()
@@ -48,7 +49,8 @@ class ObjectType(Enum):
 
     def __str__(self):
         type_to_str = {
-            "NUM": "number",
+            "INT": "integer",
+            "FLOAT": "float",
             "STR": "string",
             "ID": "variable name",
             "BOOL": "boolean",
@@ -166,50 +168,50 @@ class BoolObject(InternalObject):
         return BoolObject(not self.value)
 
     def __lt__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
             return BoolObject(self.value < other.value)
         else:
             raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
             return BoolObject(self.value <= other.value)
         else:
             raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
             return BoolObject(self.value > other.value)
         else:
             raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
             return BoolObject(self.value >= other.value)
         else:
             raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __add__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return NumObject(self.value + other.value)
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
+            return IntObject(self.value + other.value)
         else:
             raise InternalTypeError("+", self.obj_type, other.obj_type)
 
     def __sub__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return NumObject(self.value - other.value)
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
+            return IntObject(self.value - other.value)
         else:
             raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return NumObject(self.value * other.value)
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
+            return IntObject(self.value * other.value)
         else:
             raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return NumObject(self.value / other.value)
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
+            return IntObject(self.value / other.value)
         else:
             raise InternalTypeError("/", self.obj_type, other.obj_type)
 
@@ -281,7 +283,7 @@ class StringObject(InternalObject):
         raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
-        if other.obj_type == ObjectType.NUM:
+        if other.obj_type == ObjectType.INT:
             return StringObject(self.value * other.value)
         else:
             raise InternalTypeError("*", self.obj_type, other.obj_type)
@@ -307,17 +309,95 @@ class StringObject(InternalObject):
         return True
 
 
-class NumObject(InternalObject):
+class FloatObject(InternalObject):
+    """
+    Numeric internal object used to store floats.
+    """
+
+    def __init__(self, value):
+        self.value = value
+        self.obj_type = ObjectType.FLOAT
+
+    def __repr__(self):
+        return "FLOAT_OBJ {}".format(self.value)
+
+    def __str__(self):
+        return "{}".format(self.value)
+
+    def __add__(self, other):
+        if other.obj_type in [ObjectType.FLOAT, ObjectType.INT]:
+            return FloatObject(self.value + other.value)
+
+        raise InternalTypeError("+", self.obj_type, other.obj_type)
+
+    def __sub__(self, other):
+        if other.obj_type in [ObjectType.INT, ObjectType.FLOAT]:
+            return FloatObject(self.value - other.value)
+
+        raise InternalTypeError("-", self.obj_type, other.obj_type)
+
+    def __mul__(self, other):
+        if other.obj_type in [ObjectType.INT, ObjectType.FLOAT]:
+            return FloatObject(self.value * other.value)
+        else:
+            raise InternalTypeError("*", self.obj_type, other.obj_type)
+
+    def __truediv__(self, other):
+        if other.obj_type in [ObjectType.INT, ObjectType.FLOAT]:
+            return FloatObject(self.value / other.value)
+
+        raise InternalTypeError("/", self.obj_type, other.obj_type)
+
+    def __lt__(self, other):
+        if other.obj_type in [ObjectType.INT, ObjectType.FLOAT]:
+            return BoolObject(self.value < other.value)
+
+        raise InternalTypeError("<", self.obj_type, other.obj_type)
+
+    def __le__(self, other):
+        if other.obj_type in [ObjectType.INT, ObjectType.FLOAT]:
+            return BoolObject(self.value <= other.value)
+        raise InternalTypeError("<=", self.obj_type, other.obj_type)
+
+    def __gt__(self, other):
+        if other.obj_type in [ObjectType.INT, ObjectType.FLOAT]:
+            return BoolObject(self.value > other.value)
+
+        raise InternalTypeError(">", self.obj_type, other.obj_type)
+
+    def __ge__(self, other):
+        if other.obj_type in [ObjectType.INT, ObjectType.FLOAT]:
+            return BoolObject(self.value >= other.value)
+        raise InternalTypeError(">=", self.obj_type, other.obj_type)
+
+    def __neg__(self):
+        return IntObject(-self.value)
+
+    def __invert__(self):
+        return BoolObject(not self.value)
+
+    # These do not override the "and"/"or" keywords but instead override "&" and "|"
+    def __and__(self, other):
+        return BoolObject(bool(self) and bool(other))
+
+    def __or__(self, other):
+        return BoolObject(bool(self) or bool(other))
+
+    def __bool__(self):
+        return bool(self.value)
+
+
+class IntObject(InternalObject):
     """
     Numeric internal object used to store integers.
     """
 
     def __init__(self, value):
         self.value = value
-        self.obj_type = ObjectType.NUM
+        self.obj_type = ObjectType.INT
 
     def __repr__(self):
-        return "NUM_OBJ {}".format(self.value)
+        return "INT_OBJ {}".format(self.value)
 
     def __str__(self):
         return str(self.value)
@@ -330,55 +410,55 @@ class NumObject(InternalObject):
         return ~(self.__eq__(other))
 
     def __add__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return NumObject(self.value + other.value)
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
+            return IntObject(self.value + other.value)
 
         raise InternalTypeError("+", self.obj_type, other.obj_type)
 
     def __sub__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return NumObject(self.value - other.value)
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
+            return IntObject(self.value - other.value)
 
         raise InternalTypeError("-", self.obj_type, other.obj_type)
 
     def __mul__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return NumObject(self.value * other.value)
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
+            return IntObject(self.value * other.value)
         elif other.obj_type in ObjectType.STR:
             return StringObject(other.value * self.value)
         else:
             raise InternalTypeError("*", self.obj_type, other.obj_type)
 
     def __truediv__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
-            return NumObject(self.value / other.value)
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
+            return IntObject(self.value / other.value)
 
         raise InternalTypeError("/", self.obj_type, other.obj_type)
 
     def __lt__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
             return BoolObject(self.value < other.value)
 
         raise InternalTypeError("<", self.obj_type, other.obj_type)
 
     def __le__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
             return BoolObject(self.value <= other.value)
         raise InternalTypeError("<=", self.obj_type, other.obj_type)
 
     def __gt__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
             return BoolObject(self.value > other.value)
 
         raise InternalTypeError(">", self.obj_type, other.obj_type)
 
     def __ge__(self, other):
-        if other.obj_type in [ObjectType.NUM, ObjectType.BOOL]:
+        if other.obj_type in [ObjectType.INT, ObjectType.BOOL]:
             return BoolObject(self.value >= other.value)
         raise InternalTypeError(">=", self.obj_type, other.obj_type)
 
     def __neg__(self):
-        return NumObject(-self.value)
+        return IntObject(-self.value)
 
     def __invert__(self):
         return BoolObject(not self.value)

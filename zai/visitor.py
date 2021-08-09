@@ -25,10 +25,11 @@ from zai.lexer import Lexer
 from zai.parse import Parser
 from zai.utils import is_truthy, read_module_contents
 from zai.objects import (
+    FloatObject,
     ObjectType,
     BoolObject,
     NilObject,
-    NumObject,
+    IntObject,
     FuncObject,
     StringObject,
     ReturnObject,
@@ -76,8 +77,11 @@ class Visitor:
             # else:
             #     return ret_val
 
-    def visit_num(self, node):
-        return NumObject(node.val)
+    def visit_float(self, node):
+        return FloatObject(node.val)
+
+    def visit_int(self, node):
+        return IntObject(node.val)
 
     def visit_symbol(self, node):
         # Retrieve symbol from env
@@ -205,7 +209,7 @@ class Visitor:
         if isinstance(node.symbol_name, ArrayAccessNode):
             symbol_name = node.symbol_name.array_name.val
             array_index = node.symbol_name.array_pos.accept(self)
-            if array_index.obj_type != ObjectType.NUM:
+            if array_index.obj_type != ObjectType.INT:
                 err_msg = 'Array cannot be "{}" !'.format(array_index.obj_type)
                 raise InternalRuntimeError(err_msg)
 
@@ -516,7 +520,7 @@ class Visitor:
         if array_obj.obj_type != ObjectType.ARRAY:
             err_str = "Object is not an array and cannot be accessed using '[]'!"
             raise InternalRuntimeError(err_str)
-        if array_idx.obj_type != ObjectType.NUM:
+        if array_idx.obj_type != ObjectType.INT:
             err_str = "Array index is not a number but a '{}'!".format(str(array_idx.obj_type))
             raise InternalRuntimeError(err_str)
         if array_idx.value < array_obj.size:
