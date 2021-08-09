@@ -9,9 +9,9 @@ def binary_nodes_repeat_operator_helper(operations, node_type):
     operations is respected."""
     for curr_op in operations:
         tok_stream = (
-            [Token(TokType.NUM, 1)]
+            [Token(TokType.INT, 1)]
             + [Token(curr_op)]
-            + [Token(TokType.NUM, 2), Token(TokType.SEMIC), Token(TokType.EOF)]
+            + [Token(TokType.INT, 2), Token(TokType.SEMIC), Token(TokType.EOF)]
         )
         p = Parser(tok_stream, "")
         parse_tree = p.parse()
@@ -19,17 +19,17 @@ def binary_nodes_repeat_operator_helper(operations, node_type):
 
         assert isinstance(parse_tree, nodes.ProgramNode) is True
         assert isinstance(bin_node, node_type) is True
-        assert isinstance(bin_node.left, nodes.NumNode) is True and bin_node.left.val == 1
-        assert isinstance(bin_node.right, nodes.NumNode) is True and bin_node.right.val == 2
+        assert isinstance(bin_node.left, nodes.IntNode) is True and bin_node.left.val == 1
+        assert isinstance(bin_node.right, nodes.IntNode) is True and bin_node.right.val == 2
         assert bin_node.op == curr_op
 
         # Depth of two
         tok_stream2 = (
-            [Token(TokType.NUM, 1)]
+            [Token(TokType.INT, 1)]
             + [Token(curr_op)]
-            + [Token(TokType.NUM, 2)]
+            + [Token(TokType.INT, 2)]
             + [Token(curr_op)]
-            + [Token(TokType.NUM, 3)]
+            + [Token(TokType.INT, 3)]
             + [Token(TokType.SEMIC), Token(TokType.EOF)]
         )
         p = Parser(tok_stream2, "")
@@ -41,11 +41,11 @@ def binary_nodes_repeat_operator_helper(operations, node_type):
 
         assert isinstance(nested_bin_node.left, node_type) is True
 
-        assert isinstance(nested_bin_node.left.left, nodes.NumNode) is True and nested_bin_node.left.left.val == 1
+        assert isinstance(nested_bin_node.left.left, nodes.IntNode) is True and nested_bin_node.left.left.val == 1
         assert nested_bin_node.left.op == curr_op
-        assert isinstance(nested_bin_node.left.right, nodes.NumNode) is True and nested_bin_node.left.right.val == 2
+        assert isinstance(nested_bin_node.left.right, nodes.IntNode) is True and nested_bin_node.left.right.val == 2
 
-        assert isinstance(nested_bin_node.right, nodes.NumNode) is True and nested_bin_node.right.val == 3
+        assert isinstance(nested_bin_node.right, nodes.IntNode) is True and nested_bin_node.right.val == 3
         assert nested_bin_node.op == curr_op
 
 
@@ -74,11 +74,11 @@ def test_arith_binary_nodes():
 
     # 4 * 2 - 3 == (4 * 2) - 3
     tok_stream2 = (
-        [Token(TokType.NUM, 4)]
+        [Token(TokType.INT, 4)]
         + [Token(TokType.MUL)]
-        + [Token(TokType.NUM, 2)]
+        + [Token(TokType.INT, 2)]
         + [Token(TokType.MINUS)]
-        + [Token(TokType.NUM, 3)]
+        + [Token(TokType.INT, 3)]
         + [Token(TokType.SEMIC), Token(TokType.EOF)]
     )
     parser = Parser(tok_stream2, "")
@@ -88,20 +88,20 @@ def test_arith_binary_nodes():
     assert isinstance(nested_bin_node, nodes.ArithBinNode) is True
     assert isinstance(nested_bin_node.left, nodes.ArithBinNode) is True
 
-    assert isinstance(nested_bin_node.left.left, nodes.NumNode) is True and nested_bin_node.left.left.val == 4
+    assert isinstance(nested_bin_node.left.left, nodes.IntNode) is True and nested_bin_node.left.left.val == 4
     assert nested_bin_node.left.op == TokType.MUL
-    assert isinstance(nested_bin_node.left.right, nodes.NumNode) is True and nested_bin_node.left.right.val == 2
+    assert isinstance(nested_bin_node.left.right, nodes.IntNode) is True and nested_bin_node.left.right.val == 2
 
-    assert isinstance(nested_bin_node.right, nodes.NumNode) is True and nested_bin_node.right.val == 3
+    assert isinstance(nested_bin_node.right, nodes.IntNode) is True and nested_bin_node.right.val == 3
     assert nested_bin_node.op == TokType.MINUS
 
     # 3 - 4 * 2 == 3 - (4 * 2)
     tok_stream2 = (
-        [Token(TokType.NUM, 3)]
+        [Token(TokType.INT, 3)]
         + [Token(TokType.MINUS)]
-        + [Token(TokType.NUM, 4)]
+        + [Token(TokType.INT, 4)]
         + [Token(TokType.MUL)]
-        + [Token(TokType.NUM, 2)]
+        + [Token(TokType.INT, 2)]
         + [Token(TokType.SEMIC), Token(TokType.EOF)]
     )
     parser = Parser(tok_stream2, "")
@@ -110,10 +110,10 @@ def test_arith_binary_nodes():
     assert isinstance(parse_tree, nodes.ProgramNode) is True
     assert isinstance(nested_bin_node, nodes.ArithBinNode) is True
 
-    assert isinstance(nested_bin_node.left, nodes.NumNode) is True and nested_bin_node.left.val == 3
+    assert isinstance(nested_bin_node.left, nodes.IntNode) is True and nested_bin_node.left.val == 3
     assert nested_bin_node.op == TokType.MINUS
 
     assert isinstance(nested_bin_node.right, nodes.ArithBinNode) is True
-    assert isinstance(nested_bin_node.right.left, nodes.NumNode) is True and nested_bin_node.right.left.val == 4
-    assert isinstance(nested_bin_node.right.right, nodes.NumNode) is True and nested_bin_node.right.right.val == 2
+    assert isinstance(nested_bin_node.right.left, nodes.IntNode) is True and nested_bin_node.right.left.val == 4
+    assert isinstance(nested_bin_node.right.right, nodes.IntNode) is True and nested_bin_node.right.right.val == 2
     assert nested_bin_node.right.op == TokType.MUL

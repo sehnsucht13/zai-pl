@@ -10,38 +10,38 @@ def test_function_call_with_args():
     tok_stream = [
         Token(TokType.ID, "hello"),
         Token(TokType.LROUND),
-        Token(TokType.NUM, 4),
+        Token(TokType.INT, 4),
         Token(TokType.RROUND),
         Token(TokType.EOF),
     ]
     p = Parser(tok_stream, "")
     call_node = p.access()
     assert isinstance(call_node, nodes.CallNode) and len(call_node.call_args) == 1
-    assert isinstance(call_node.call_args[0], nodes.NumNode) and call_node.call_args[0].val == 4
+    assert isinstance(call_node.call_args[0], nodes.IntNode) and call_node.call_args[0].val == 4
 
     # Call with one arg
     tok_stream = [
         Token(TokType.ID, "hello"),
         Token(TokType.LROUND),
-        Token(TokType.NUM, 4),
+        Token(TokType.INT, 4),
         Token(TokType.COMMA),
-        Token(TokType.NUM, 5),
+        Token(TokType.INT, 5),
         Token(TokType.RROUND),
         Token(TokType.EOF),
     ]
     p = Parser(tok_stream, "")
     call_node = p.access()
     assert isinstance(call_node, nodes.CallNode) and len(call_node.call_args) == 2
-    assert isinstance(call_node.call_args[0], nodes.NumNode) and call_node.call_args[0].val == 4
-    assert isinstance(call_node.call_args[1], nodes.NumNode) and call_node.call_args[1].val == 5
+    assert isinstance(call_node.call_args[0], nodes.IntNode) and call_node.call_args[0].val == 4
+    assert isinstance(call_node.call_args[1], nodes.IntNode) and call_node.call_args[1].val == 5
 
 
 def test_call_without_comma():
     tok_stream = [
         Token(TokType.ID, "hello"),
         Token(TokType.LROUND),
-        Token(TokType.NUM, 4),
-        Token(TokType.NUM, 5),
+        Token(TokType.INT, 4),
+        Token(TokType.INT, 5),
         Token(TokType.RROUND),
         Token(TokType.EOF),
     ]

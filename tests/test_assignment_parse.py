@@ -10,7 +10,7 @@ def test_add_assign():
     tok_stream = [
         Token(TokType.ID, "id"),
         Token(TokType.SUBASSIGN),
-        Token(TokType.NUM, 4),
+        Token(TokType.INT, 4),
         Token(TokType.SEMIC),
         Token(TokType.EOF),
     ]
@@ -23,7 +23,7 @@ def test_add_assign():
     assert isinstance(assign_node, nodes.SubassignNode) is True
     assert assign_node.symbol_path is None
     assert isinstance(assign_node.symbol_name, nodes.SymbolNode) and assign_node.symbol_name.val == "id"
-    assert isinstance(assign_node.decrement, nodes.NumNode) and assign_node.decrement.val == 4
+    assert isinstance(assign_node.decrement, nodes.IntNode) and assign_node.decrement.val == 4
 
     # Omit the value to be assigned like "let id = ;"
     tok_stream = [Token(TokType.ID, "id"), Token(TokType.SUBASSIGN), Token(TokType.SEMIC), Token(TokType.EOF)]
@@ -33,7 +33,7 @@ def test_add_assign():
         parse_tree = p.parse()
 
     # Omit the variable name like "let  = 4 ;"
-    tok_stream = [Token(TokType.SUBASSIGN), Token(TokType.NUM, 4), Token(TokType.SEMIC), Token(TokType.EOF)]
+    tok_stream = [Token(TokType.SUBASSIGN), Token(TokType.INT, 4), Token(TokType.SEMIC), Token(TokType.EOF)]
 
     p = Parser(tok_stream, "")
     with pytest.raises(InternalParseError):
@@ -45,7 +45,7 @@ def test_add_assign():
     tok_stream = [
         Token(TokType.ID, "id"),
         Token(TokType.ADDASSIGN),
-        Token(TokType.NUM, 4),
+        Token(TokType.INT, 4),
         Token(TokType.SEMIC),
         Token(TokType.EOF),
     ]
@@ -58,7 +58,7 @@ def test_add_assign():
     assert isinstance(assign_node, nodes.AddassignNode) is True
     assert assign_node.symbol_path is None
     assert isinstance(assign_node.symbol_name, nodes.SymbolNode) and assign_node.symbol_name.val == "id"
-    assert isinstance(assign_node.increment, nodes.NumNode) and assign_node.increment.val == 4
+    assert isinstance(assign_node.increment, nodes.IntNode) and assign_node.increment.val == 4
 
     # Omit the value to be assigned like "let id = ;"
     tok_stream = [Token(TokType.ID, "id"), Token(TokType.ADDASSIGN), Token(TokType.SEMIC), Token(TokType.EOF)]
@@ -68,7 +68,7 @@ def test_add_assign():
         parse_tree = p.parse()
 
     # Omit the variable name like "let  = 4 ;"
-    tok_stream = [Token(TokType.ADDASSIGN), Token(TokType.NUM, 4), Token(TokType.SEMIC), Token(TokType.EOF)]
+    tok_stream = [Token(TokType.ADDASSIGN), Token(TokType.INT, 4), Token(TokType.SEMIC), Token(TokType.EOF)]
 
     p = Parser(tok_stream, "")
     with pytest.raises(InternalParseError):
@@ -80,7 +80,7 @@ def test_reassign():
     tok_stream = [
         Token(TokType.ID, "id"),
         Token(TokType.ASSIGN),
-        Token(TokType.NUM, 4),
+        Token(TokType.INT, 4),
         Token(TokType.SEMIC),
         Token(TokType.EOF),
     ]
@@ -93,7 +93,7 @@ def test_reassign():
     assert isinstance(assign_node, nodes.ReplaceAssignBinNode) is True
     assert assign_node.symbol_path is None
     assert isinstance(assign_node.symbol_name, nodes.SymbolNode) and assign_node.symbol_name.val == "id"
-    assert isinstance(assign_node.value, nodes.NumNode) and assign_node.value.val == 4
+    assert isinstance(assign_node.value, nodes.IntNode) and assign_node.value.val == 4
 
     # Omit the value to be assigned like "let id = ;"
     tok_stream = [Token(TokType.ID, "id"), Token(TokType.ASSIGN), Token(TokType.SEMIC), Token(TokType.EOF)]
@@ -103,7 +103,7 @@ def test_reassign():
         parse_tree = p.parse()
 
     # Omit the variable name like "let  = 4 ;"
-    tok_stream = [Token(TokType.ASSIGN), Token(TokType.NUM, 4), Token(TokType.SEMIC), Token(TokType.EOF)]
+    tok_stream = [Token(TokType.ASSIGN), Token(TokType.INT, 4), Token(TokType.SEMIC), Token(TokType.EOF)]
 
     p = Parser(tok_stream, "")
     with pytest.raises(InternalParseError):
@@ -116,7 +116,7 @@ def test_new_assignment():
         Token(TokType.LET),
         Token(TokType.ID, "id"),
         Token(TokType.ASSIGN),
-        Token(TokType.NUM, 4),
+        Token(TokType.INT, 4),
         Token(TokType.SEMIC),
         Token(TokType.EOF),
     ]
@@ -129,7 +129,7 @@ def test_new_assignment():
     assert isinstance(assign_node, nodes.NewAssignBinNode) is True
     assert assign_node.symbol_path is None
     assert isinstance(assign_node.symbol_name, nodes.SymbolNode) and assign_node.symbol_name.val == "id"
-    assert isinstance(assign_node.value, nodes.NumNode) and assign_node.value.val == 4
+    assert isinstance(assign_node.value, nodes.IntNode) and assign_node.value.val == 4
 
     # Omit the value to be assigned like "let id = ;"
     tok_stream = [
@@ -148,7 +148,7 @@ def test_new_assignment():
     tok_stream = [
         Token(TokType.LET),
         Token(TokType.ASSIGN),
-        Token(TokType.NUM, 4),
+        Token(TokType.INT, 4),
         Token(TokType.SEMIC),
         Token(TokType.EOF),
     ]

@@ -15,7 +15,7 @@ def test_array():
     # Array with one element
     tok_stream = [
         Token(TokType.LSQUARE),
-        Token(TokType.NUM, 1),
+        Token(TokType.INT, 1),
         Token(TokType.RSQUARE),
         Token(TokType.SEMIC),
         Token(TokType.EOF),
@@ -25,14 +25,14 @@ def test_array():
     array_node = parse_tree.stmnts[0]
     assert isinstance(parse_tree, nodes.ProgramNode) is True
     assert isinstance(array_node, nodes.ArrayNode) is True
-    assert isinstance(array_node.elements[0], nodes.NumNode) is True and array_node.elements[0].val == 1
+    assert isinstance(array_node.elements[0], nodes.IntNode) is True and array_node.elements[0].val == 1
 
     # Array with several elements
     tok_stream = [
         Token(TokType.LSQUARE),
-        Token(TokType.NUM, 1),
+        Token(TokType.INT, 1),
         Token(TokType.COMMA),
-        Token(TokType.NUM, 2),
+        Token(TokType.INT, 2),
         Token(TokType.RSQUARE),
         Token(TokType.SEMIC),
         Token(TokType.EOF),
@@ -42,8 +42,8 @@ def test_array():
     array_node = parse_tree.stmnts[0]
     assert isinstance(parse_tree, nodes.ProgramNode) is True
     assert isinstance(array_node, nodes.ArrayNode) is True
-    assert isinstance(array_node.elements[0], nodes.NumNode) is True and array_node.elements[0].val == 1
-    assert isinstance(array_node.elements[1], nodes.NumNode) is True and array_node.elements[1].val == 2
+    assert isinstance(array_node.elements[0], nodes.IntNode) is True and array_node.elements[0].val == 1
+    assert isinstance(array_node.elements[1], nodes.IntNode) is True and array_node.elements[1].val == 2
 
 
 def create_tok_stream(values):
@@ -131,16 +131,16 @@ def test_boolean_parsing():
 
 
 def test_integer_parsing():
-    values = [(TokType.NUM, 1, nodes.NumNode)]
+    values = [(TokType.INT, 1, nodes.IntNode)]
     tok_stream = create_tok_stream(values)
     p = Parser(tok_stream, "")
     parse_tree = p.parse()
     compare_parsed_output(values, parse_tree)
 
     values = [
-        (TokType.NUM, 1, nodes.NumNode),
-        (TokType.NUM, 0, nodes.NumNode),
-        (TokType.NUM, -1, nodes.NumNode),
+        (TokType.INT, 1, nodes.IntNode),
+        (TokType.INT, 0, nodes.IntNode),
+        (TokType.INT, -1, nodes.IntNode),
     ]
     tok_stream = create_tok_stream(values)
     p = Parser(tok_stream, "")
@@ -151,7 +151,7 @@ def test_integer_parsing():
 # Mixed tests for primitives
 def test_mixed_primitive_values():
     tok_stream = [
-        Token(TokType.NUM, 4),
+        Token(TokType.INT, 4),
         Token(TokType.SEMIC),
         Token(TokType.DQUOTE),
         Token(TokType.STRING, "Hello world"),
@@ -164,14 +164,14 @@ def test_mixed_primitive_values():
     assert isinstance(parse_tree, nodes.ProgramNode) is True
     num_node = parse_tree.stmnts[0]
     string_node = parse_tree.stmnts[1]
-    assert isinstance(num_node, nodes.NumNode) and num_node.val == 4
+    assert isinstance(num_node, nodes.IntNode) and num_node.val == 4
     assert isinstance(string_node, nodes.StringNode) and string_node.val == "Hello world"
 
     tok_stream = [
         Token(TokType.LSQUARE),
-        Token(TokType.NUM, 1),
+        Token(TokType.INT, 1),
         Token(TokType.COMMA),
-        Token(TokType.NUM, 2),
+        Token(TokType.INT, 2),
         Token(TokType.RSQUARE),
         Token(TokType.SEMIC),
         Token(TokType.DQUOTE),
@@ -192,7 +192,7 @@ def test_mixed_primitive_values():
     true_bool_node = parse_tree.stmnts[2]
     false_bool_node = parse_tree.stmnts[3]
     assert isinstance(array_node, nodes.ArrayNode) is True
-    assert isinstance(array_node.elements[0], nodes.NumNode) and isinstance(array_node.elements[1], nodes.NumNode)
+    assert isinstance(array_node.elements[0], nodes.IntNode) and isinstance(array_node.elements[1], nodes.IntNode)
     assert array_node.elements[0].val == 1 and array_node.elements[1].val == 2
     assert isinstance(string_node, nodes.StringNode) and string_node.val == "Hello world"
     assert isinstance(true_bool_node, nodes.BoolNode) and true_bool_node.val == TokType.TRUE

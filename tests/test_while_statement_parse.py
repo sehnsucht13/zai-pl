@@ -9,7 +9,7 @@ def test_properly_formed_while():
     tok_stream = [
         Token(TokType.WHILE),
         Token(TokType.LROUND),
-        Token(TokType.NUM, 1),
+        Token(TokType.INT, 1),
         Token(TokType.RROUND),
         Token(TokType.LCURLY),
         Token(TokType.DQUOTE),
@@ -23,7 +23,7 @@ def test_properly_formed_while():
     while_statement_node = p.while_statement()
 
     assert isinstance(while_statement_node, nodes.WhileNode) is True
-    assert isinstance(while_statement_node.condition, nodes.NumNode) and while_statement_node.condition.val == 1
+    assert isinstance(while_statement_node.condition, nodes.IntNode) and while_statement_node.condition.val == 1
     assert isinstance(while_statement_node.body, nodes.BlockNode)
     assert (
         isinstance(while_statement_node.body.stmnts[0], nodes.StringNode)
@@ -52,7 +52,7 @@ def test_missing_body_while():
     tok_stream = [
         Token(TokType.WHILE),
         Token(TokType.LROUND),
-        Token(TokType.NUM, 1),
+        Token(TokType.INT, 1),
         Token(TokType.RROUND),
         Token(TokType.EOF),
     ]
@@ -72,7 +72,7 @@ def test_improperly_formed_condition_while():
     tok_stream = [
         Token(TokType.WHILE),
         Token(TokType.LROUND),
-        Token(TokType.NUM, 1),
+        Token(TokType.INT, 1),
         Token(TokType.EQ),
         Token(TokType.RROUND),
         Token(TokType.LCURLY),
@@ -92,7 +92,7 @@ def test_improperly_formed_body_while():
     tok_stream = [
         Token(TokType.WHILE),
         Token(TokType.LROUND),
-        Token(TokType.NUM, 1),
+        Token(TokType.INT, 1),
         Token(TokType.RROUND),
         Token(TokType.LCURLY),
         Token(TokType.DQUOTE),

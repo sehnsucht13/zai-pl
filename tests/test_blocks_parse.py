@@ -20,9 +20,9 @@ def test_well_formed_block():
     # Block with contents
     tok_stream = [
         Token(TokType.LCURLY),
-        Token(TokType.NUM, 1),
+        Token(TokType.INT, 1),
         Token(TokType.PLUS),
-        Token(TokType.NUM, 2),
+        Token(TokType.INT, 2),
         Token(TokType.SEMIC),
         Token(TokType.RCURLY),
         Token(TokType.EOF),
@@ -32,8 +32,8 @@ def test_well_formed_block():
 
     assert isinstance(block_node, nodes.BlockNode)
     assert isinstance(block_node.stmnts[0], nodes.ArithBinNode) and block_node.stmnts[0].op == TokType.PLUS
-    assert isinstance(block_node.stmnts[0].left, nodes.NumNode) and block_node.stmnts[0].left.val == 1
-    assert isinstance(block_node.stmnts[0].right, nodes.NumNode) and block_node.stmnts[0].right.val == 2
+    assert isinstance(block_node.stmnts[0].left, nodes.IntNode) and block_node.stmnts[0].left.val == 1
+    assert isinstance(block_node.stmnts[0].right, nodes.IntNode) and block_node.stmnts[0].right.val == 2
 
 
 def test_missing_opening_block():
