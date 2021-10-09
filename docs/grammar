@@ -31,6 +31,7 @@ reassign_stmnt := access ( "=" | "+=" | "-=") expr_stmnt
 expr_stmnt := or_expr ";"
 
 ;; Expressions
+assign_expr := or_expr (( '=' | "+=" | "-=" | "*=" | "/=" )  or_expr )  ';'
 or_expr := and_expr ("||" and_expr)*
 and_expr := eq_expr ("&&" eq_expr)*
 eq_expr := rel_expr ( ("=="|"!=") rel_expr)*

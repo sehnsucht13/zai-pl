@@ -90,7 +90,7 @@ def test_reassign():
     assign_node = parse_tree.stmnts[0]
 
     assert isinstance(parse_tree, nodes.ProgramNode) is True
-    assert isinstance(assign_node, nodes.ReplaceAssignBinNode) is True
+    assert isinstance(assign_node, nodes.ReassignBinNode) is True
     assert assign_node.symbol_path is None
     assert isinstance(assign_node.symbol_name, nodes.SymbolNode) and assign_node.symbol_name.val == "id"
     assert isinstance(assign_node.value, nodes.IntNode) and assign_node.value.val == 4

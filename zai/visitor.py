@@ -17,7 +17,7 @@
 
 """Module contains a visitor class implementation used to execute the AST
 produced by the parser."""
-from zai.ast_nodes import ArrayAccessNode
+import zai.ast_nodes as ast_nodes
 from zai.tokens import TokType
 from zai.internal_error import InternalRuntimeError
 from zai.env import EnvironmentStack, Scope
@@ -86,7 +86,7 @@ class Visitor:
     def visit_symbol(self, node):
         # Retrieve symbol from env
         curr_scope = self.env.peek()
-        symbol_val = curr_scope.lookup_symbol(node.val)
+        symbol_val = curr_scope.get_variable(node.val)
 
         if symbol_val is None:
             err_msg = 'Variable "{}" is not defined!.'.format(node.val)
@@ -197,6 +197,25 @@ class Visitor:
         print_value = node.expr.accept(self)
         print(str(print_value))
 
+    def _replace_assign_local(self, name, value):
+        if isinstance(name, ast_nodes.SymbolNode):
+            value = value.accept(self)
+            scope = self.env.peek()
+
+            if scope.get_variable(name.val) is None:
+                scope.initialize_variable(name.val, value)
+            else:
+                msg = "Variable {} is not initialized!".format(name.val)
+                InternalRuntimeError(msg)
+        elif isinstance(name, ast_nodes.ArrayAccessNode):
+            pass
+
+    def _replace_assign_call(self, name, val):
+        pass
+
+    def _replace_assign_nested(self, name, val):
+        pass
+
     def visit_replace_assign(self, node):
         symbol_namespace = None
         symbol_name = None
@@ -213,7 +232,7 @@ class Visitor:
                 err_msg = 'Array cannot be "{}" !'.format(array_index.obj_type)
                 raise InternalRuntimeError(err_msg)
 
-            array_instance = symbol_namespace.lookup_symbol(symbol_name)
+            array_instance = symbol_namespace.get_variable(symbol_name)
             if array_instance is None:
                 err_msg = ('The array "{}" does not exist within the current' "environment!").format(symbol_name)
                 raise InternalRuntimeError(err_msg)
@@ -243,29 +262,37 @@ class Visitor:
                     )
                     raise InternalRuntimeError(err_msg)
 
-    def visit_new_assign(self, node):
-        # Symbol name will always be an id node
-        symbol_name = node.symbol_name.val
-        # Evaluate the right hand side containing the value which will be assigned
-        value = node.value.accept(self)
+    def _new_assign_local(self, name, value):
+        scope = self.env.peek()
 
-        assert symbol_name is not None, (
-            "Attempting to assign a new variable without a symbol name in" "visit_new_assign."
-        )
-        assert value is not None, "Attempting to assign a non existant value in visit_new_assign."
-
-        # Find if a path to the variable exists
-        symbol_path = None
-        if node.symbol_path is None:
-            # We must be trying to access a variable within the current scope.
-            scope = self.env.peek()
-            scope.new_variable(symbol_name, value)
+        if not scope.is_initialized(name.val):
+            value = value.accept(self)
+            scope.initialize_variable(name.val, value)
         else:
-            symbol_path = node.symbol_path.accept(self)
-            if isinstance(symbol_path, Scope):
-                symbol_path.new_variable(symbol_name, value)
-            elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
-                symbol_path.namespace.new_variable(symbol_name, value)
+            # TODO: Raise Runtime Error
+            print("Variable abc is already initialized")
+
+    def _new_assign_call(self):
+        # TODO: Runtime Error
+        print("Cannot assign to function call")
+
+    def _new_assign_nested(self, path, name, value):
+        symbol_path = path.accept(self)
+        if isinstance(symbol_path, Scope):
+            symbol_path.initialize_variable(name.val, value)
+        elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
+            symbol_path.namespace.initialize_variable(name.val, value)
+
+    def visit_new_assign(self, node):
+        if isinstance(node.name, ast_nodes.CallNode):
+            return self._new_assign_call()
+        elif isinstance(node.name, (ast_nodes.SymbolNode, ast_nodes.ArrayAccessNode)):
+            if node.path is None:
+                self._new_assign_local(node.name, node.value)
+            else:
+                self._new_assign_nested(node.path, node.name, node.value)
+        else:
+            print("This should not happen.")
 
     def visit_scope_block(self, node):
         # Create a new scope to evaluate the current block in
@@ -313,7 +340,7 @@ class Visitor:
     def visit_func_def(self, node):
         curr_scope = self.env.peek()
         # Register the function in the current frame
-        curr_scope.new_variable(node.name, FuncObject(node.name, node.args, node.body, curr_scope))
+        curr_scope.initialize_variable(node.name, FuncObject(node.name, node.args, node.body, curr_scope))
 
     def visit_class_def(self, node):
         """
@@ -322,7 +349,7 @@ class Visitor:
         """
         curr_scope = self.env.peek()
         # Register the class in the scope
-        curr_scope.new_variable(node.class_name, ClassDefObject(node.class_name, node.class_methods))
+        curr_scope.initialize_variable(node.class_name, ClassDefObject(node.class_name, node.class_methods))
 
     def __run_native_function(self, func_object, call_args):
         if func_object.arity != len(call_args):
@@ -365,11 +392,11 @@ class Visitor:
             self.env.enter_scope(func_object.env)
         elif func_object.obj_type == ObjectType.CLASS_METHOD:
             self.env.enter_scope(func_object.class_env)
-            self.env.peek().new_variable("this", func_object.class_env)
+            self.env.peek().initialize_variable("this", func_object.class_env)
 
         # Add arguments to the current environment
         for arg_pair in zip(func_object.args, arg_values):
-            self.env.peek().new_variable(arg_pair[0].lexeme, arg_pair[1])
+            self.env.peek().initialize_variable(arg_pair[0].lexeme, arg_pair[1])
 
         for stmnt in func_object.body:
             ret_val = stmnt.accept(self)
@@ -407,7 +434,7 @@ class Visitor:
             instance_ptr = ClassInstanceObject(call_object.class_name, call_object.class_methods)
             # Enter new scope to register "this" namespace
             self.env.enter_scope(instance_ptr.namespace)
-            self.env.peek().new_variable("this", instance_ptr.namespace)
+            self.env.peek().initialize_variable("this", instance_ptr.namespace)
 
             class_constructor = instance_ptr.get_field("constructor")
             if class_constructor is None and len(node.call_args) != 0:
@@ -426,28 +453,29 @@ class Visitor:
             raise InternalRuntimeError("Object is not callable!")
 
     def visit_dot_node(self, node):
-        left_side = node.left.accept(self)
-        if isinstance(left_side, Scope):
-            val = left_side.lookup_symbol(node.right.val)
+        left = node.left.accept(self)
+
+        if isinstance(left, Scope):
+            val = left.get_variable(node.right.val)
             if val is not None:
                 return val
             else:
                 err_msg = "Current environment does not contain the variable {}".format(node.right.val)
                 raise InternalRuntimeError(err_msg)
-        elif left_side.obj_type == ObjectType.MODULE:
-            val = left_side.namespace.lookup_symbol(node.right.val)
+        elif left.obj_type == ObjectType.MODULE:
+            val = left.namespace.get_variable(node.right.val)
             if val is not None:
                 return val
             else:
                 err_msg = "Module environment does not contain the variable {}".format(node.right.lexeme)
                 raise InternalRuntimeError(err_msg)
-        elif left_side.obj_type == ObjectType.CLASS_INSTANCE:
-            val = left_side.get_field(node.right.val)
+        elif left.obj_type == ObjectType.CLASS_INSTANCE:
+            val = left.get_field(node.right.val)
             if val is not None:
                 return val
             else:
                 err_msg = ('Class instance "{}" of class "{}" does not contain a field ' 'with name "{}"').format(
-                    node.left.val, left_side.class_name, node.right.val
+                    node.left.val, left.class_name, node.right.val
                 )
                 raise InternalRuntimeError(err_msg)
         else:
@@ -568,7 +596,7 @@ class Visitor:
         if node.import_name is not None:
             module_env_name = node.import_name
 
-        self.env.peek().new_variable(
+        self.env.peek().initialize_variable(
             module_env_name,
             ModuleObject(node.module_name, module_path, import_scope, module_env_name),
         )
@@ -583,7 +611,7 @@ class Visitor:
         symbol_path = None
         if node.symbol_path is None:
             current_scope = self.env.peek()
-            old_val = current_scope.lookup_symbol(symbol_name)
+            old_val = current_scope.get_variable(symbol_name)
             status = current_scope.replace_variable(symbol_name, old_val + new_value)
             if status is False:
                 err_msg = (
@@ -593,7 +621,7 @@ class Visitor:
         else:
             symbol_path = node.symbol_path.accept(self)
             if isinstance(symbol_path, Scope):
-                old_val = symbol_path.lookup_symbol(symbol_name)
+                old_val = symbol_path.get_variable(symbol_name)
                 status = symbol_path.replace_variable(symbol_name, old_val + new_value)
                 if status is False:
                     err_msg = (
@@ -602,7 +630,7 @@ class Visitor:
                     ).format(symbol_name)
                     raise InternalRuntimeError(err_msg)
             elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
-                old_val = symbol_path.namespace.lookup_symbol(symbol_name)
+                old_val = symbol_path.namespace.get_variable(symbol_name)
                 status = symbol_path.namespace.replace_variable(symbol_name, old_val + new_value)
                 if status is False:
                     err_msg = ('Variable "{}" cannot be reasigned because it does not ' "exist.").format(symbol_name)
@@ -618,7 +646,7 @@ class Visitor:
         symbol_path = None
         if node.symbol_path is None:
             current_scope = self.env.peek()
-            old_val = current_scope.lookup_symbol(symbol_name)
+            old_val = current_scope.get_variable(symbol_name)
             status = current_scope.replace_variable(symbol_name, old_val - new_value)
             if status is False:
                 err_msg = (
@@ -628,7 +656,7 @@ class Visitor:
         else:
             symbol_path = node.symbol_path.accept(self)
             if isinstance(symbol_path, Scope):
-                old_val = symbol_path.lookup_symbol(symbol_name)
+                old_val = symbol_path.get_variable(symbol_name)
                 status = symbol_path.replace_variable(symbol_name, old_val - new_value)
                 if status is False:
                     err_msg = (
@@ -637,7 +665,7 @@ class Visitor:
                     ).format(symbol_name)
                     raise InternalRuntimeError(err_msg)
             elif symbol_path.obj_type in [ObjectType.MODULE, ObjectType.CLASS_INSTANCE]:
-                old_val = symbol_path.namespace.lookup_symbol(symbol_name)
+                old_val = symbol_path.namespace.get_variable(symbol_name)
                 status = symbol_path.namespace.replace_variable(symbol_name, old_val - new_value)
                 if status is False:
                     err_msg = ('Variable "{}" cannot be reasigned because it does not ' "exist.").format(symbol_name)

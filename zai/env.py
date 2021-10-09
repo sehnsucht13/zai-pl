@@ -26,7 +26,7 @@ class Scope:
         self.scope = dict()
         self.parent = parent
 
-    def new_variable(self, var_name, value):
+    def initialize_variable(self, var_name, value):
         """
         Instantiate a new variable within the current scope of the environment.
         Return True to indicate success.
@@ -52,15 +52,26 @@ class Scope:
         else:
             return self.parent.replace_variable(var_name, value)
 
-    def lookup_symbol(self, symbol):
+    def get_variable(self, symbol):
         """
         Lookupt the value of a symbol in the current scope and all parent scopes
         and return it. If the symbol does not exist, return None.
         """
         value = self.scope.get(symbol, None)
         if value is None and self.parent is not None:
-            return self.parent.lookup_symbol(symbol)
+            return self.parent.get_variable(symbol)
         return value
+
+    def is_initialized(self, var_name):
+        """
+        Check if variable is initialized.
+        """
+        val = self.get_variable(var_name)
+
+        if val is None:
+            return False
+        else:
+            return True
 
     def merge_scopes(self, new_scope):
         """

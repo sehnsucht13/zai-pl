@@ -707,7 +707,7 @@ class ClassInstanceObject(InternalObject):
 
         # Register all class methods in the internal environment
         for method in class_methods:
-            self.namespace.new_variable(
+            self.namespace.initialize_variable(
                 method.name,
                 ClassMethodObject(method.name, method.args, method.body, self.namespace),
             )
@@ -716,4 +716,4 @@ class ClassInstanceObject(InternalObject):
         return "<class instance object {}>".format(self.class_name)
 
     def get_field(self, field_name):
-        return self.namespace.lookup_symbol(field_name)
+        return self.namespace.get_variable(field_name)

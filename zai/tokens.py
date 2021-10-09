@@ -219,7 +219,7 @@ keywords = {
     "case": TokType.CASE,
     "default": TokType.DEFAULT,
     "class": TokType.CLASS,
-    "this": TokType.THIS,
+    # "this": TokType.THIS,
     "return": TokType.RETURN,
     "break": TokType.BREAK,
     "continue": TokType.CONTINUE,

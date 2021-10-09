@@ -53,7 +53,7 @@ class YaplVm:
         native_functions = register_functions()
         curr_scope = self.env.peek()
         for func in native_functions:
-            curr_scope.new_variable(func.name, func)
+            curr_scope.initialize_variable(func.name, func)
 
     def _setup_readline(self):
         history_file = os.path.join(os.path.expanduser("~"), ".zai_history")

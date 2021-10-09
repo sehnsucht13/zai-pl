@@ -48,8 +48,8 @@ class ProgramNode(ASTNode):
         return visitor.visit_program(self)
 
     def __str__(self):
-        for stmn in self.stmnts:
-            print(stmn)
+        for stmnt in self.stmnts:
+            print(stmnt)
         return "Program_node"
 
 
@@ -64,26 +64,26 @@ class PrintNode(ASTNode):
         return "{}".format(self.expr)
 
 
-class DotBinNode(ASTNode):
+class PropertyAccessNode(ASTNode):
     def __init__(self, left, right):
         self.left = left
         self.right = right
 
     def __str__(self):
-        return "DOT_NODE {} {}".format(self.left, self.right)
+        return "(DOT_NODE L:{} R:{})".format(self.left, self.right)
 
     def accept(self, visitor):
         return visitor.visit_dot_node(self)
 
 
-class ReplaceAssignBinNode(ASTNode):
+class ReassignBinNode(ASTNode):
     def __init__(self, symbol_path, symbol_name, value):
-        self.symbol_path = symbol_path  # Path leading to the symbol
-        self.symbol_name = symbol_name  # The actual symbol name within the environment
+        self.path = symbol_path  # Path leading to the symbol
+        self.name = symbol_name  # The actual symbol name within the environment
         self.value = value
 
     def __str__(self):
-        return "REPLACE_ASSIGN_NODE {} {} {}".format(self.symbol_name, self.symbol_path, self.value)
+        return "REPLACE_ASSIGN_NODE {} {} {}".format(self.name, self.path, self.value)
 
     def accept(self, visitor):
         return visitor.visit_replace_assign(self)
@@ -91,12 +91,12 @@ class ReplaceAssignBinNode(ASTNode):
 
 class NewAssignBinNode(ASTNode):
     def __init__(self, symbol_path, symbol_name, value):
-        self.symbol_path = symbol_path
-        self.symbol_name = symbol_name
+        self.path = symbol_path
+        self.name = symbol_name
         self.value = value
 
     def __str__(self):
-        return "NEW_ASSIGN_NODE {} {} {}".format(self.symbol_name, self.symbol_path, self.value)
+        return "NEW_ASSIGN_NODE {} {} {}".format(self.name, self.path, self.value)
 
     def accept(self, visitor):
         return visitor.visit_new_assign(self)

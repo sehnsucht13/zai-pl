@@ -20,7 +20,6 @@ Module containing lexer class used to convert an input string into a sequence
 of language tokens.
 """
 from zai.tokens import TokType, Token, keywords
-from zai.internal_error import InternalTokenError
 import string
 
 
@@ -168,24 +167,10 @@ class Lexer:
                 if self._peek() == "&":
                     self.token_stream.append(Token(TokType.AND, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
-                else:
-                    raise InternalTokenError(
-                        self.curr_lin_num,
-                        self.curr_col_num,
-                        self.text,
-                        ("A single '&' is not a valid symbol or operator. Did you" "mean to use '&&'(AND) operator?"),
-                    )
             elif self.curr_char == "|":
                 if self._peek() == "|":
                     self.token_stream.append(Token(TokType.OR, None, self.curr_lin_num, self.curr_col_num))
                     self._advance()
-                else:
-                    raise InternalTokenError(
-                        self.curr_lin_num,
-                        self.curr_col_num,
-                        self.text,
-                        ("A single '|' is not a valid symbol or operator. Did you " "mean to use '||'(OR) operator?"),
-                    )
             elif self.curr_char == "+":
                 if self._peek() == "+":
                     self.token_stream.append(Token(TokType.INCR, None, self.curr_lin_num, self.curr_col_num))
